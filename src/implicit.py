@@ -4,14 +4,16 @@ import matplotlib.pyplot as plt
 from scipy.sparse import diags
 from scipy.optimize import root
 
+import datetime
+
 r = 0.1  # Risk-free interest rate.
 sigma = 0.2  # Volatility.
 K = 1.0  # Strike price.
 T = 1.0  # Maturity date.
 x_inf = 2.0  # Front-fixing infinity.
 
-M = 99  # Number of internal nodes in spatial direction.
-N = 99  # Number of internal nodes in time direction.
+M = 999  # Number of internal nodes in spatial direction.
+N = 999  # Number of internal nodes in time direction.
 
 dt, dt_inv = T/(N+1), (N+1)/T
 dx, dx_inv = (x_inf-1)/(M+1), (M+1)/(x_inf - 1)
@@ -64,21 +66,30 @@ def J(y, _, S_bar):
 
     return retVal
 
+
+starting_time = datetime.datetime.now()
+print("Start time:", starting_time)
 S_bar = K
 p = np.zeros((M+2))
-for _ in range(N, -1, -1):
+for n in range(N, -1, -1):
     sol = root(lambda y: F(y, np.copy(p[:]), S_bar), np.concatenate([p[2:-1], [S_bar]]), jac=lambda y: J(y, np.copy(p[:]), S_bar), method='hybr')
+    if (n%10) == 0:
+        cur_time = datetime.datetime.now()
+        print("Elapsed time since last iteration:", (cur_time - starting_time).seconds)
     *p[2:-1], S_bar = sol['x']
     p[0] = K - S_bar
     p[1] = K - (1+dx)*S_bar
 
-print(S_bar)
+
+end = datetime.datetime.now()
+print("Final time:", end)
+print("S_bar:", S_bar)
 S = S_bar * np.arange(0, x_inf+dx, step=dx) 
 P = np.concatenate([K - S[S < S_bar], p])
 
 plt.plot(S, np.maximum(K-S, 0))
 plt.plot(S, P)
-plt.vlines(S_bar, 0, p[0])
+plt.vlines(S_bar, 0, p[0], linestyles='dashed')
 plt.xlim(0, S_bar*x_inf)
 plt.ylim(bottom=0, top=K)
 plt.show()

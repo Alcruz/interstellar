@@ -44,7 +44,7 @@ P = np.concatenate([K - S[S < S_bar], p])
 
 plt.plot(S, np.maximum(K-S, 0))
 plt.plot(S, P)
-plt.vlines(S_bar, 0, p[0])
+plt.vlines(S_bar, 0, p[0], linestyles='dashed')
 plt.xlim(0, S_bar*x_inf)
 plt.ylim(bottom=0, top=K)
 plt.show()
