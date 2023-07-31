@@ -1,0 +1,113 @@
+\section{Front fixing method}
+
+\subsection{Inverse transformation}
+
+\begin{equation}
+    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \frac{\partial{V}}{\partial{S}} - rV = 0 \quad \text{for $S > \bar{S}(t)$ and $0 \le t < T$}
+\end{equation}
+
+\begin{equation}
+    V(S, t) = K - S \quad  \text{for $0 \le S \le \bar{S}(t)$ and $0 \le t < T$}
+\end{equation}
+
+\begin{equation}
+    V(S, T) = \max(K - S, 0) \quad \text{for $S \ge 0$}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
+\end{equation}
+
+\begin{equation}
+    \lim_{S\rightarrow \infty} V(S, t) = 0
+\end{equation}
+
+\begin{equation}
+    \bar{S}(T) = K
+\end{equation}
+
+In order for remove the free boundary in the system of equation, the following 
+transformation is used:
+
+\begin{equation}
+    x = \frac{S}{\bar{S}(t)}
+\end{equation}
+
+Next,
+
+\begin{equation}
+    v(x, t) := V(x\bar{S}(t), t) = V(S, t)
+\end{equation}
+
+
+By computing the partial derivatives of V with respect to S and t
+
+\begin{equation}
+    \frac{\partial{V}}{\partial{t}} =  \frac{\partial{v}}{\partial{t}} + \frac{\partial{v}}{\partial{x}} \frac{\partial{x}}{\partial{t}} 
+    = \frac{\partial{v}}{\partial{t}} - x\frac{\bar{S}^\prime(t)}{\bar{S}(t)}\frac{\partial{v}}{\partial{x}} 
+\end{equation}
+
+\begin{equation}
+    \frac{\partial{V}}{\partial{S}} = \frac{\partial{v}}{\partial{x}} 
+    \frac{\partial{x}}{\partial{S}} = 
+    \frac{1}{\bar{S}(t)} \frac{\partial{v}}{\partial{x}}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial^2{V}}{\partial{S^2}} =
+    \frac{1}{\bar{S}(t)^2} \frac{\partial^2{v}}{\partial{x}^2}
+\end{equation}
+
+an expression for (3.1) with respect to $x$ is derived:
+
+\begin{equation}
+    \frac{\partial{v}}{\partial{t}} + \frac{1}{2}\sigma^{2} x^2 \frac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \frac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\frac{\partial{v}}{\partial{x}} - rv = 0 \quad \text{for $x > 1$ and $0 \le t < T$}
+\end{equation}
+
+Similarly, (3.2) is reformulated in term of x to:
+
+\begin{equation}
+    v(x, t) = K - x\bar{S}(t) \quad  \text{for $0 \le x \le 1$ and $0 \le t < T$}
+\end{equation}
+
+Next, the terminal condition (3.3) is re-written with respect of x:
+
+\begin{equation}
+    v(x, T) = \max(K - x\bar{S}(T), 0) = K \max(1 - x, 0) = 0 \quad \text{for $x \ge 1$}
+\end{equation}
+
+Finally, the left and right boundary conditions are given with respect to x:
+
+\begin{equation}
+    \frac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t)
+\end{equation}
+
+\begin{equation}
+    \lim_{x \rightarrow \infty} v(x, t) = 0
+\end{equation}
+
+In summary, a non linear system of PDEs is obtained:
+
+\begin{equation}
+    \frac{\partial{v}}{\partial{t}} + \frac{1}{2}\sigma^{2} x^2 \frac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \frac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\frac{\partial{v}}{\partial{x}} - rv = 0 \quad \text{for $x > 1$ and $0 \le t < T$}
+\end{equation}
+
+\begin{equation}
+    v(x, t) = K - x\bar{S}(t) \quad  \text{for $0 \le x \le 1$ and $0 \le t < T$}
+\end{equation}
+
+\begin{equation}
+    v(x, T) = 0 \quad \text{for $x \ge 1$}
+\end{equation}
+
+\begin{equation}
+    \frac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t)
+\end{equation}
+
+\begin{equation}
+    \lim_{x \rightarrow \infty} v(x, t) = 0
+\end{equation}
+
+\begin{equation}
+    \bar{S}(T) = K
+\end{equation}

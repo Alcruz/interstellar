@@ -1,0 +1,48 @@
+
+\section{Background} \label{sec:_background}
+
+\subsection{Finance}
+
+A common problem in finance is to price financial derivatives, often referred just
+as derivative. In essence, a derivatives are contracts set between parties 
+whose value in time derives from the price of their underlying assets. A notorious
+family of derivatives in financial markets are options. Options are contracts set 
+between two parties in which the buyer of option has the right to sell or buy, 
+commonly referred as, exercise, an stock at a prestablished price, also known as, 
+strike price, in the future. An option is referred as a call option or as a put 
+option if the exercise position is to buy or to sell respectevely. Similarly, 
+options are classified depending on their exercise style. In that regard,
+the simplest of options are European options. European options gives buyer of 
+the option can only exercise the option at given point in time in the future, 
+often referred as the maturity or expiration date. The payoff of an European 
+option is expressed using the following formula
+
+\begin{equation}
+  P = \max(S_T - K, 0)
+  \label{eq:section2:subsection1:payoff_call_european_option}
+\end{equation}
+
+\begin{equation}
+  P = \max(K - S_T, 0)
+  \label{eq:section2:subsection1:payoff_put_european_option}
+\end{equation}
+
+where $T$ is the time elapsed between the starting and expiration date of the 
+contract, $S_T$ is the stock price at the expiration time, and $K$ is the strike 
+price. Note that formula (\ref*{eq:section2:subsection1:payoff_call_european_option})
+and (\ref*{eq:section2:subsection1:payoff_put_european_option}) are for an call and a 
+put option respectevely. Obviously, options give greater flexibility 
+to the buyers because is removing their exposure of having a negative payoff.
+It is because the writers of options charge premiums to the buyers at the time
+they enter the contracts. The premium is often referred as the price or value 
+of the option and the problem of finding this value is called options pricing or
+valuing. When pricing options, it is important to find the just price because 
+otherwise the writer or buyer of the option could set some scheme in which option
+will always be profitable to them. In other words, options pricing must follow
+the principle of no-arbitrage. Suppose that there exists a risk-free financial
+instruments with a continous rate of return $r$. This financial instrument 
+could be a US tresury bill or a certificate of deposit. By principle of non-arbitrage,
+the price of an option must by 
+
+That is we want to gi
+
