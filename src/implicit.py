@@ -6,6 +6,35 @@ from scipy.optimize import root
 
 import datetime
 
+import numpy as np
+
+def solve(F, J, x0, epsilon=1e-6, max_iterations=100):
+    """
+    Newton's method for solving a system of nonlinear equations.
+    
+    Arguments:
+        f: A function that takes a vector x and returns a vector of equations evaluated at x.
+        J: A function that takes a vector x and returns the Jacobian matrix of f evaluated at x.
+        x0: The initial guess for the solution vector.
+        epsilon: The desired level of accuracy.
+        max_iterations: The maximum number of iterations.
+    
+    Returns:
+        The approximate solution vector.
+    """
+    x = x0
+    for i in range(max_iterations):
+        f_val = F(x)
+        if np.linalg.norm(f_val) < epsilon:
+            return x
+        J_val = J(x)
+        if np.linalg.det(J_val) == 0:
+            break
+        delta_x = np.linalg.solve(J_val, -f_val)
+        x = x + delta_x
+    return x
+
+
 r = 0.1  # Risk-free interest rate.
 sigma = 0.2  # Volatility.
 K = 1.0  # Strike price.
@@ -72,11 +101,17 @@ print("Start time:", starting_time)
 S_bar = K
 p = np.zeros((M+2))
 for n in range(N, -1, -1):
-    sol = root(lambda y: F(y, np.copy(p[:]), S_bar), np.concatenate([p[2:-1], [S_bar]]), jac=lambda y: J(y, np.copy(p[:]), S_bar), method='hybr')
+    *p[2:-1], S_bar = solve(
+        F=lambda y: F(y, np.copy(p[:]), S_bar), 
+        J=lambda y: J(y, np.copy(p[:]), S_bar), 
+        x0=np.concatenate([p[2:-1], [S_bar]]),
+        epsilon=1e-10,
+        max_iterations=100
+    )
     if (n%10) == 0:
         cur_time = datetime.datetime.now()
-        print("Elapsed time since last iteration:", (cur_time - starting_time).seconds)
-    *p[2:-1], S_bar = sol['x']
+        print("Elapsed seconds since last iteration:", (cur_time - starting_time).seconds)
+        print(S_bar)
     p[0] = K - S_bar
     p[1] = K - (1+dx)*S_bar
 
