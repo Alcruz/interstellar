@@ -17,32 +17,103 @@ the option can only exercise the option at given point in time in the future,
 often referred as the maturity or expiration date. The payoff of an European 
 option is expressed using the following formula
 
-\begin{equation}
-  P = \max(S_T - K, 0)
-  \label{eq:section2:subsection1:payoff_call_european_option}
-\end{equation}
-
-\begin{equation}
-  P = \max(K - S_T, 0)
-  \label{eq:section2:subsection1:payoff_put_european_option}
-\end{equation}
+\begin{align}
+  P = \max(S(T) - K, 0) 
+  \label{eq:section2:subsection1:payoff_call_european_option}\\
+  P = \max(K - S(T), 0)
+  \label{eq:section2:subsection1:payoff_put_european_option} 
+\end{align}
 
 where $T$ is the time elapsed between the starting and expiration date of the 
-contract, $S_T$ is the stock price at the expiration time, and $K$ is the strike 
+contract, $S(T)$ is the stock price at the expiration time, and $K$ is the strike 
 price. Note that formula (\ref*{eq:section2:subsection1:payoff_call_european_option})
 and (\ref*{eq:section2:subsection1:payoff_put_european_option}) are for an call and a 
-put option respectevely. Obviously, options give greater flexibility 
-to the buyers because is removing their exposure of having a negative payoff.
-It is because the writers of options charge premiums to the buyers at the time
-they enter the contracts. The premium is often referred as the price or value 
-of the option and the problem of finding this value is called options pricing or
-valuing. When pricing options, it is important to find the just price because 
+put option respectively. Another well known option are the American options. American options
+gives the right to exercise the option at any point in time between the beginning 
+and expiration date of the contract. The payoff of an American option is
+
+\begin{align}
+  P(t) = \max(S(t) - K, 0) 
+  \label{eq:section2:subsection1:payoff_call_european_option}\\
+  P(t) = \max(K - S(t), 0)
+  \label{eq:section2:subsection1:payoff_put_european_option} 
+\end{align}
+
+where $t$ is the time when the buyer decides to exercise the option. 
+The value of both options $V(t)$ at the maturity time $T$ is 
+equal to the payoff
+
+\begin{align}
+  V(T) = P
+\end{align}
+
+Obviously, options give greater flexibility 
+to buyers because is removing their exposure of having a negative value.
+It is because of this that the writer of the option charges a premium $V(0)$ to the buyer
+at the time they enter the contract. The premium is often referred as the price or value 
+of the option and the problem of finding this value is called option pricing. 
+When pricing options, it is important to find the just price because 
 otherwise the writer or buyer of the option could set some scheme in which option
 will always be profitable to them. In other words, options pricing must follow
-the principle of no-arbitrage. Suppose that there exists a risk-free financial
-instruments with a continous rate of return $r$. This financial instrument 
-could be a US tresury bill or a certificate of deposit. By principle of non-arbitrage,
-the price of an option must by 
+the principle of no-arbitrage. Therefore, we assume that the writer of the option
+uses the premium to construct a portfolio consisting of $\phi_0$ units of the 
+stock and invests $\psi_0$ units of cash into a risk-free asset such as US
+tresury bill, certificate of deposit, or bank account. Then, the writer only 
+uses wealth of the portfolio $(\phi_0, \psi_0)$ to hedge any 
+possible claims from the buyer of the option at any future time $0 \le t \le T$. 
+Therefore, at any time $t$, the writer holds a portfolio $(\phi(t), \psi(t))$ 
+with value
 
-That is we want to gi
+\begin{equation}
+  \Pi(t) = \phi(t)S(t) + \psi(t)B(t)
+\end{equation}
 
+Moreover, the portfolio is self-financing. In other words, the changes in the value
+of the portfolio $V(t)$ depend on the changes in $S(t)$ and $B(t)$, and the current
+portfolio $(\phi(t), \psi(t))$
+
+\begin{equation}
+  d\Pi(t) = \phi(t)dS(t) + \psi(t)dB(t)
+\end{equation}
+
+Finally, the value of an option must satisfy the following
+
+\begin{equation}
+  \Pi(t) = V(t)
+\end{equation}
+
+at any time $0 \le t \le T$.
+
+The black schole model is built upon the self-financing portfolio hedging strategy 
+and expresses a mathematical model for dynamics of option's price. 
+The black schole model comes with some assumptions. The most important one is 
+that the risk-free asset has the model:
+
+\begin{equation}
+  dB = r(t)B(t)dt
+\end{equation}
+
+
+By applying the black schole model to European option, the famous black-schole 
+PDE is obtained:
+
+\begin{equation}
+  \begin{cases}
+    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + r S \frac{\partial{V}}{\partial{S}} - rV = 0 \\
+    V(S, T) = P
+  \end{cases}
+\end{equation}
+
+Where $V(S,t)$ is a smooth and deterministic function of $S$ and $t$.
+
+\begin{align}
+  \begin{cases}
+    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \frac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $S > \bar{S}(t)$ and $0 \le t < T$} \\
+    V(S, t) = K - S & \text{for $0 \le S \le \bar{S}(t)$ and $0 \le t < T$} \\
+    V(S, T) = \max(K - S, 0) & \text{for $S \ge 0$} \\
+    \frac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1 \\
+    \lim_{S\rightarrow \infty} V(S, t) = 0 \\
+    \bar{S}(T) = K
+  \end{cases}
+  \label{eq:background:finance:free_boundary_problem}
+\end{align}
