@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import datetime
 
 matplotlib.use('qtagg')
 
@@ -10,8 +11,8 @@ K = 1.0  # Strike price.
 T = 1.0  # Maturity date.
 x_inf = 2.0  # Front-fixing infinity.
 
-M = 999  # Number of internal nodes in spatial direction.
-N = 199999  # Number of internal nodes in time direction.
+M = 99 # Number of internal nodes in spatial direction.
+N = 1999  # Number of internal nodes in time direction.
 
 dt, dt_inv = T/(N+1), (N+1)/T
 dx, dx_inv = (x_inf-1)/(M+1), (M+1)/(x_inf - 1)
@@ -25,6 +26,8 @@ A = 0.5 * np.power(sigma*x, 2) * gamma - x * (r - dt_inv) * alpha
 B = 1 - np.power(sigma*x, 2) * gamma - r*dt
 C = 0.5 * np.power(sigma*x, 2) * gamma + x * (r - dt_inv) * alpha
 
+starting_time = datetime.datetime.now()
+print("Start time:", starting_time)
 p = np.zeros(M+2)
 S_bar = K
 for n in range(N, -1, -1):
@@ -33,7 +36,10 @@ for n in range(N, -1, -1):
 
     S_bar = K - (A[1]*p[0] + B[1]*p[1] + C[1]*p[2])
     S_bar /= D[1] + 1 + dx
-
+    if (n % 100) == 0:
+        cur_time = datetime.datetime.now()
+        print("Elapsed seconds since last iteration:", (cur_time - starting_time).seconds)
+        print(f"Iteration {n}:", S_bar)
     p[2:-1] = A[2:-1]*p[1:-2] + B[2:-1]*p[2:-1] + C[2:-1]*p[3:] + D[2:-1]*S_bar
     p[0] = K - S_bar
     p[1] = K - (1+dx)*S_bar

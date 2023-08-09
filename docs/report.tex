@@ -3,6 +3,7 @@
 % loads already mathtools, graphicx,
 % but you may want to add other packages, like
 \usepackage{listings} % to include code in python see https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+\usepackage{xcolor}
 % other useful pagackes include booktabs, hyperref, amsthm, xcolor, todonotes, showkeys, ...
 % see https://www.overleaf.com/learn 
 
@@ -44,22 +45,8 @@ concise and clear. The typical length is one paragraph.
 \setcounter{tocdepth}{2}  % this will list subsections, but not subsubsections
 \tableofcontents 
 \newpage
-
-\section{Introduction} \label{sec:intro}
-
-The introductory section goes here. And remember the introduction
-is the last thing you write.
-
 % this is a comment in the file that won't appear in the output
 
-The end of the introductory section would typically outline the
-structure of the report. In this template, section \ref{sec:background}
-gives the background of the topic, sections \ref{sec:my1} and
-\ref{sec:my2} contain the bulk of the work and section
-\ref{sec:conclusions} summarises and discusses what has been
-achieved. Appendix \ref{app:rawdata} displays the raw data, and
-certain technical calculations for section \ref{sec:my1} are deferred
-to appendix \ref{app:calculations}.
 
 \include{chapters/chapter1_introduction}
 \include{chapters/chapter2_background}
