@@ -41,7 +41,7 @@ will always be profitable to them. In other words, options pricing must follow
 the principle of no-arbitrage. Therefore, we assume that the writer of the option
 uses the premium to construct a portfolio consisting of $\phi_0$ units of the 
 stock and invests $\psi_0$ units of cash into a risk-free asset such as US
-tresury bill, certificate of deposit, or bank account. Then, the writer rebalanced
+treasury bill, certificate of deposit, or bank account. Then, the writer rebalanced
 the portfolio $(\phi_0, \psi_0)$ to hedge any 
 possible claims from the buyer of the option at any future time $0 < t \le T$. 
 Therefore, at any time $t$, the writer holds a portfolio $(\phi(t), \psi(t))$ 
@@ -67,10 +67,10 @@ Finally, the value of an option must satisfy the following
 
 at any time $0 \le t \le T$.
 
-The black schole model is built upon the self-financing portfolio hedging strategy 
+The Black-Schole model is built upon the self-financing portfolio hedging strategy 
 and expresses a mathematical model for dynamics of option's price. 
-The black schole model makes with some assumptions about the market. For complete
-list of these assumptions look at (reference). We enumerates the one we believe 
+The Black-Schole model makes with some assumptions about the market. For complete
+list of these assumptions look at (reference). We enumerate the one we believe 
 are important for our task. First, the stock price $S(t)$ is a log-normal random
 variable 
 
@@ -90,7 +90,7 @@ Finally, the stock does not pay dividends. From now on, we will assume that
 the risk-free interest rate and stock price volatility are constant during the 
 life of the option. Later on, we will address the assumption about dividends.
 
-By applying the black schole model to price European options, the famous black-schole 
+By applying the Black-Schole model to price European options, the famous Black-Schole 
 PDE is obtained
 
 \begin{equation}
@@ -134,26 +134,22 @@ we obtain the slightly modified version of (\ref*{eq:background:finance:european
 Similarly, the Black-Schole model is applied to price American options. 
 One important result is that the value of an American option $V_\text{Ame}(t)$ is
 bounded from below by the payoff function
-
 \begin{align}
   V_{\text{Am}}(S, t) \ge H(S, t) \qquad \text{for $t\in[0,T]$}
   \label{eq:background:american_options_price_lower_bound}
 \end{align}
 
 Moreover, the domain of $V(S,t)$ can be separated in the exercise region 
-
 \begin{equation}
   \mathcal{S} := \{(S, t): V(S, t) = H(S, t) \}
 \end{equation}
 
 and the continuation region 
-
 \begin{equation}
   \mathcal{C} := \{(S, t): V(S, t) > H(S, t) \}
 \end{equation}
 
 where the boundary of $\mathcal{C}$ is defined as
-
 \begin{equation}
   \partial \mathcal{C} := \{(S, t): S = \bar{S}(t)\} 
 \end{equation}
@@ -185,38 +181,38 @@ Similarly, the bound of $\mathcal{L}_{\text{BS}}(V)$ is
 \end{align*}
 
 Therefore, grouping the bounds above we form a linear complementary system of equations
-
 {
   \color{red}  
-  \begin{align*}
+  \begin{align}
     \begin{cases}
-      \mathcal{L}_{\text{BS}}(V) \cdot [V(S,t) - H(S,t)] = 0 & \text{for all $(S,t)$} \\
+      \big[\frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,t) - H(S,t)] = 0 & \text{for all $(S,t)$} \\
       V(S, t) - H(S, t) \ge 0 & \text{for all $(S, t)$}\\
-      \mathcal{L}_{\text{BS}}(V) \le 0 &  \text{for all $(S, t)$}\\
+      \frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V) \le 0 &  \text{for all $(S, t)$}\\
       V(S, T) = H(S, T) \\  
     \end{cases}
-  \end{align*}
+    \label{eq:background:finance:linear_complementary_problem}
+  \end{align}
 }
 
-By combining the expression above with the lower bound (\ref*{eq:background:american_options_price_lower_bound}),
-we obtain a linearly complementary system of equations
+The benefit of the reformulation (\ref*{eq:background:finance:linear_complementary_problem})
+is that there is no dependence on the unknown boundary of the continuation region.
+Later in section (XXX) and section (XXX), we will explore numerical methods for solving 
+both type of problems.
 
-The system of equation (\ref*{eq:background:finance:american_options_pde_free_boundary_problem}) could
-be reformulated as free a boundary problem, or as a linear complementary problem. To 
-reframe the problem as free boundary problem, note that we know the value of $V(S,t)$
-in the stopping region. Hence, we only need to solve the Black-Schole PDE at the
-continuation region but with unknown boundary condition given by $S=\bar{S}(t)$. 
-Finally, at the terminal condition the unknown boundary condition is given by 
-$\bar{S}(T) = K$.
+\subsection{Numerical methods for the heat diffusion PDE}
 
-\begin{align}
-  \begin{cases}
-  \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
-  V(S, t) = H(S, t) & \text{for all $(t, \bar{S}(t))$} \\
-  S = \bar{S}(T)
-  \end{cases}
-  \label{eq:background:finance:free_boundary_problem}
-\end{align}
+The Black-Schole PDE can be transformed to heat diffusion PDE using the following
+change of variables
+
+\begin{align*}
+  S &= Ke^x \\
+  t &= T - \frac{2\tau}{\sigma^2} \\ 
+  q &:= \frac{2r}{\sigma^2} \\
+  q_{\delta} &:= \frac{2(r-\delta)}{\sigma^2} \\
+  \alpha &:= \frac{1}{2}(q_{\delta} - 1) \\
+  \beta &:= \frac{1}{4}(q_{\delta} - 1)^2 + q \\
+  v(x, \tau) &:= e^{-(\alpha x + \beta \tau)}y(x, \tau)= V(S, t)
+\end{align*}
 
 The system (\ref{eq:background:finance:free_boundary_problem}) 
 is the free boundary formulation for the pricing problem for American options.
@@ -227,12 +223,6 @@ can be found at [REFERENCES].
 The equation (\ref*{eq:background:finance:american_options_pde}) 
 is a paraboblic PDE. Moreover, by applying the transformation,
 
-\begin{align}
-  S = Ke^x, \quad t = T - \frac{2\tau}{\sigma^2}, \quad q := \frac{2r}{\sigma^2}, \quad q_{\delta} := \frac{2(r-\delta)}{\sigma^2} & \\
-  v(x, \tau) := V(S, t) = V\big(Ke^x, T - \frac{2\tau}{\sigma^2}\big) \\
-  \alpha := \frac{1}{2}(q_{\delta} - 1) \quad \beta := \frac{1}{4}(q_{\delta} - 1)^2 + q  \\
-  v(x, \tau) := e^{-(\alpha x + \beta \tau)}y(x, \tau)
-\end{align}
 
 the equation (\ref*{eq:background:finance:american_options_pde}) converts 
 to the heat diffusion PDE.
@@ -295,7 +285,6 @@ Moreover, as the price goes to infinity the value of the option tends to zero
 \end{align}
 
 
-\subsection{Numerical methods for the heat diffusion PDE}
 
 Pricing American options requires using numerical methods. The Black-Schole PDE 
 in (XXX) can be converted to the heat diffusion equation
