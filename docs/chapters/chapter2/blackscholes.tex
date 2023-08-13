@@ -145,6 +145,7 @@ bounded from below by the payoff function
 Moreover, the domain of $V(S,t)$ can be separated in the exercise region 
 \begin{equation}
   \mathcal{S} := \{(S, t): V(S, t) = H(S, t) \}
+  \label{eq:background:finance:exercise_region}
 \end{equation}
 
 and the continuation region 
@@ -156,6 +157,7 @@ where the boundary of $\mathcal{C}$ is defined as
 
 \begin{equation}
   \partial \mathcal{C} := \{(S, t): S = \bar{S}(t)\} 
+  \label{eq:background:finance:exercise_region}
 \end{equation}
 
 Lastly, the price dynamics of American options behaves as European options within
@@ -207,7 +209,7 @@ derivative of the value with respect to the price is given by:
 Grouping , boundary conditions and terminal condition 
 in one equation, we obtain the system.
 
-\begin{subequations}
+\begin{subequations} \label{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}
 \begin{equation}
   \begin{cases}
     \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{v}}{\partial{x}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $0 \le S < \bar{S}(t)$ and $0 \le t < T$} \\
@@ -240,77 +242,174 @@ $t \in [0, T]$. This method will t
 
 \subsubsection{Inverse transformation}
 
-The change of variable proposed by this method is the following
-
+This method proposes the transformation 
 \begin{equation}
     x = \dfrac{S}{\bar{S}(t)}
     \label{eq:blackscholes:frontfixingmethod:inversetransform}
 \end{equation}
 
-Next, we use the transformation propose by \eqref{eq:blackscholes:frontfixingmethod:inversetransform}
-to rewrite the system of PDE 
-
+which maps the boundary of the continuation region $\partial C$ defined in 
+\eqref{eq:background:finance:exercise_region} to the fixed boundary 
 \begin{equation}
-    v(x, t) := V(x\bar{S}(t), t) = V(S, t)
+  \mathcal{\partial C}_x := \{(x, t): x = 1\} 
 \end{equation}
 
-
-By computing the partial derivatives of V with respect to S and t
-
+which remain constant as t changes. Now, let us define the value $v(x,t)$ 
+under this new map
 \begin{equation}
-    \dfrac{\partial{V}}{\partial{t}} =  \dfrac{\partial{v}}{\partial{t}} + \dfrac{\partial{v}}{\partial{x}} \dfrac{\partial{x}}{\partial{t}} 
-    = \dfrac{\partial{v}}{\partial{t}} - x\dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}} 
+  v(x, t) := V(S, t)
+  \label{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
 \end{equation}
 
+which fixes the moving boundary $\bar{S}(t)$ at $x=1$ when $S(t)$. Next, we compute
+the partial derivatives of $V$ with respect of the partial derivatives of $v$ which
+will allow us to rewrite the PDE in \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full} 
+with respect of \eqref{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
+
+\begin{align*}
+  \dfrac{\partial{x}}{\partial{S}} &= \dfrac{1}{\bar{S}(t)} \\\\
+  \dfrac{\partial{x}}{\partial{t}} &= -x\dfrac{\bar{S}'(t)}{\bar{S}(t)} \\\\
+  \dfrac{\partial{V}}{\partial{S}} &= \dfrac{\partial{v}}{\partial{x}}\dfrac{\partial{x}}{\partial{S}} = \dfrac{1}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}} \\\\
+  \dfrac{\partial^2{V}}{\partial{S^2}} &= \dfrac{1}{\bar{S}(t)} \dfrac{\partial{x}}{\partial{S}} \dfrac{\partial^2{v}}{\partial{x^2}} = \dfrac{1}{\bar{S}(t)^2} \dfrac{\partial^2{v}}{\partial{x}^2} \\\\
+  \dfrac{\partial{V}}{\partial{t}} &=  \dfrac{\partial{v}}{\partial{t}} + \dfrac{\partial{v}}{\partial{x}} \dfrac{\partial{x}}{\partial{t}} = \dfrac{\partial{v}}{\partial{t}} - x\dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}}
+\end{align*}
+
+Substituting these partial derivatives in the Black-Scholes PDE given by \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full},
+we obtain the non-linear PDE
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:american_options_pde}
+  \begin{align}  
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x \in [0, 1)$ and $t \in [0, T)$}\\
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x > 1$ and $t \in (0, T]$}
+  \end{align}  
+\end{subequations}
+
+Likewise, we rewrite the terminal condition as
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}
+  \begin{equation}
+    v(x, T) = \max(x\bar{S}(T) - K) = K \max(x - 1, 0) = 0
+  \end{equation}
+  \begin{equation}
+    v(x, T) = \max(K - x\bar{S}(T)) = K \max(1 - x, 0) = 0
+  \end{equation}
+\end{subequations}
+
+Note that $x$ is always less than one for put options. Analogously, $x$ is 
+always greater than one for call options. Finally, we rewrite the boundary condition
+given by the optimal exercise price $\bar{S}(t)$ as
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc}
+  \begin{equation}
+    \dfrac{\partial v}{\partial x}(1, t) = 1
+  \end{equation}  
+  \begin{equation}
+    \dfrac{\partial v}{\partial x}(1, t) = -1
+  \end{equation}
+\end{subequations}
+
+and the boundary condition opposite to the optimal exercise price as  
+\begin{equation} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_option_opposite_bc}
+  v(0, t) = 0
+\end{equation} 
+
+for both put and call options. In summary, by groping equations 
+\eqref{eq:blackscholes:frontfixingmethod:american_options_pde},
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition},
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
+and \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
+we obtain the system
+\begin{subequations}
 \begin{equation}
-    \dfrac{\partial{V}}{\partial{S}} = \dfrac{\partial{v}}{\partial{x}} 
-    \dfrac{\partial{x}}{\partial{S}} = 
-    \dfrac{1}{\bar{S}(t)} \dfrac{\partial{v}}{\partial{x}}
+  \begin{cases}
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x \in (0, 1)$ and $t \in [0, T]$} \\
+    v(x, T) = 0 \qquad \bar{S}(T) = K \\
+    v(0, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = \bar{S}(t)
+  \end{cases}
 \end{equation}
-
 \begin{equation}
-    \dfrac{\partial^2{V}}{\partial{S^2}} =
-    \dfrac{1}{\bar{S}(t)^2} \dfrac{\partial^2{v}}{\partial{x}^2}
+  \begin{cases}
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $t \in [0, T]$} \\
+    v(x, T) = 0 \qquad \bar{S}(T) = K \\
+    \lim_{x\rightarrow\infty}v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = -\bar{S}(t)
+  \end{cases}
 \end{equation}
-
-an expression for (3.1) with respect to $x$ is derived:
-
-\begin{equation}
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad \text{for $x > 1$ and $0 \le t < T$}
-\end{equation}
-
-Similarly, (3.2) is reformulated in term of x to:
-
-\begin{equation}
-    v(x, t) = K - x\bar{S}(t) \quad  \text{for $0 \le x \le 1$ and $0 \le t < T$}
-\end{equation}
-
-Next, the terminal condition (3.3) is re-written with respect of x:
-
-\begin{equation}
-    v(x, T) = \max(K - x\bar{S}(T), 0) = K \max(1 - x, 0) = 0 \quad \text{for $x \ge 1$}
-\end{equation}
-
-Finally, the left and right boundary conditions are given with respect to x:
-
-\begin{equation}
-    \dfrac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t)
-\end{equation}
-
-\begin{equation}
-    \lim_{x \rightarrow \infty} v(x, t) = 0
-\end{equation}
-
-In summary, a non linear system of PDEs is obtained:
-
-\begin{align}
-    & \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $0 \le t < T$} \\
-    & v(x, t) = K - x\bar{S}(t) & \text{for $0 \le x \le 1$ and $0 \le t < T$} \\
-    & v(x, T) = 0 & \text{for $x \ge 1$} \\
-    & \dfrac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t) & \\
-    & \lim_{x \rightarrow \infty} v(x, t) = 0 & \\
-    & \bar{S}(T) = K & 
-\end{align}
-
+\end{subequations}
 
 \subsubsection{Log transformation}
+
+In this section, we define the transformations
+\begin{equation}
+  x := \log \dfrac{KS}{\bar{S}(t)} \qquad v(x, t) := \dfrac{V(S, t)}{K}
+\end{equation}
+
+which maps the boundary $\partial \mathcal{C}$ to the region
+\begin{equation}
+  \partial{\mathcal{C}_x} := \{ (x, t): x = \log{K} \}  
+\end{equation}
+
+\newpage
+
+Similarly to the previous section, we compute the partial derivatives of $v(x,t)$,
+\begin{align*}
+  \dfrac{\partial x}{\partial t} &= -\dfrac{\bar{S}'(t) }{\bar{S}(t)} \\\\
+  \dfrac{\partial x}{\partial S} &= \dfrac{1}{S} \\\\ 
+  \dfrac{\partial V}{\partial S} &= \dfrac{K}{S} \dfrac{\partial v}{\partial x} \\\\
+  \dfrac{\partial^2 V}{\partial^2 S} &= \dfrac{K}{S^2}\dfrac{\partial^2 v}{\partial x^2} - \dfrac{K}{S^2} \dfrac{\partial v}{\partial x} \\\\
+  \dfrac{\partial V}{\partial t} &= K \dfrac{\partial v}{\partial t} - K\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x}
+\end{align*}
+
+Using the partial derivates, we rewrite the Black-Scholes PDE as follows
+\begin{subequations}
+  \begin{align}
+      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x < \log{K}$ and $t \in [0, T)$} \\
+      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x > \log{K}$ and $t \in [0, T)$}
+  \end{align}
+\end{subequations}
+
+with terminal condition
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:logtransform:american_options_terminal_condition}
+  \begin{equation}
+    v(x, T) = \max\bigg(\dfrac{e^x}{K} - 1, 0\bigg) = 0
+  \end{equation}
+  \begin{equation}
+    v(x, T) = \max\bigg(1 - e^x, 0\bigg) = 0
+  \end{equation}
+\end{subequations}
+
+\newpage
+
+Next, we rewrite the boundary condition given by the optimal exercise price
+\begin{subequations}
+  \begin{equation}
+    \dfrac{\partial v}{\partial x}(\log{K}, t) = \dfrac{\bar{S}(t)}{K} 
+  \end{equation}
+  \begin{equation}
+    \dfrac{\partial v}{\partial x}(\log{K}, t) = -\dfrac{\bar{S}(t)}{K}
+  \end{equation}
+\end{subequations}
+
+and the boundary condition opposite to the optimal exercise price
+\begin{subequations}
+  \begin{equation}
+    \lim_{x\rightarrow-\infty} v(x, t) = 0
+  \end{equation}
+  \begin{equation}
+    \lim_{x\rightarrow\infty} v(x, t) = 0
+  \end{equation}
+\end{subequations}
+
+Finally, grouping equations together, we have the system
+\begin{subequations}
+  \begin{equation}
+    \begin{cases}
+      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x < \log{K}$ and $t \in [0, T)$} \\
+      v(x, T) = 0 \qquad \bar{S}(T) = K \\
+      \lim_{x\rightarrow-\infty} v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(\log{K}, t) = \dfrac{\bar{S}(t)}{K}
+    \end{cases}
+  \end{equation}
+  \begin{equation}
+    \begin{cases}
+      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x > \log{K}$ and $t \in [0, T)$} \\
+      v(x, T) = 0 \qquad \bar{S}(T) = K \\
+      \lim_{x\rightarrow\infty} v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(\log{K}, t) = -\dfrac{\bar{S}(t)}{K}
+    \end{cases}
+  \end{equation}
+\end{subequations}
