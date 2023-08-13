@@ -1,7 +1,7 @@
 
-\section{Background} \label{sec:_background}
+\section{Black-Scholes equation} \label{sec:blackscholes}
 
-\subsection{Finance}
+\subsection{Preliminaries}
 
 A common problem in finance is to price financial derivatives, often referred just
 as derivatives. In essence, derivatives are contracts set between parties 
@@ -14,16 +14,19 @@ or as "put options" if the exercise position is to buy or to sell, respectively.
 Similarly, options are classified depending on their exercise style. In that regard,
 the simplest of options are European options. European options give the right 
 to exercise at the expiration date of the contract. Another well known type options 
-are American options. American options give the right to exercise at any 
-point in time between the beginning and expiration date of the contract. 
+are American options. American options work similar as European options with the
+difference that can be exercised at any point in time between the beginning and 
+expiration date of the contract. 
 Let us define the payoff as
 
-\begin{align}
-  H(S,t) = \begin{cases}
-    \max(S - K, 0) & \text{(call)}\\ 
-     \max(K - S, 0) & \text{(put)}
-   \end{cases}
-\end{align}
+\begin{subequations} \label{eq:blackscholes:preliminaries:payoff_function}
+  \begin{equation}
+    H(S,t) = \max(S - K, 0)
+  \end{equation}  
+  \begin{equation}
+    H(S,t) = \max(K - S, 0)
+  \end{equation}
+\end{subequations}
 
 where $K$ is the strike price, $S\in[0,\infty]$ is the stock price, and 
 $t \in [0, T]$ is the current time. Note that $t$ is measure in years, $t=0$ and $t=T$
@@ -67,9 +70,9 @@ Finally, the value of an option must satisfy the following
 
 at any time $0 \le t \le T$.
 
-The Black-Schole model is built upon the self-financing portfolio hedging strategy 
+The Black-Scholes model is built upon the self-financing portfolio hedging strategy 
 and expresses a mathematical model for dynamics of option's price. 
-The Black-Schole model makes with some assumptions about the market. For complete
+The Black-Scholes model makes some assumptions about the market. For a complete
 list of these assumptions look at (reference). We enumerate the one we believe 
 are important for our task. First, the stock price $S(t)$ is a log-normal random
 variable 
@@ -90,21 +93,21 @@ Finally, the stock does not pay dividends. From now on, we will assume that
 the risk-free interest rate and stock price volatility are constant during the 
 life of the option. Later on, we will address the assumption about dividends.
 
-By applying the Black-Schole model to price European options, the famous Black-Schole 
+By applying the Black-Scholes model to price European options, the famous Black-Scholes 
 PDE is obtained
 
 \begin{equation}
   \begin{cases}
-    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + r S \frac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + r S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
     V(S, T) = H(S, T) & \text{for $S\in[0, \infty)$}
   \end{cases}
-  \label{eq:background:finance:european_option_pde}
+  \label{eq:blackscholes:finance:european_option_pde}
 \end{equation}
 
 where $V(S, t)$ is a deterministic function. For the derivation of 
-(\ref{eq:background:finance:european_option_pde}), we reference to REFERENCE.
+\eqref{eq:blackscholes:finance:european_option_pde}, we reference to REFERENCE.
 
-We previously mention that the one of the assumptions of the Black-Schole model is
+We previously mention that the one of the assumptions of the Black-Scholes model is
 that the underlying stock does not pay dividends. In most cases, assets such as stock
 pay out dividends just a few times at year. Therefore, dividends are to be 
 modelled discretely. However, there are certain assets that pay out a proportion
@@ -114,29 +117,29 @@ and continuous dividend yield $\delta(S,t)$ paid at instant of time $dt$ is mode
 
 \begin{align}
   dS = (r(t) - \delta(S, t))Sdt + \sigma(t) S dW
-  \label{eq:background:finance:bs_price_model_with_dividends}
+  \label{eq:blackscholes:finance:bs_price_model_with_dividends}
 \end{align}
 
 Similarly to
 as we did for the risk-free interest rate and the volatility of the asset price,
 we will assume that continuous dividends yield is as constant from now on. [REFERENCES]
-show that applying the Black-Schole model under the price model (\ref*{eq:background:finance:bs_price_model_with_dividends}) to price European options,
-we obtain the slightly modified version of (\ref*{eq:background:finance:european_option_pde})
+show that applying the Black-Scholes model under the price model \eqref{eq:blackscholes:finance:bs_price_model_with_dividends} to price European options,
+we obtain the slightly modified version of \eqref{eq:blackscholes:finance:european_option_pde}
 
 \begin{equation}
   \begin{cases}
-    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \frac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
     V(S, T) = H(S, T) & \text{for $S\in[0, \infty)$}
   \end{cases}
   \label{eq:chapter2:european_option_pde_with_dividens}
 \end{equation}
  
-Similarly, the Black-Schole model is applied to price American options. 
+Similarly, the Black-Scholes model is applied to price American options. 
 One important result is that the value of an American option $V_\text{Ame}(t)$ is
 bounded from below by the payoff function
 \begin{align}
   V_{\text{Am}}(S, t) \ge H(S, t) \qquad \text{for $t\in[0,T]$}
-  \label{eq:background:american_options_price_lower_bound}
+  \label{eq:blackscholes:american_options_price_lower_bound}
 \end{align}
 
 Moreover, the domain of $V(S,t)$ can be separated in the exercise region 
@@ -150,6 +153,7 @@ and the continuation region
 \end{equation}
 
 where the boundary of $\mathcal{C}$ is defined as
+
 \begin{equation}
   \partial \mathcal{C} := \{(S, t): S = \bar{S}(t)\} 
 \end{equation}
@@ -159,233 +163,154 @@ the continuation region. Since we know $V(S, t)$ at the stopping region, we only
 need to solve $V(S,t)$ at continuation region and determine its boundary $\partial$
 at the same time. Therefore, this is known as the free boundary problem formulation
 of the American option pricing problem and is equivalent to solve.
-
 \begin{align}
   \begin{cases}
-  \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
+  \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
   V(S, t) = H(S, t) & \text{for $(S,t)\in \partial\mathcal{C}$}
   \end{cases}
-  \label{eq:background:finance:american_options_pde_free_boundary_problem}
+  \label{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
 \end{align}
 
-Now, note that the bound of $V(S, t)$ in each region is
+Since the holder of an American option would always at the expiration date $T$
+exercise the if it is profitable or would not make a profit otherwise. Therefore,
+American options value is equal to its payoff at the maturity date. With this 
+information, we could establish terminal conditions for the free boundary problem 
+in \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}.
 \begin{align*}
-  &V(S, t) - H(S, t) > 0 \qquad \text{for all $(S,t) \in \mathcal{C}$} \\ 
-  &V(S, t) - H(S, t) = 0 \qquad \text{for all $(S,t) \in \mathcal{S}$}
+  & V(S,T) = H(S, T) \\
+  & \bar{S}(T) = K
 \end{align*}
 
-Similarly, the bound of $\mathcal{L}_{\text{BS}}(V)$ is
-\begin{align*}
-  &\frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 \qquad \text{for $(S,t) \in \mathcal{C}$} \\
-  &\frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV < 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
-\end{align*}
+Next, we need to establish boundary conditions for the system 
+\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}. 
+Generally, when pricing options, we would need two boundaries conditions 
+for option pricing. However, the free boundary problem in 
+\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
+is expressed in terms on the moving boundary condition $\bar{S}(t)$. Therefore,
+we only need to determine one extra boundary condition. In case of 
+American put options, the left boundary condition would be given by $\bar{S}(t)$,
+and the right boundary condition by $V(S, t) = 0$ for a sufficiently large $S$. 
+Analogously, $\bar{S}(t)$ would be the right boundary condition for 
+an American call option and its left boundary condition by $V(S, t) = 0$ for $S = 0$. 
+Finally, one extra information is that at the point $(\bar{S}(t), t)$, the 
+derivative of the value with respect to the price is given by:
 
-Therefore, grouping the bounds above we form a linear complementary system of equations
-{
-  \color{red}  
-  \begin{align}
-    \begin{cases}
-      \big[\frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,t) - H(S,t)] = 0 & \text{for all $(S,t)$} \\
-      V(S, t) - H(S, t) \ge 0 & \text{for all $(S, t)$}\\
-      \frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V) \le 0 &  \text{for all $(S, t)$}\\
-      V(S, T) = H(S, T) \\  
-    \end{cases}
-    \label{eq:background:finance:linear_complementary_problem}
-  \end{align}
-}
+\begin{subequations}
+  \begin{equation}
+    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1 \qquad \text{(call)}
+  \end{equation}
+  \begin{equation}
+    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1 \qquad \text{(put)}
+  \end{equation}
+\end{subequations}
 
-The benefit of the reformulation (\ref*{eq:background:finance:linear_complementary_problem})
-is that there is no dependence on the unknown boundary of the continuation region.
-Later in section (XXX) and section (XXX), we will explore numerical methods for solving 
-both type of problems.
+Grouping , boundary conditions and terminal condition 
+in one equation, we obtain the system.
 
-\subsection{Numerical methods for the heat diffusion PDE}
-
-The Black-Schole PDE can be transformed to heat diffusion PDE using the following
-change of variables
-
-\begin{align*}
-  S &= Ke^x \\
-  t &= T - \frac{2\tau}{\sigma^2} \\ 
-  q &:= \frac{2r}{\sigma^2} \\
-  q_{\delta} &:= \frac{2(r-\delta)}{\sigma^2} \\
-  \alpha &:= \frac{1}{2}(q_{\delta} - 1) \\
-  \beta &:= \frac{1}{4}(q_{\delta} - 1)^2 + q \\
-  v(x, \tau) &:= e^{-(\alpha x + \beta \tau)}y(x, \tau)= V(S, t)
-\end{align*}
-
-The system (\ref{eq:background:finance:free_boundary_problem}) 
-is the free boundary formulation for the pricing problem for American options.
-A detailed derivation of (\ref{eq:background:finance:american_options_pde}) 
-can be found at [REFERENCES].
-
-
-The equation (\ref*{eq:background:finance:american_options_pde}) 
-is a paraboblic PDE. Moreover, by applying the transformation,
-
-
-the equation (\ref*{eq:background:finance:american_options_pde}) converts 
-to the heat diffusion PDE.
-
+\begin{subequations}
 \begin{equation}
-  h(x, \tau) := \frac{H(S, t)}{K} = \begin{cases}
-    \max(e^{x} - 1, 0)\\
-    \max(1 - e^{x}, 0)
-  \end{cases} 
-\end{equation}
-
-\begin{equation}
-  \bar{x}(\tau) := \log{\bar{S}(t)} - \log{K} 
-\end{equation}
-
-\begin{align}
   \begin{cases}
-    \frac{\partial y}{\partial \tau} = \frac{\partial^2 y}{\partial x^2} & \text{for $\tau\in[0,\frac{\sigma^2}{2}T)$ and $x\in(\bar{x}(t), \infty)$} \\
-    y(x, \tau) = e^{(\alpha x + \beta \tau)}h(x, \tau) & \text{for $\tau\in[0, \frac{\sigma^2}{2}T]$ and $x\in(-\infty, \bar{x}(\tau)]$} \\
-    \bar{x}(0) = 0
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{v}}{\partial{x}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $0 \le S < \bar{S}(t)$ and $0 \le t < T$} \\
+    V(S, T) = S - K \qquad \bar{S}(T) = K \\
+    V(0, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1
   \end{cases}
-  \label{eq:background:finance:american_option_heat_equation}
-\end{align}
-
-We can reformulate equation (\ref*{eq:background:finance:american_option_heat_equation})
-as:
-
-\begin{equation}
-  g := e^{\alpha x + \beta \tau}h(x, \tau)
 \end{equation}
-
-\begin{align}
+\begin{equation}
   \begin{cases}
-    \big(\frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2}\big)(y  - g) =0 \\
-    \frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2} \ge 0 \quad y - g \ge 0 \\
-    y(x, 0) = g(x, 0)
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{v}}{\partial{x}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $\bar{S}(t) < S < \infty$ and $0 \le t < T$} \\
+    V(S, T) = K - S \qquad \bar{S}(T) = K \\
+    \lim_{S\rightarrow\infty}V(S, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
   \end{cases}
-\end{align}
+\end{equation}
+
+\end{subequations}
+
+\subsection{Front-Fixing method}
+
+In the previous section, we obtain to system of equations
+
+Solving the free boundary problem \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
+requires keeping track of the moving boundary $\bar{S}(t)$. Using a change variable, 
+it is possible to fix the moving boundary to a constant for 
+$t \in [0, T]$. This method will t
+
+\begin{equation}
+  \xi(\bar{S}(t), S)
+\end{equation}
+
+\subsubsection{Inverse transformation}
+
+The change of variable proposed by this method is the following
+
+\begin{equation}
+    x = \dfrac{S}{\bar{S}(t)}
+    \label{eq:blackscholes:frontfixingmethod:inversetransform}
+\end{equation}
+
+Next, we use the transformation propose by \eqref{eq:blackscholes:frontfixingmethod:inversetransform}
+to rewrite the system of PDE 
+
+\begin{equation}
+    v(x, t) := V(x\bar{S}(t), t) = V(S, t)
+\end{equation}
 
 
-By exploring the geometric properties of the value function $V(S,t)$, 
-we can determine useful conditions that will later help on in solving the equation 
-(\ref*{eq:background:finance:american_options_pde}). Firstly, at
-any given time $0 \le t \le T$, American options match the linear segment of the payoff
-function within the stopping region. Therefore, we could say that 
+By computing the partial derivatives of V with respect to S and t
+
+\begin{equation}
+    \dfrac{\partial{V}}{\partial{t}} =  \dfrac{\partial{v}}{\partial{t}} + \dfrac{\partial{v}}{\partial{x}} \dfrac{\partial{x}}{\partial{t}} 
+    = \dfrac{\partial{v}}{\partial{t}} - x\dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}} 
+\end{equation}
+
+\begin{equation}
+    \dfrac{\partial{V}}{\partial{S}} = \dfrac{\partial{v}}{\partial{x}} 
+    \dfrac{\partial{x}}{\partial{S}} = 
+    \dfrac{1}{\bar{S}(t)} \dfrac{\partial{v}}{\partial{x}}
+\end{equation}
+
+\begin{equation}
+    \dfrac{\partial^2{V}}{\partial{S^2}} =
+    \dfrac{1}{\bar{S}(t)^2} \dfrac{\partial^2{v}}{\partial{x}^2}
+\end{equation}
+
+an expression for (3.1) with respect to $x$ is derived:
+
+\begin{equation}
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad \text{for $x > 1$ and $0 \le t < T$}
+\end{equation}
+
+Similarly, (3.2) is reformulated in term of x to:
+
+\begin{equation}
+    v(x, t) = K - x\bar{S}(t) \quad  \text{for $0 \le x \le 1$ and $0 \le t < T$}
+\end{equation}
+
+Next, the terminal condition (3.3) is re-written with respect of x:
+
+\begin{equation}
+    v(x, T) = \max(K - x\bar{S}(T), 0) = K \max(1 - x, 0) = 0 \quad \text{for $x \ge 1$}
+\end{equation}
+
+Finally, the left and right boundary conditions are given with respect to x:
+
+\begin{equation}
+    \dfrac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t)
+\end{equation}
+
+\begin{equation}
+    \lim_{x \rightarrow \infty} v(x, t) = 0
+\end{equation}
+
+In summary, a non linear system of PDEs is obtained:
 
 \begin{align}
-  \frac{\partial V}{\partial S}(S, t) =  \begin{cases}
-    -1 & \text{(put)} \\ 
-    1 & \text{(call)}
-  \end{cases}
-  \label{eq:background:finance:american_option_left_boundary}
-\end{align}
-
-Moreover, as the price goes to infinity the value of the option tends to zero
-
-\begin{align}
-  \lim_{S \rightarrow \infty}V(S, t) = 0 
-  \label{eq:background:finance:american_option_stopping_right_boundary}
+    & \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $0 \le t < T$} \\
+    & v(x, t) = K - x\bar{S}(t) & \text{for $0 \le x \le 1$ and $0 \le t < T$} \\
+    & v(x, T) = 0 & \text{for $x \ge 1$} \\
+    & \dfrac{\partial{v}}{\partial{x}}(x, t) = -\bar{S}(t) & \\
+    & \lim_{x \rightarrow \infty} v(x, t) = 0 & \\
+    & \bar{S}(T) = K & 
 \end{align}
 
 
-
-Pricing American options requires using numerical methods. The Black-Schole PDE 
-in (XXX) can be converted to the heat diffusion equation
-
-
-Therefore, we focus on analyzing the numerical solution of the heat diffusion equation. 
-Suppose the equation (XXX) is defined within the rectangular region $[x_{\text{min}}, x_{\text{max}}]\times[\tau_{\text{min}}, \tau_{\text{max}}]$.
-By discretizing uniformly along the spatial direction $x$ and temporal direction $\tau$,
-
-\begin{align}
-  M &:= \frac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
-  N &:= \frac{\tau_{\text{max}} - \tau_{\text{min}}}{\Delta \tau} \\ 
-  x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
-  \tau_i &:= \tau_{\text{min}} + i{\Delta \tau} & \qquad \text{for $i = 0,\dots, N$}
-\end{align}
-
-where $\Delta x$ and $\Delta \tau$ are the distance between two consecutive points,
-then, the grid is defined as the discrete region. 
-
-\begin{align}
-  \mathcal{G} := \{(x_i, \tau_j): (i, j) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
-\end{align}
-
-Thus, solving numerically the equation (XXX) means finding an approximation for $y(x_i, \tau_n)$ at every 
-$(x_i, \tau_n)$ within the grid $\mathcal{G}$,
-
-\begin{align}
-  y^{n}_i \approx y(x_i,\tau_n)
-\end{align}
-
-To obtain such approximation, we rely on central difference approximations (REFERENCE).
-
-\begin{align}
-  f'(x_i) &= \frac{f_{i+1} - f_{i}}{h} + O(h) \\
-  f'(x_i) &= \frac{f_{i+1} - f_{i-1}}{2h} + O(h^2) \\
-  f''(x_i) &= \frac{f_{i+1} - 2f_{i} + f_{i-1}}{h^2} + O(h^2)
-\end{align}
-
-\subsubsection{Explicit scheme}
-
-An explicit scheme is one where we approximate the time partial derivative using
-a forward difference approximation. Hence, the PDE in (XXX) is approximated as
-
-\begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-By rearranging the terms,
-
-\begin{equation}
-  \lambda := \frac{\Delta \tau}{(\Delta x)^2}
-\end{equation}
-
-\begin{equation}
-  y^{n+1}_i = \lambda y^{n}_{i-1} + (1 - 2\lambda)y^{n}_{i} + \lambda y^{n}_{i+1}
-\end{equation}
-
-It is shown by reference [REFERENCE] that method (XXX) is stable and consistent 
-under the following condition
-
-\begin{equation}
-  0 < \Delta \tau \le \frac{(\Delta x)^2}{2}
-\end{equation}
-
-Moreover, the method has order of convergence $O(\Delta \tau, (\Delta x)^{2})$.
-
-\subsubsection{Implicit scheme}
-
-The implicit scheme approximates the time derivative using a backward difference
-
-\begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-\begin{equation}
-  y^{n+1}_{i} - \lambda (y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) = y^{n}_{i}  
-\end{equation}
-
-\begin{equation}
-  K := \begin{bmatrix}
-    2 & -1     & & 0 \\ 
-   -1 & \ddots & \ddots \\
-      & \ddots & \ddots & \ddots \\
-    0 & & \ddots & \ddots & \\
-  \end{bmatrix} 
-\end{equation}
-
-\begin{equation}
-  (I + \lambda K)\boldsymbol{y}^{n+1} = \boldsymbol{y}^{n}
-\end{equation}
-
-\subsubsection{Theta method}
-
-\begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = (1-\theta)\frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} +  \theta\frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-\begin{equation}
-  y^{n+1}_{i} - \lambda\theta(y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) =  y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
-\end{equation}
-
-\begin{equation}
-  (1 + \lambda\theta K)\boldsymbol{y}^{n+1} = (1-\lambda\theta K)\boldsymbol{y}^{n} 
-\end{equation}
+\subsubsection{Log transformation}

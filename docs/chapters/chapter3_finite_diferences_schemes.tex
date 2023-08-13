@@ -1,0 +1,191 @@
+
+\section{Finite Difference schemes}
+
+The Black-Scholes PDE can be transformed to heat diffusion PDE using the following
+change of variables
+
+\begin{align*}
+  S &= Ke^x \\
+  t &= T - \frac{2\tau}{\sigma^2} \\ 
+  q &:= \frac{2r}{\sigma^2} \\
+  q_{\delta} &:= \frac{2(r-\delta)}{\sigma^2} \\
+  \alpha &:= \frac{1}{2}(q_{\delta} - 1) \\
+  \beta &:= \frac{1}{4}(q_{\delta} - 1)^2 + q \\
+  v(x, \tau) &:= e^{-(\alpha x + \beta \tau)}y(x, \tau)= V(S, t)
+\end{align*}
+
+The system (\ref{eq:background:finance:free_boundary_problem}) 
+is the free boundary formulation for the pricing problem for American options.
+A detailed derivation of (\ref{eq:background:finance:american_options_pde}) 
+can be found at [REFERENCES].
+
+
+The equation (\ref*{eq:background:finance:american_options_pde}) 
+is a paraboblic PDE. Moreover, by applying the transformation,
+
+
+the equation (\ref*{eq:background:finance:american_options_pde}) converts 
+to the heat diffusion PDE.
+
+\begin{equation}
+  h(x, \tau) := \frac{H(S, t)}{K} = \begin{cases}
+    \max(e^{x} - 1, 0)\\
+    \max(1 - e^{x}, 0)
+  \end{cases} 
+\end{equation}
+
+\begin{equation}
+  \bar{x}(\tau) := \log{\bar{S}(t)} - \log{K} 
+\end{equation}
+
+\begin{align}
+  \begin{cases}
+    \frac{\partial y}{\partial \tau} = \frac{\partial^2 y}{\partial x^2} & \text{for $\tau\in[0,\frac{\sigma^2}{2}T)$ and $x\in(\bar{x}(t), \infty)$} \\
+    y(x, \tau) = e^{(\alpha x + \beta \tau)}h(x, \tau) & \text{for $\tau\in[0, \frac{\sigma^2}{2}T]$ and $x\in(-\infty, \bar{x}(\tau)]$} \\
+    \bar{x}(0) = 0
+  \end{cases}
+  \label{eq:background:finance:american_option_heat_equation}
+\end{align}
+
+We can reformulate equation (\ref*{eq:background:finance:american_option_heat_equation})
+as:
+
+\begin{equation}
+  g := e^{\alpha x + \beta \tau}h(x, \tau)
+\end{equation}
+
+\begin{align}
+  \begin{cases}
+    \big(\frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2}\big)(y  - g) =0 \\
+    \frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2} \ge 0 \quad y - g \ge 0 \\
+    y(x, 0) = g(x, 0)
+  \end{cases}
+\end{align}
+
+
+By exploring the geometric properties of the value function $V(S,t)$, 
+we can determine useful conditions that will later help on in solving the equation 
+(\ref*{eq:background:finance:american_options_pde}). Firstly, at
+any given time $0 \le t \le T$, American options match the linear segment of the payoff
+function within the stopping region. Therefore, we could say that 
+
+\begin{align}
+  \frac{\partial V}{\partial S}(S, t) =  \begin{cases}
+    -1 & \text{(put)} \\ 
+    1 & \text{(call)}
+  \end{cases}
+  \label{eq:background:finance:american_option_left_boundary}
+\end{align}
+
+Moreover, as the price goes to infinity the value of the option tends to zero
+
+\begin{align}
+  \lim_{S \rightarrow \infty}V(S, t) = 0 
+  \label{eq:background:finance:american_option_stopping_right_boundary}
+\end{align}
+
+
+
+Pricing American options requires using numerical methods. The Black-Scholes PDE 
+in (XXX) can be converted to the heat diffusion equation
+
+
+Therefore, we focus on analyzing the numerical solution of the heat diffusion equation. 
+Suppose the equation (XXX) is defined within the rectangular region $[x_{\text{min}}, x_{\text{max}}]\times[\tau_{\text{min}}, \tau_{\text{max}}]$.
+By discretizing uniformly along the spatial direction $x$ and temporal direction $\tau$,
+
+\begin{align}
+  M &:= \frac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
+  N &:= \frac{\tau_{\text{max}} - \tau_{\text{min}}}{\Delta \tau} \\ 
+  x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
+  \tau_i &:= \tau_{\text{min}} + i{\Delta \tau} & \qquad \text{for $i = 0,\dots, N$}
+\end{align}
+
+where $\Delta x$ and $\Delta \tau$ are the distance between two consecutive points,
+then, the grid is defined as the discrete region. 
+
+\begin{align}
+  \mathcal{G} := \{(x_i, \tau_j): (i, j) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
+\end{align}
+
+Thus, solving numerically the equation (XXX) means finding an approximation for $y(x_i, \tau_n)$ at every 
+$(x_i, \tau_n)$ within the grid $\mathcal{G}$,
+
+\begin{align}
+  y^{n}_i \approx y(x_i,\tau_n)
+\end{align}
+
+To obtain such approximation, we rely on central difference approximations (REFERENCE).
+
+\begin{align}
+  f'(x_i) &= \frac{f_{i+1} - f_{i}}{h} + O(h) \\
+  f'(x_i) &= \frac{f_{i+1} - f_{i-1}}{2h} + O(h^2) \\
+  f''(x_i) &= \frac{f_{i+1} - 2f_{i} + f_{i-1}}{h^2} + O(h^2)
+\end{align}
+
+\subsection{Explicit scheme}
+
+An explicit scheme is one where we approximate the time partial derivative using
+a forward difference approximation. Hence, the PDE in (XXX) is approximated as
+
+\begin{equation}
+  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2}
+\end{equation}
+
+By rearranging the terms,
+
+\begin{equation}
+  \lambda := \frac{\Delta \tau}{(\Delta x)^2}
+\end{equation}
+
+\begin{equation}
+  y^{n+1}_i = \lambda y^{n}_{i-1} + (1 - 2\lambda)y^{n}_{i} + \lambda y^{n}_{i+1}
+\end{equation}
+
+It is shown by reference [REFERENCE] that method (XXX) is stable and consistent 
+under the following condition
+
+\begin{equation}
+  0 < \Delta \tau \le \frac{(\Delta x)^2}{2}
+\end{equation}
+
+Moreover, the method has order of convergence $O(\Delta \tau, (\Delta x)^{2})$.
+
+\subsection{Implicit scheme}
+
+The implicit scheme approximates the time derivative using a backward difference
+
+\begin{equation}
+  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
+\end{equation}
+
+\begin{equation}
+  y^{n+1}_{i} - \lambda (y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) = y^{n}_{i}  
+\end{equation}
+
+\begin{equation}
+  K := \begin{bmatrix}
+    2 & -1     & & 0 \\ 
+   -1 & \ddots & \ddots \\
+      & \ddots & \ddots & \ddots \\
+    0 & & \ddots & \ddots & \\
+  \end{bmatrix} 
+\end{equation}
+
+\begin{equation}
+  (I + \lambda K)\boldsymbol{y}^{n+1} = \boldsymbol{y}^{n}
+\end{equation}
+
+\subsection{Theta method}
+
+\begin{equation}
+  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = (1-\theta)\frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} +  \theta\frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
+\end{equation}
+
+\begin{equation}
+  y^{n+1}_{i} - \lambda\theta(y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) =  y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
+\end{equation}
+
+\begin{equation}
+  (1 + \lambda\theta K)\boldsymbol{y}^{n+1} = (1-\lambda\theta K)\boldsymbol{y}^{n} 
+\end{equation}
