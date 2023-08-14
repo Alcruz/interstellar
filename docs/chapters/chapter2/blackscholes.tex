@@ -229,16 +229,18 @@ in one equation, we obtain the system.
 
 \subsection{Front-Fixing method}
 
-In the previous section, we obtain to system of equations
-
-Solving the free boundary problem \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
-requires keeping track of the moving boundary $\bar{S}(t)$. Using a change variable, 
-it is possible to fix the moving boundary to a constant for 
-$t \in [0, T]$. This method will t
-
-\begin{equation}
-  \xi(\bar{S}(t), S)
-\end{equation}
+In the previous section, we presented the pricing of American options problem.
+By applying the Black-Scholes model, we derived the Black-Scholes PDE that describes 
+the price dynamics in the continuation region $\mathcal{C}$ of call and put options.
+Moreover, we presented the moving boundary condition $\bar{S}(t)$ for this PDE.
+The moving boundary condition $\bar{S}(t)$ makes the Black-Scholes PDE more 
+involved since we also need to determine this boundary as time changes. This type 
+of problem are known as free boundary problems. The front fixing method
+was first introduced by \cite{landau_1950_heat_ci} and is a strategy in which 
+we define a map from the original domain to new domain where moving boundary
+remains constant as time changes. In this section, we explore two transformation
+based on the work of Nielsen and others \cite{nielsen_2001}, and the work of
+Company and others \cite{company_egorova_jodar_2014}.
 
 \subsubsection{Inverse transformation}
 
