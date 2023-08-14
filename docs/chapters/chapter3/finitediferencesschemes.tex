@@ -1,5 +1,47 @@
 
-\section{Finite Difference schemes}
+\section{Finite difference schemes}
+
+Numerical methods 
+
+
+Previously, we considered the pricing problem of American options which requires
+to solve the free boundary problem defined in 
+\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}. 
+Numerical methods for solving problems such as 
+\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}
+can be devised in which we could keep track how 
+
+\ref{sec:blackscholes}
+
+In this section, we present numerical methods for solving the non-linear PDEs that
+arise from reformulating the free boundary problem using the front fixing method.
+I
+
+
+Therefore, we focus on analyzing the numerical solution of the heat diffusion equation. 
+Suppose the equation (XXX) is defined within the rectangular region $[x_{\text{min}}, x_{\text{max}}]\times[\tau_{\text{min}}, \tau_{\text{max}}]$.
+By discretizing uniformly along the spatial direction $x$ and temporal direction $\tau$,
+
+\begin{align}
+  M &:= \frac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
+  N &:= \frac{\tau_{\text{max}} - \tau_{\text{min}}}{\Delta \tau} \\ 
+  x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
+  \tau_i &:= \tau_{\text{min}} + i{\Delta \tau} & \qquad \text{for $i = 0,\dots, N$}
+\end{align}
+
+where $\Delta x$ and $\Delta \tau$ are the distance between two consecutive points,
+then, the grid is defined as the discrete region. 
+
+\begin{align}
+  \mathcal{G} := \{(x_i, \tau_j): (i, j) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
+\end{align}
+
+Thus, solving numerically the equation (XXX) means finding an approximation for $y(x_i, \tau_n)$ at every 
+$(x_i, \tau_n)$ within the grid $\mathcal{G}$,
+
+\begin{align}
+  y^{n}_i \approx y(x_i,\tau_n)
+\end{align}
 
 The Black-Scholes PDE can be transformed to heat diffusion PDE using the following
 change of variables
@@ -90,30 +132,6 @@ Pricing American options requires using numerical methods. The Black-Scholes PDE
 in (XXX) can be converted to the heat diffusion equation
 
 
-Therefore, we focus on analyzing the numerical solution of the heat diffusion equation. 
-Suppose the equation (XXX) is defined within the rectangular region $[x_{\text{min}}, x_{\text{max}}]\times[\tau_{\text{min}}, \tau_{\text{max}}]$.
-By discretizing uniformly along the spatial direction $x$ and temporal direction $\tau$,
-
-\begin{align}
-  M &:= \frac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
-  N &:= \frac{\tau_{\text{max}} - \tau_{\text{min}}}{\Delta \tau} \\ 
-  x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
-  \tau_i &:= \tau_{\text{min}} + i{\Delta \tau} & \qquad \text{for $i = 0,\dots, N$}
-\end{align}
-
-where $\Delta x$ and $\Delta \tau$ are the distance between two consecutive points,
-then, the grid is defined as the discrete region. 
-
-\begin{align}
-  \mathcal{G} := \{(x_i, \tau_j): (i, j) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
-\end{align}
-
-Thus, solving numerically the equation (XXX) means finding an approximation for $y(x_i, \tau_n)$ at every 
-$(x_i, \tau_n)$ within the grid $\mathcal{G}$,
-
-\begin{align}
-  y^{n}_i \approx y(x_i,\tau_n)
-\end{align}
 
 To obtain such approximation, we rely on central difference approximations (REFERENCE).
 

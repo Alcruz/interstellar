@@ -3,94 +3,99 @@
 
 \subsection{Preliminaries}
 
-A common problem in finance is to price financial derivatives, often referred just
-as derivatives. In essence, derivatives are contracts set between parties 
-whose value in time derives from the price of their underlying assets. A notorious
-family of derivatives in financial markets are "options". Options
-are contracts set between two parties in which the holder has the right 
-to sell or buy, commonly referred as exercise, an underlying stock at a preestablished price, 
-also known as "strike price", in the future. Options are referred as "call options" 
-or as "put options" if the exercise position is to buy or to sell, respectively. 
-Similarly, options are classified depending on their exercise style. In that regard,
-the simplest of options are European options. European options give the right 
-to exercise at the expiration date of the contract. Another well known type options 
-are American options. American options work similar as European options with the
-difference that can be exercised at any point in time between the beginning and 
-expiration date of the contract. 
-Let us define the payoff as
+A common problem in finance is pricing financial derivatives, often referred to 
+simply as derivatives. In essence, derivatives are contracts set between parties 
+whose value over time derives from the price of their underlying assets. A 
+notorious family of derivatives in financial markets are "options". Options are 
+contracts set between two parties in which the holder has the right to sell or 
+buy, commonly referred to as exercising, an underlying asset at a 
+pre-established price, also known as the "strike price", in the future. Options 
+are referred to as "call options" or "put options" if the exercise position is 
+to buy or to sell, respectively. Similarly, options are classified depending on 
+their exercise style. In that regard, the simplest options are European options. 
+European options give the right to exercise on the expiration date of the contract. 
+Another well-known type of option is the American option. American options work 
+similarly to European options, with the difference that they can be exercised at
+any point in time between the beginning and the expiration date of the contract.
+
+Let's define the payoff as
 
 \begin{subequations} \label{eq:blackscholes:preliminaries:payoff_function}
-  \begin{equation}
-    H(S,t) = \max(S - K, 0)
-  \end{equation}  
-  \begin{equation}
-    H(S,t) = \max(K - S, 0)
-  \end{equation}
+\begin{equation}
+H(S, t) = \max(S - K, 0)
+\end{equation}
+\begin{equation}
+H(S, t) = \max(K - S, 0)
+\end{equation}
 \end{subequations}
 
-where $K$ is the strike price, $S\in[0,\infty]$ is the stock price, and 
-$t \in [0, T]$ is the current time. Note that $t$ is measure in years, $t=0$ and $t=T$
-denotes the beginning of the contract and the expiration date, and
-the region $[0,T]$ is the life span of the option. While an American option's payoff
-is defined for all $(S,t)$, European options' payoff is only defined at $t=T$.   
+where $K$ is the strike price, $S \in [0, \infty]$ is the asset price, and
+$t \in [0, T]$ is the current time. Note that $t$ is measured in years, where 
+$t=0$ and $t=T$ denote the beginning of the contract and the expiration date, 
+respectively, and the interval $[0, T]$ represents the lifespan of the option. 
+While an American option's payoff is defined for all $(S, t)$, a European 
+option's payoff is only defined at $t=T$.
 
-Obviously, options give greater flexibility 
-to holders by removing their exposure of a negative payoff which is why writers of 
-the option charge a premium to the buyers at the time they enter the contract. 
-The premium is often referred as the price or value of the option and the problem of finding this value is called option pricing. 
-When pricing options, it is important to find the just price because 
-otherwise the writer or buyer of the option could set some scheme in which option
-will always be profitable to them. In other words, options pricing must follow
-the principle of no-arbitrage. Therefore, we assume that the writer of the option
-uses the premium to construct a portfolio consisting of $\phi_0$ units of the 
-stock and invests $\psi_0$ units of cash into a risk-free asset such as US
-treasury bill, certificate of deposit, or bank account. Then, the writer rebalanced
-the portfolio $(\phi_0, \psi_0)$ to hedge any 
-possible claims from the buyer of the option at any future time $0 < t \le T$. 
-Therefore, at any time $t$, the writer holds a portfolio $(\phi(t), \psi(t))$ 
-with value
-
-\begin{equation}
-  \Pi(t) = \phi(t)S(t) + \psi(t)B(t)
-\end{equation}
-
-Moreover, the portfolio is self-financing. In other words, the changes in the value
-of the portfolio $V(t)$ depend on the changes in $S(t)$ and $B(t)$, and the current
-portfolio $(\phi(t), \psi(t))$
+Obviously, options provide greater flexibility to holders by eliminating their 
+exposure to negative payoffs. This is why the writers charge a premium to the holders
+at the time they enter the contract. The premium is often referred to as the price 
+or value of the option, and the problem of determining 
+this value is called option pricing. When pricing options, it is crucial to find
+the fair price; otherwise, the writer or holder of the option could devise a 
+scheme in which the option will always be profitable for them. In other words,
+options pricing must adhere to the principle of no-arbitrage. Therefore, we 
+assume that the writer of the option uses the premium to construct a portfolio 
+consisting of $\phi_0$ units of the asset and invests $\psi_0$ units of cash in 
+a risk-free asset, such as US Treasury bills, certificates of deposit, or a bank 
+account. Then, the writer rebalances the portfolio $(\phi_0, \psi_0)$ to hedge 
+against any potential claims from the holder of the option at any future time 
+$0 < t \le T$. Consequently, at any time $t$, the writer holds a portfolio 
+$(\phi_t, \psi_t)$ with a value
 
 \begin{equation}
-  d\Pi(t) = \phi(t)dS(t) + \psi(t)dB(t)
+  \Pi_t = \phi_t S_t + \psi_t B_t
 \end{equation}
 
-Finally, the value of an option must satisfy the following
+Moreover, the portfolio is self-financing. In other words, the changes in
+portfolio depend on the changes in $S_t$ and $B_t$, 
+and the rebalancing of portfolio $(\phi_t, \psi_t)$
+
+\begin{align*}
+  & d\Pi_t = \phi_tdS_t + \psi_t dB_t \\
+  & S_t d\phi_t + B_t d\psi_t = 0
+\end{align*}
+
+Finally, the portfolio value matches the option value
 
 \begin{equation}
-  \Pi(t) = V(t)
+  \Pi_t = V_t
 \end{equation}
 
-at any time $0 \le t \le T$.
+at any time $0 \le t \le T$. Using the self-financing portfolio hedging 
+strategy, The Black-Scholes model presents a mathematical model for the dynamics of an option's price. 
+The model makes certain assumptions about the market. A complete list of all the
+assumptions can be found in \cite{seydel_2009} and \cite{wilmott_howison_dewynne_1995}. 
+In the next part, we enumerate some them. 
+First, the 
+asset price $S_t$ is distributed as a log-normally,
 
-The Black-Scholes model is built upon the self-financing portfolio hedging strategy 
-and expresses a mathematical model for dynamics of option's price. 
-The Black-Scholes model makes some assumptions about the market. For a complete
-list of these assumptions look at (reference). We enumerate the one we believe 
-are important for our task. First, the stock price $S(t)$ is a log-normal random
-variable 
-
+{
+\color{red}
 \begin{equation}
-  dS = r(t)Sdt + \sigma(t) S dW
+  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
 \end{equation}
+}
 
 where the risk-free interest $r(t)$ and the price volatility $\sigma(t)$ are 
 deterministic functions of time during the life of the option. Secondly, the 
-bank account $B(t)$ is a deterministic function of time
+bank account $B(t)$ is a deterministic function
 
 \begin{equation}
   dB = r(t)B(t)dt
 \end{equation}
 
-Finally, the stock does not pay dividends. From now on, we will assume that 
-the risk-free interest rate and stock price volatility are constant during the 
+Finally, the asset does not pay dividends. Additionally, we will assume that 
+the risk-free interest rate and asset price volatility are constant during the 
 life of the option. Later on, we will address the assumption about dividends.
 
 By applying the Black-Scholes model to price European options, the famous Black-Scholes 
@@ -101,30 +106,34 @@ PDE is obtained
     \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + r S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
     V(S, T) = H(S, T) & \text{for $S\in[0, \infty)$}
   \end{cases}
-  \label{eq:blackscholes:finance:european_option_pde}
+  \label{eq:blackscholes:preliminaries:european_option_pde}
 \end{equation}
 
-where $V(S, t)$ is a deterministic function. For the derivation of 
-\eqref{eq:blackscholes:finance:european_option_pde}, we reference to REFERENCE.
+where $V(S, t)$ is a deterministic function. A derivation of
+\eqref{eq:blackscholes:preliminaries:european_option_pde} can be found in \cite{seydel_2009}
+and \cite{wilmott_howison_dewynne_1995}.
 
 We previously mention that the one of the assumptions of the Black-Scholes model is
-that the underlying stock does not pay dividends. In most cases, assets such as stock
-pay out dividends just a few times at year. Therefore, dividends are to be 
+that the underlying asset does not pay dividends. In most cases, assets such as stocks
+pay out dividends just a few times at year. In this case, dividends are to be 
 modelled discretely. However, there are certain assets that pay out a proportion
-of the current asset price during and interval of time. Thus, in such cases, it is
-useful to model dividends as a continuous yield. By arbitrage arguments [REFERENCES], it can be shown that the asset price with volatility $\sigma(t)$, rate of return $r(t)$,
-and continuous dividend yield $\delta(S,t)$ paid at instant of time $dt$ is modeled as
-
+of the current price during and interval of time. Thus, in such cases, it is
+useful to model dividends as a continuous yield. \cite{wilmott_howison_dewynne_1995}
+shows as reasonable model of the asset price with volatility $\sigma(t)$, 
+rate of return $r(t)$, and continuous dividend yield $\delta(S,t)$ paid at instant
+of time $dt$ is modeled as
 \begin{align}
   dS = (r(t) - \delta(S, t))Sdt + \sigma(t) S dW
-  \label{eq:blackscholes:finance:bs_price_model_with_dividends}
+  \label{eq:blackscholes:preliminaries:bs_price_model_with_dividends}
 \end{align}
 
 Similarly to
 as we did for the risk-free interest rate and the volatility of the asset price,
-we will assume that continuous dividends yield is as constant from now on. [REFERENCES]
-show that applying the Black-Scholes model under the price model \eqref{eq:blackscholes:finance:bs_price_model_with_dividends} to price European options,
-we obtain the slightly modified version of \eqref{eq:blackscholes:finance:european_option_pde}
+we will assume that continuous dividends yield is as constant from now on.
+In \cite{wilmott_howison_dewynne_1995}, it is shown by applying the Black-Scholes 
+model under \eqref{eq:blackscholes:preliminaries:bs_price_model_with_dividends} 
+to price European options, the slightly modified version of \eqref{eq:blackscholes:preliminaries:european_option_pde}
+is obtained
 
 \begin{equation}
   \begin{cases}
@@ -134,92 +143,96 @@ we obtain the slightly modified version of \eqref{eq:blackscholes:finance:europe
   \label{eq:chapter2:european_option_pde_with_dividens}
 \end{equation}
  
-Similarly, the Black-Scholes model is applied to price American options. 
-One important result is that the value of an American option $V_\text{Ame}(t)$ is
-bounded from below by the payoff function
+Similarly, the Black-Scholes model is applied to price American options.
+The work of \cite{wilmott_howison_dewynne_1995} derives some important facts 
+about the value surface of American options. Firstly, the value function is 
+bounded from below by the payoff function:
 \begin{align}
-  V_{\text{Am}}(S, t) \ge H(S, t) \qquad \text{for $t\in[0,T]$}
-  \label{eq:blackscholes:american_options_price_lower_bound}
+V_{\text{Am}}(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}
+\label{eq:blackscholes:american_options_price_lower_bound}
 \end{align}
 
-Moreover, the domain of $V(S,t)$ can be separated in the exercise region 
+Moreover, the domain of $V(S, t)$ can be separated into the exercise region, 
+where it is profitable for the holder to exercise the option,
 \begin{equation}
-  \mathcal{S} := \{(S, t): V(S, t) = H(S, t) \}
-  \label{eq:background:finance:exercise_region}
+\mathcal{S} := {(S, t) : V(S, t) = H(S, t)}
+\label{eq:blackscholes:preliminaries:exercise_region}
 \end{equation}
 
-and the continuation region 
+The continuation region, where it is preferable to continue holding the option 
+because exercising is not profitable:
 \begin{equation}
-  \mathcal{C} := \{(S, t): V(S, t) > H(S, t) \}
+\mathcal{C} := {(S, t) : V(S, t) > H(S, t)}
 \end{equation}
 
-where the boundary of $\mathcal{C}$ is defined as
-
+The boundary of the continuation region, where it is most optimal for the 
+holder to exercise the option:
 \begin{equation}
-  \partial \mathcal{C} := \{(S, t): S = \bar{S}(t)\} 
-  \label{eq:background:finance:exercise_region}
+\partial \mathcal{C} := {(S, t) : S = \bar{S}(t)}
+\label{eq:blackscholes:preliminaries:continuation_region}
 \end{equation}
 
-Lastly, the price dynamics of American options behaves as European options within
+where $\bar{S}(t)$ is the optimal exercise price. Lastly, the price dynamics of 
+American options behaves as European options within
 the continuation region. Since we know $V(S, t)$ at the stopping region, we only
-need to solve $V(S,t)$ at continuation region and determine its boundary $\partial$
+need to solve $V(S,t)$ at continuation region and determine its boundary $\partial\mathcal{C}$
 at the same time. Therefore, this is known as the free boundary problem formulation
-of the American option pricing problem and is equivalent to solve.
+of the American option pricing problem and is equivalent to solve:
 \begin{align}
   \begin{cases}
   \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
   V(S, t) = H(S, t) & \text{for $(S,t)\in \partial\mathcal{C}$}
   \end{cases}
-  \label{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
+  \label{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
 \end{align}
 
-Since the holder of an American option would always at the expiration date $T$
-exercise the if it is profitable or would not make a profit otherwise. Therefore,
-American options value is equal to its payoff at the maturity date. With this 
-information, we could establish terminal conditions for the free boundary problem 
-in \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}.
-\begin{align*}
-  & V(S,T) = H(S, T) \\
-  & \bar{S}(T) = K
-\end{align*}
+at time $T$, the value of the option at exercise region will overlap with linear
+segment of the payoff function $H(S, T)$, in that case, the optimal exercise 
+$S(T)$ will be equal to the strike price $K$ payoff function. Therefore, 
+we can use this information to define the terminal conditions of 
+\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
+\begin{align}
+  V(S,T) = H(S, T) \quad \bar{S}(T) = K
+  \label{eq:blackscholes:preliminaries:american_options_terminal_condition}
+\end{align}
 
 Next, we need to establish boundary conditions for the system 
-\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}. 
+\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}. 
 Generally, when pricing options, we would need two boundaries conditions 
 for option pricing. However, the free boundary problem in 
-\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem}
+\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
 is expressed in terms on the moving boundary condition $\bar{S}(t)$. Therefore,
 we only need to determine one extra boundary condition. In case of 
 American put options, the left boundary condition would be given by $\bar{S}(t)$,
 and the right boundary condition by $V(S, t) = 0$ for a sufficiently large $S$. 
 Analogously, $\bar{S}(t)$ would be the right boundary condition for 
 an American call option and its left boundary condition by $V(S, t) = 0$ for $S = 0$. 
-Finally, one extra information is that at the point $(\bar{S}(t), t)$, the 
-derivative of the value with respect to the price is given by:
-
-\begin{subequations}
+Finally, $V(S,t)$ touches tangentially the exercise region $S$ at $(\bar{S}(t), t)$.
+Since the exercise region is a linear segment, the derivative at that point is
+\begin{subequations} \label{eq:blackscholes:preliminaries:smooth_passing_condition}
   \begin{equation}
-    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1 \qquad \text{(call)}
+    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1 
   \end{equation}
   \begin{equation}
-    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1 \qquad \text{(put)}
+    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
   \end{equation}
 \end{subequations}
 
-Grouping , boundary conditions and terminal condition 
-in one equation, we obtain the system.
+which is called the smooth pasting condition in \cite{seydel_2009} and \cite{wilmott_howison_dewynne_1995}.
+Grouping \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}, \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}
+and \eqref{eq:blackscholes:preliminaries:smooth_passing_condition} in one equation, we obtain the system.
 
-\begin{subequations} \label{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}
+\begin{subequations} \label{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full}
 \begin{equation}
   \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{v}}{\partial{x}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $0 \le S < \bar{S}(t)$ and $0 \le t < T$} \\
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $0 \le S < \bar{S}(t)$ and $0 \le t < T$} \\
     V(S, T) = S - K \qquad \bar{S}(T) = K \\
     V(0, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1
   \end{cases}
 \end{equation}
 \begin{equation}
   \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{v}}{\partial{x}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $\bar{S}(t) < S < \infty$ and $0 \le t < T$} \\
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $\bar{S}(t) < S < \infty$ and $0 \le t < T$} \\
     V(S, T) = K - S \qquad \bar{S}(T) = K \\
     \lim_{S\rightarrow\infty}V(S, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
   \end{cases}
@@ -242,7 +255,7 @@ remains constant as time changes. In this section, we explore two transformation
 based on the work of Nielsen and others \cite{nielsen_2001}, and the work of
 Company and others \cite{company_egorova_jodar_2014}.
 
-\subsubsection{Inverse transformation}
+\subsubsection{Inverse transformation} \label{sec:blackscholes:frontfixingmethod:inversetransform}
 
 This method proposes the transformation 
 \begin{equation}
@@ -251,7 +264,7 @@ This method proposes the transformation
 \end{equation}
 
 which maps the boundary of the continuation region $\partial C$ defined in 
-\eqref{eq:background:finance:exercise_region} to the fixed boundary 
+\eqref{eq:blackscholes:preliminaries:exercise_region} to the fixed boundary 
 \begin{equation}
   \mathcal{\partial C}_x := \{(x, t): x = 1\} 
 \end{equation}
@@ -265,7 +278,7 @@ under this new map
 
 which fixes the moving boundary $\bar{S}(t)$ at $x=1$ when $S(t)$. Next, we compute
 the partial derivatives of $V$ with respect of the partial derivatives of $v$ which
-will allow us to rewrite the PDE in \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full} 
+will allow us to rewrite the PDE in \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full} 
 with respect of \eqref{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
 
 \begin{align*}
@@ -276,7 +289,7 @@ with respect of \eqref{eq:blackscholes:frontfixingmethod:inversetransform:value_
   \dfrac{\partial{V}}{\partial{t}} &=  \dfrac{\partial{v}}{\partial{t}} + \dfrac{\partial{v}}{\partial{x}} \dfrac{\partial{x}}{\partial{t}} = \dfrac{\partial{v}}{\partial{t}} - x\dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}}
 \end{align*}
 
-Substituting these partial derivatives in the Black-Scholes PDE given by \eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full},
+Substituting these partial derivatives in the Black-Scholes PDE given by \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full},
 we obtain the non-linear PDE
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:american_options_pde}
   \begin{align}  
