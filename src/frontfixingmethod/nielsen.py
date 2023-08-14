@@ -9,12 +9,15 @@ from option import AmericanOption
 from utils import solve
 
 
-def solve_explicitly(option: AmericanOption,
-                     r: float,
-                     sigma: float,
-                     x_max: float,
-                     dx: float,
-                     dt: float):
+def solve_explicitly(
+    option: AmericanOption,  # the option
+    r: float,  # risk-free interest rate
+    sigma: float,  # sigma price volatitliy
+    x_max: float,  # sufficiently large value for x
+    dx: float,  # grid resolution along x-axis
+    dt: float,  # grid resolution along t-axis
+    delta=0  # dividends
+):
     """Solve front-fixing method explicitly.
 
     Parameters:
@@ -25,24 +28,21 @@ def solve_explicitly(option: AmericanOption,
         dx (float): Grid resolution in the spatial direction.
         dt (float): Grid resolution in the time direction.
     """
-    dx_inv = np.round(dx)
-    dt_inv = np.round(dt)
-    print(dx, dt)
-    print(dx_inv, dt_inv)
+    dx_inv = np.round(1/dx)
+    dt_inv = np.round(1/dt)  # round to the nearest integer
 
     gamma = dt / np.power(dx, 2)
     alpha = 0.5 * dt / dx
 
     x = np.arange(1, x_max+dx, dx)
 
-    A = 0.5 * np.power(sigma*x, 2) * gamma - x * (r - dt_inv) * alpha
+    A = 0.5 * np.power(sigma*x, 2) * gamma - x * ((r-delta) - dt_inv) * alpha
     B = 1 - np.power(sigma*x, 2) * gamma - r*dt
-    C = 0.5 * np.power(sigma*x, 2) * gamma + x * (r - dt_inv) * alpha
+    C = 0.5 * np.power(sigma*x, 2) * gamma + x * ((r-delta) - dt_inv) * alpha
 
     p = np.zeros_like(x)
     S_bar = option.K
-    N = int(option.T/dt)
-    for n in range(N, -1, -1):
+    for _ in np.arange(0, option.T, dt):
         D = 0.5*x*dx_inv
         D[1:-1] *= (p[2:]-p[:-2]) * (1/S_bar)
 
@@ -55,17 +55,19 @@ def solve_explicitly(option: AmericanOption,
         p[1] = option.K - (1+dx)*S_bar
 
     S = S_bar * np.arange(0, x_max+dx, step=dx)
-    P = np.concatenate([option.payoff(S[S < S_bar]), p])
+    V = np.concatenate([option.payoff(S[S < S_bar]), p])
+    return S, V, S_bar
 
-    return S, P, S_bar
 
-
-def solve_implicitly(option: AmericanOption,
-                     r: float,
-                     sigma: float,
-                     x_max: float,
-                     dx: float,
-                     dt: float):
+def solve_implicitly(
+    option: AmericanOption,  # the option
+    r: float,  # risk-free interest rate
+    sigma: float,  # sigma price volatitliy
+    x_max: float,  # sufficiently large value for x
+    dx: float,  # grid resolution along x-axis
+    dt: float,  # grid resolution along t-axis
+    delta=0  # dividends
+):
     """Solve front-fixing method explicitly.
 
     Parameters:
@@ -77,31 +79,27 @@ def solve_implicitly(option: AmericanOption,
         M (float): Grid resolution in the time direction.
     """
 
-    N = option.T / dt - 1
-    M = (x_max-1) / dx - 1
-    dt_inv = option.T/(N+1), (N+1)/option.T
-    dx_inv = (x_max-1)/(M+1), (M+1)/(x_max-1)
-
-    lambd = (np.power(M+1, 2)/(N+1)) * (option.T/np.power(x_max - 1, 2))
-    kappa = 0.5*((M+1)/(N+1)) * (option.T/(x_max - 1))
+    dx_inv = np.round(1/dt)
+    lambd = dt/np.power(dx, 2)
+    kappa = dt/dx
 
     x = np.arange(1, 2+dx, dx)
+    M = x.size
 
     alpha = 1 + lambd*np.power(sigma*x, 2) + r*dt
 
     def beta(s):
-        return -0.5*lambd*np.power(sigma, 2)*np.power(x, 2) + kappa*x*(r - (S_bar - s)/(dt*s))
+        return -0.5*lambd*np.power(sigma, 2)*np.power(x, 2) + 0.5*kappa*x*((r-delta) - (S_bar - s)/(dt*s))
 
     def gamma(s):
-        return -0.5*lambd*np.power(sigma, 2)*np.power(x, 2) - kappa*x*(r - (S_bar - s)/(dt*s))
+        return -0.5*lambd*np.power(sigma, 2)*np.power(x, 2) - 0.5*kappa*x*((r-delta) - (S_bar - s)/(dt*s))
 
     def F(y, b, _):
         p, s, = y[:-1], y[-1]
         _beta = beta(s)
         _gamma = gamma(s)
-
         A = diags([_beta[3:-1], alpha[2:-1], _gamma[1:-2]],
-                  [-2, -1, 0], shape=(M, M-1)).toarray()
+                  [-2, -1, 0], shape=(M-2, M-3)).toarray()
         f = b[1:-1]
         f[0] -= _beta[1]*(option.K-s) + alpha[1]*((option.K-(1+dx)*s))
         f[1] -= _beta[2]*(option.K-(1+dx)*s)
@@ -117,7 +115,7 @@ def solve_implicitly(option: AmericanOption,
         dbeta_ds = 0.5 * dx_inv * x * S_bar / s**2
 
         retVal = diags([_beta[3:-1], alpha[2:-1], _gamma[1:-1]],
-                       [-2, -1, 0], shape=(M, M)).toarray()
+                       [-2, -1, 0], shape=(M-2, M-2)).toarray()
 
         retVal[-1, :] = 0
         retVal[:, -1] = 0
@@ -137,32 +135,23 @@ def solve_implicitly(option: AmericanOption,
     starting_time = datetime.datetime.now()
     print("Start time:", starting_time)
     S_bar = option.K
-    p = np.zeros((M+2))
-    for n in range(N, -1, -1):
-        *p[2:-1], S_bar = solve(
-            F=lambda y: F(y, np.copy(p[:]), S_bar),
-            J=lambda y: J(y, np.copy(p[:]), S_bar),
-            x0=np.concatenate([p[2:-1], [S_bar]]),
+    v = np.zeros_like(x)
+
+    for _ in np.arange(0, option.T, dt):
+        *v[2:-1], S_bar = solve(
+            F=lambda y: F(y, np.copy(v[:]), S_bar),
+            J=lambda y: J(y, np.copy(v[:]), S_bar),
+            x0=np.concatenate([v[2:-1], [S_bar]]),
             epsilon=1e-10,
             max_iterations=100
         )
-        if (n % 10) == 0:
-            cur_time = datetime.datetime.now()
-            print("Elapsed seconds since last iteration:",
-                  (cur_time - starting_time).seconds)
-            print(S_bar)
-        p[0] = option.K - S_bar
-        p[1] = option.K - (1+dx)*S_bar
+        v[0] = option.K - S_bar
+        v[1] = option.K - (1+dx)*S_bar
 
     end = datetime.datetime.now()
     print("Final time:", end)
-    print("S_bar:", S_bar)
-    S = S_bar * np.arange(0, x_inf+dx, step=dx)
-    P = np.concatenate([option.K - S[S < S_bar], p])
+    
+    S = S_bar * np.arange(0, x_max+dx, step=dx)
+    V = np.concatenate([option.K - S[S < S_bar], v])
 
-    # plt.plot(S, np.maximum(K-S, 0))
-    # plt.plot(S, P)
-    # plt.vlines(S_bar, 0, p[0], linestyles='dashed')
-    # plt.xlim(0, S_bar*x_inf)
-    # plt.ylim(bottom=0, top=K)
-    # plt.show()
+    return S, V, S_bar

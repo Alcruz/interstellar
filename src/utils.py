@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 def solve(F, J, x0, epsilon=1e-6, max_iterations=100):
     """
