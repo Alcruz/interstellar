@@ -1,4 +1,3 @@
-
 \section{Finite difference schemes}
 
 \subsection{Overview}
@@ -21,21 +20,16 @@ and \eqref{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pd
 Recall that the solution $v(x,t)$ of 
 \eqref{eq:blackscholes:frontfixingmethod:inversetransform} 
 is defined in the continuous region 
-
 \begin{equation*}
   \mathcal{F}: \mathcal{X} \times \mathcal{T}
 \end{equation*}
-
 where
-
 \begin{equation*}
   \mathcal{T}: [0, T]
 \end{equation*}
-
 \begin{equation*}
    \mathcal{X}: [0, \infty)
 \end{equation*}
-
 Now, we want to discretize $\mathcal{F}$ using a grid with resolution $\Delta x$
 and $\Delta t$. Let's define the bound of the grid as:
 \begin{equation*}
@@ -60,26 +54,19 @@ dimension will be given by
   x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
   t_i &:= t_{\text{min}} + i{\Delta t} & \qquad \text{for $i = 0,\dots, N$}
 \end{align}
-
 Hence, the grid $\mathcal{G}$ is defined as
-
 \begin{align}
   \mathcal{G} := \{(x_i, t_n): (i, n) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
 \end{align}
-
 Thus, solving equation \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
 numerically is the find approximations 
-
 \begin{align*}
   v^{n}_i \approx v(x_i,t_n)
 \end{align*}
-
 and
-
 \begin{align*}
   \bar{S}^{n} \approx \bar{S}(t_n)
 \end{align*}
-
 Since \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
 and \eqref{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}
 are written backward in time, all information of the previous time step is contained

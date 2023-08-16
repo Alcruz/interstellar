@@ -1,17 +1,25 @@
 \section{Linear complementary problem}
 
-In section \ref{sec:blackscholes}
+\subsection{Overview}
 
-Now, note that the bound of $V(S, t)$ in each region is
+In section \ref{sec:blackscholes}, we defined some
+
+
 \begin{align*}
   &V(S, t) - H(S, t) > 0 \qquad \text{for all $(S,t) \in \mathcal{C}$} \\ 
   &V(S, t) - H(S, t) = 0 \qquad \text{for all $(S,t) \in \mathcal{S}$}
 \end{align*}
 
-Similarly, the bound of $\mathcal{L}_{\text{BS}}(V)$ is
+Additionally,
+
 \begin{align*}
-  &\frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 \qquad \text{for $(S,t) \in \mathcal{C}$} \\
-  &\frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV < 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
+    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 \qquad \text{for $(S,t) \in \mathcal{C}$} \\
+\end{align*}
+  
+Moreover
+
+\begin{align*}
+    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV < 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
 \end{align*}
 
 Therefore, grouping the bounds above we form a linear complementary system of equations
