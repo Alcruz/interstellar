@@ -1,209 +1,402 @@
 
 \section{Finite difference schemes}
 
-Numerical methods 
+\subsection{Overview}
 
+In this section, we present explicit and implicit finite difference schemes
+for solving the non-linear PDE problem in
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}. 
+The explicit and implicit schemes of \eqref{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}
+are provided in appendix A.
 
-Previously, we considered the pricing problem of American options which requires
-to solve the free boundary problem defined in 
-\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}. 
-Numerical methods for solving problems such as 
-\eqref{eq:blackscholes:finance:american_options_pde_free_boundary_problem_full}
-can be devised in which we could keep track how 
+Previously, we  considered the pricing problem of American options which requires
+solving the free boundary problem defined in 
+\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full}.
+Then, we presented the front fixing method used to rewrite the PDE problem using
+a fixed boundary by applying the inverse transformation presented in \cite{nielsen_2001}
+and the log transformation presented in \cite{company_egorova_jodar_2014} resulting
+in the systems \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+and \eqref{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}. 
 
-\ref{sec:blackscholes}
+Recall that the solution $v(x,t)$ of 
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform} 
+is defined in the continuous region 
 
-In this section, we present numerical methods for solving the non-linear PDEs that
-arise from reformulating the free boundary problem using the front fixing method.
-I
+\begin{equation*}
+  \mathcal{F}: \mathcal{X} \times \mathcal{T}
+\end{equation*}
 
+where
 
-Therefore, we focus on analyzing the numerical solution of the heat diffusion equation. 
-Suppose the equation (XXX) is defined within the rectangular region $[x_{\text{min}}, x_{\text{max}}]\times[\tau_{\text{min}}, \tau_{\text{max}}]$.
-By discretizing uniformly along the spatial direction $x$ and temporal direction $\tau$,
+\begin{equation*}
+  \mathcal{T}: [0, T]
+\end{equation*}
+
+\begin{equation*}
+   \mathcal{X}: [0, \infty)
+\end{equation*}
+
+Now, we want to discretize $\mathcal{F}$ using a grid with resolution $\Delta x$
+and $\Delta t$. Let's define the bound of the grid as:
+\begin{equation*}
+  x_{\text{min}} := 0
+\end{equation*}
+\begin{equation*}
+  x_{\text{max}} := x_{\infty}
+\end{equation*}
+\begin{equation*}
+  t_{\text{min}} := 0 
+\end{equation*}
+\begin{equation*}
+  t_{\text{max}} := T
+\end{equation*}
+
+where $x_{\infty}$ means an arbitrary large value in this context. Moreover, the grid
+dimension will be given by
 
 \begin{align}
-  M &:= \frac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
-  N &:= \frac{\tau_{\text{max}} - \tau_{\text{min}}}{\Delta \tau} \\ 
+  M &:= \dfrac{x_{\text{max}} - x_{\text{min}}}{\Delta x} \\ 
+  N &:= \dfrac{t_{\text{max}} - t_{\text{min}}}{\Delta t} \\ 
   x_i &:= x_{\text{min}} + i\Delta x & \text{for $i = 0,\dots, M$} \\
-  \tau_i &:= \tau_{\text{min}} + i{\Delta \tau} & \qquad \text{for $i = 0,\dots, N$}
+  t_i &:= t_{\text{min}} + i{\Delta t} & \qquad \text{for $i = 0,\dots, N$}
 \end{align}
 
-where $\Delta x$ and $\Delta \tau$ are the distance between two consecutive points,
-then, the grid is defined as the discrete region. 
+Hence, the grid $\mathcal{G}$ is defined as
 
 \begin{align}
-  \mathcal{G} := \{(x_i, \tau_j): (i, j) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
+  \mathcal{G} := \{(x_i, t_n): (i, n) \in \{0,\dots,M\}\times\{0,\dots,N\}\}
 \end{align}
 
-Thus, solving numerically the equation (XXX) means finding an approximation for $y(x_i, \tau_n)$ at every 
-$(x_i, \tau_n)$ within the grid $\mathcal{G}$,
-
-\begin{align}
-  y^{n}_i \approx y(x_i,\tau_n)
-\end{align}
-
-The Black-Scholes PDE can be transformed to heat diffusion PDE using the following
-change of variables
+Thus, solving equation \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+numerically is the find approximations 
 
 \begin{align*}
-  S &= Ke^x \\
-  t &= T - \frac{2\tau}{\sigma^2} \\ 
-  q &:= \frac{2r}{\sigma^2} \\
-  q_{\delta} &:= \frac{2(r-\delta)}{\sigma^2} \\
-  \alpha &:= \frac{1}{2}(q_{\delta} - 1) \\
-  \beta &:= \frac{1}{4}(q_{\delta} - 1)^2 + q \\
-  v(x, \tau) &:= e^{-(\alpha x + \beta \tau)}y(x, \tau)= V(S, t)
+  v^{n}_i \approx v(x_i,t_n)
 \end{align*}
 
-The system (\ref{eq:background:finance:free_boundary_problem}) 
-is the free boundary formulation for the pricing problem for American options.
-A detailed derivation of (\ref{eq:background:finance:american_options_pde}) 
-can be found at [REFERENCES].
+and
 
+\begin{align*}
+  \bar{S}^{n} \approx \bar{S}(t_n)
+\end{align*}
 
-The equation (\ref*{eq:background:finance:american_options_pde}) 
-is a paraboblic PDE. Moreover, by applying the transformation,
-
-
-the equation (\ref*{eq:background:finance:american_options_pde}) converts 
-to the heat diffusion PDE.
-
-\begin{equation}
-  h(x, \tau) := \frac{H(S, t)}{K} = \begin{cases}
-    \max(e^{x} - 1, 0)\\
-    \max(1 - e^{x}, 0)
-  \end{cases} 
-\end{equation}
-
-\begin{equation}
-  \bar{x}(\tau) := \log{\bar{S}(t)} - \log{K} 
-\end{equation}
-
-\begin{align}
-  \begin{cases}
-    \frac{\partial y}{\partial \tau} = \frac{\partial^2 y}{\partial x^2} & \text{for $\tau\in[0,\frac{\sigma^2}{2}T)$ and $x\in(\bar{x}(t), \infty)$} \\
-    y(x, \tau) = e^{(\alpha x + \beta \tau)}h(x, \tau) & \text{for $\tau\in[0, \frac{\sigma^2}{2}T]$ and $x\in(-\infty, \bar{x}(\tau)]$} \\
-    \bar{x}(0) = 0
-  \end{cases}
-  \label{eq:background:finance:american_option_heat_equation}
-\end{align}
-
-We can reformulate equation (\ref*{eq:background:finance:american_option_heat_equation})
-as:
-
-\begin{equation}
-  g := e^{\alpha x + \beta \tau}h(x, \tau)
-\end{equation}
-
-\begin{align}
-  \begin{cases}
-    \big(\frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2}\big)(y  - g) =0 \\
-    \frac{\partial y}{\partial \tau} - \frac{\partial^2 y}{\partial x^2} \ge 0 \quad y - g \ge 0 \\
-    y(x, 0) = g(x, 0)
-  \end{cases}
-\end{align}
-
-
-By exploring the geometric properties of the value function $V(S,t)$, 
-we can determine useful conditions that will later help on in solving the equation 
-(\ref*{eq:background:finance:american_options_pde}). Firstly, at
-any given time $0 \le t \le T$, American options match the linear segment of the payoff
-function within the stopping region. Therefore, we could say that 
-
-\begin{align}
-  \frac{\partial V}{\partial S}(S, t) =  \begin{cases}
-    -1 & \text{(put)} \\ 
-    1 & \text{(call)}
-  \end{cases}
-  \label{eq:background:finance:american_option_left_boundary}
-\end{align}
-
-Moreover, as the price goes to infinity the value of the option tends to zero
-
-\begin{align}
-  \lim_{S \rightarrow \infty}V(S, t) = 0 
-  \label{eq:background:finance:american_option_stopping_right_boundary}
-\end{align}
-
-
-
-Pricing American options requires using numerical methods. The Black-Scholes PDE 
-in (XXX) can be converted to the heat diffusion equation
-
-
-
-To obtain such approximation, we rely on central difference approximations (REFERENCE).
-
-\begin{align}
-  f'(x_i) &= \frac{f_{i+1} - f_{i}}{h} + O(h) \\
-  f'(x_i) &= \frac{f_{i+1} - f_{i-1}}{2h} + O(h^2) \\
-  f''(x_i) &= \frac{f_{i+1} - 2f_{i} + f_{i-1}}{h^2} + O(h^2)
-\end{align}
+Since \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+and \eqref{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}
+are written backward in time, all information of the previous time step is contained
+at $t_{n+1}$. Therefore, as an explicit scheme, we will use backward central difference 
+to approximate the (partial) derivates of $v(x, t)$ and $\bar{S}(t)$. Conversely,
+we will use forward central difference as an implicit scheme. 
 
 \subsection{Explicit scheme}
 
-An explicit scheme is one where we approximate the time partial derivative using
-a forward difference approximation. Hence, the PDE in (XXX) is approximated as
-
+In the explicit scheme, we use the information available in the previous time 
+step $t_{n+1}$ when computing the central finite difference. 
+Therefore, we approximate the spatial partial derivatives of $v(x,t)$ at the nodes
+$(x_{i},t_{n})$ as
 \begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-By rearranging the terms,
-
-\begin{equation}
-  \lambda := \frac{\Delta \tau}{(\Delta x)^2}
+  \dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{2 \Delta{x}} = \dfrac{\partial{v}}{\partial{x}}+ O((\Delta{x})^2) \qquad \text{for $i = 1, \dots, M - 1$}
 \end{equation}
 
 \begin{equation}
-  y^{n+1}_i = \lambda y^{n}_{i-1} + (1 - 2\lambda)y^{n}_{i} + \lambda y^{n}_{i+1}
+  \dfrac{v^{n+1}_{i+1} - 2v^{n+1}_{i} + v^{n+1}_{i-1}}{\Delta{x}^2} = \dfrac{\partial^2{v}}{\partial{x^2}}+ O(h^2) \qquad \text{for $i = 1, \dots, M - 1$} \\
 \end{equation}
 
-It is shown by reference [REFERENCE] that method (XXX) is stable and consistent 
-under the following condition
+Analogously, we approximate the time partial derivative of $v(x, t)$ and the time derivative of $\bar{S}(t)$
+as
+\begin{equation}
+  \dfrac{v^{n+1}_{i} - v^{n}_{i-1}}{\Delta{t}} = \dfrac{\partial{v}}{\partial{t}}+ O(\Delta{t}) \qquad \text{for $n = N-1,\dots,0$ }
+\end{equation}
 
 \begin{equation}
-  0 < \Delta \tau \le \frac{(\Delta x)^2}{2}
+  \dfrac{\bar{S}^{n+1}-\bar{S}^{n}}{\Delta t} = \bar{S}'(t) + O(\Delta{t}) \qquad \text{for $n = N-1,\dots,0$ }
 \end{equation}
 
-Moreover, the method has order of convergence $O(\Delta \tau, (\Delta x)^{2})$.
+Using the finite difference approximations above, and approximation of the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} 
+is given by 
+\begin{equation*}
+  \begin{split}
+    \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} & + \dfrac{1}{2}\sigma^2 x_i^2 \dfrac{v^{n+1}_{i-1} - 2v^{n+1}_{i} + v^{n+1}_{i+1}}{(\Delta{x})^2} \\ 
+     & + x_i\bigg( (r-\delta) - \dfrac{1}{\bar{S}^{n+1}}\dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta{t}} \bigg)\dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{2\Delta{x}} - rv^{n+1}_{i} = 0
+  \end{split}
+\end{equation*}
+
+for $i = 1, \dots, M-1$ and $t = N-1, \dots, 0$. To simplify the expression above, we introduce the terms
+\begin{align*}
+  \lambda &:= \dfrac{\Delta{t}}{(\Delta{x})^2} \\
+  A_i &:= \dfrac{\lambda}{2}\sigma^2x^{2}_i - \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x} & \text{for $i = 1, \dots, M - 1$} \\ 
+  B_i &:= 1 - \lambda\sigma^2x_i^2 - r\Delta{t} & \text{for $i = 1, \dots, M - 1$} \\
+  C_i &:= \dfrac{\lambda}{2}\sigma^2x^{2}_i + \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x} &  \text{for $i = 1, \dots, M - 1$} \\
+  D^{n+1}_{i} &:= \dfrac{x_i}{2\Delta{x}}\dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{\bar{S}^{n+1}} &  \text{for $i = 1, \dots, M - 1$}
+\end{align*}
+
+Then, we rearrange the finite difference approximation of the PDE as 
+
+\begin{equation*}
+  v^{n}_{i} - D^{n+1}_{i}\bar{S}^n = A^{n+1}_i v^{n+1}_{i-1} + B^{n+1}_{i}v^{n+1}_{i} + C^{n+1}_{i}v^{n+1}_{i} 
+\end{equation*}
+
+for $i = 1, \dots, M-1$ and $t = N-1, \dots, 0$. Moreover, we have 
+well-defined boundary conditions 
+
+\begin{subequations}
+  \begin{equation*}
+    v^{n}_{0} = 0 \qquad v^{n}_{M} = \bar{S}^{n} - K \qquad \text{for $n=N-1,\dots,0$}
+  \end{equation*}
+  \begin{equation*}
+    v^{n}_{0} = K - \bar{S}^{n} \qquad v^{n}_{M} = 0 \qquad \text{for $n=N-1,\dots,0$}
+  \end{equation*}
+\end{subequations}
+
+and terminal condition
+
+\begin{subequations}
+  \begin{equation*}
+    v^{N}_{i} = 0 \qquad \text{for $i=0,\dots,M$}
+  \end{equation*}
+\end{subequations}
+
+
+Moreover, using the contact point condition,
+
+\begin{subequations}
+  \begin{align}
+    v^{n}_{M-1} &= v^{n}_{M} - \Delta{x}\bar{S}^{n} = (1-\Delta{x})\bar{S}^n - K & \qquad \text{for $n = N-1,\dots,0$ }\\
+    v^{n}_{1} &= v^{n}_{0} - \Delta{x}\bar{S}^{n} = K - (1+\Delta{x})\bar{S}^n & \qquad \text{for $n = N-1,\dots,0$ }
+  \end{align}    
+\end{subequations}
+
+
+we obtain an explicit expression for $\bar{S}^n$ 
+
+\begin{subequations}
+  \begin{equation}
+    \bar{S}^{n} = \dfrac{K + A_{M-2}v^{n+1}_{M-2} + B_{M-1}v^{n+1}_{M-1} + C_{M-1}v^{n+1}_{M}}{(1-\Delta{x}) - D^{n+1}_{M-1}} \qquad \text{for $n = N-1,\dots,0$ } \\
+  \end{equation}
+  \begin{equation}    
+    \bar{S}^{n} = \dfrac{K - (A_{1}v^{n+1}_{0} + B_{1}v^{n+1}_{1} + C_{1}v^{n+1}_{2})}{D^{n+1}_1 + (1+\Delta{x})} \qquad \text{for $n = N-1,\dots,0$ }
+  \end{equation}
+\end{subequations}
+
+Thus, the non-linear PDE problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+can be rewritten as:
+\begin{subequations}
+  \begin{align}
+    \begin{cases}
+      v^{n}_{i} - D^{n+1}_{i}\bar{S}^n = A_i v^{n+1}_{i-1} + B_{i}v^{n+1}_{i} + C_{i}v^{n+1}_{i+1} & \text{for $i = 1, \dots, M-2$ and $n = N-1,\dots,0$} \\
+      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for $i = 0, \dots, M$} \\
+      v^{n}_0 = 0 \quad v^{n}_{M-1} = (1-\Delta{x})\bar{S}^n - K \quad v^{n}_M = \bar{S}^n - K  & \text{for $n = N-1, \dots 0$} \\
+      x_{\text{min}} := 0 \quad x_{\text{max}} := 1 \\
+      t_{\text{min}} := 0 \quad t_{\text{max}} := T
+    \end{cases}
+  \end{align}
+  \begin{align}
+    \begin{cases}
+      v^{n}_{i} - D^{n+1}_{i}\bar{S}^n = A_i v^{n+1}_{i-1} + B_{i}v^{n+1}_{i} + C_{i}v^{n+1}_{i+1} & \text{for $i = 2, \dots, M-1$ and $n = N-1,\dots,0$} \\
+      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for i = 0, \dots, M} \\
+      v^{n}_{0} = K - \bar{S}^{n} \quad v^{n}_{1} =  K - (1+\Delta{x})\bar{S}^{n} \quad v^{n}_{M} = 0 & \text{for $n = N-1, \dots 0$} \\
+      x_{\text{min}} := 1 \quad x_{\text{max}} := x_{\infty} \\
+      t_{\text{min}} := 0 \quad t_{\text{max}} := T
+    \end{cases}
+  \end{align}
+\end{subequations}
+
+Therefore, we can formulate the following algorithm
+
+\begin{algorithm}
+  \caption{Explicit method for call options} \label{alg:cap}
+  \begin{algorithmic}
+  \Ensure $\lambda \le 0.5$
+  
+  \For{$i = 0,\dots,M$} 
+    \State $v^{N}_i = 0 $
+  \EndFor
+  
+  \State $\bar{S}^{N} = K$
+
+  \For{$i = 1,\dots,M-2$} 
+    \State $A_i = \dfrac{\lambda}{2}\sigma^2x^{2}_i - \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x}$
+    \State $B_i = 1 - \lambda\sigma^2x_i^2 - r\Delta{t} $
+    \State $C_i = \dfrac{\lambda}{2}\sigma^2x^{2}_i + \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x} $
+  \EndFor
+  
+  \For{$n = N-1, \dots, 0$}
+    \For{$i = 1, \dots, M-1$}
+      \State $D^{n+1}_i = \dfrac{x_i}{2\Delta{x}}\dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{\bar{S}^{n+1}}$
+    \EndFor
+    \State $\bar{S}^n = \dfrac{K - (A_{M-2}v^{n+1}_{M-2} + B_{M-1}v^{n+1}_{M-1} + C_{M-1}v^{n+1}_{M})}{D^{n+1}_{M-1} + (1-\Delta{x})}$
+    \State $v^{n}_{0} = 0$
+    \State $v^{n}_{M-1} = (1-\Delta{x})\bar{S}^{n} - K$
+    \State $v^{n}_{M} = \bar{S}^{n} - K$
+    \For{$i = 1, \dots, M-2$}
+      \State $v^{n}_{i} = A^{n+1}_i v^{n+1}_{i-1} + B^{n+1}_{i}v^{n+1}_{i} + C^{n+1}_{i}v^{n+1}_{i} + D^{n+1}_{i}\bar{S}^n$
+    \EndFor
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\newpage
+
+\begin{algorithm}[H]
+  \caption{Explicit method for put options}\label{alg:cap}
+  \begin{algorithmic}
+  \Require $n \geq 0$
+  \Ensure $\lambda \le 0.5$
+  
+  \For{$i = 0,\dots,M$} 
+    \State $v^{N}_i = 0 $
+  \EndFor
+  
+  \State $\bar{S}^{N} = K$
+
+  \For{$i = 2,\dots,M-1$} 
+    \State $A_i = \dfrac{\lambda}{2}\sigma^2x^{2}_i - \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x}$
+    \State $B_i = 1 - \lambda\sigma^2x_i^2 - r\Delta{t} $
+    \State $C_i = \dfrac{\lambda}{2}\sigma^2x^{2}_i + \dfrac{\lambda}{2}\bigg((r-\delta) - \dfrac{1}{\Delta{t}}\bigg)x_i\Delta{x} $
+  \EndFor
+  
+  \For{$n = N-1, \dots, 0$}
+    \For{$i = 1, \dots, M-1$}
+      \State $D^{n+1}_i = \dfrac{x_i}{2\Delta{x}}\dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{\bar{S}^{n+1}}$
+    \EndFor
+    \State $\bar{S}^n = \dfrac{K - (A_{1}v^{n+1}_{0} + B_{1}v^{n+1}_{1} + C_{1}v^{n+1}_{2})}{D^{n+1}_{1} + (1+\Delta{x})}$
+    \State $v^{n}_{0} = K - \bar{S}^{n}$
+    \State $v^{n}_{1} = K - (1+\Delta{x})\bar{S}^n$
+    \State $v^{n}_{M} = 0$
+    \For{$i = 2, \dots, M-1$}
+      \State $v^{n}_{i} = A^{n+1}_i v^{n+1}_{i-1} + B^{n+1}_{i}v^{n+1}_{i} + C^{n+1}_{i}v^{n+1}_{i} + D^{n+1}_{i}\bar{S}^n$
+    \EndFor
+  \EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Implicit scheme}
 
-The implicit scheme approximates the time derivative using a backward difference
+Analogously to the previous section, the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} 
+is approximated using forward central difference  
+\begin{equation*}
+  \begin{split}
+    \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} & + \dfrac{1}{2}\sigma^2 x_i^2 \dfrac{v^{n}_{i-1} - 2v^{n}_{i} + v^{n}_{i+1}}{(\Delta{x})^2} \\ 
+     & + x_i\bigg( (r-\delta) - \dfrac{1}{\bar{S}^{n}}\dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta{t}} \bigg)\dfrac{v^{n}_{i+1} - v^{n}_{i-1}}{2\Delta{x}} - rv^{n}_{i} = 0
+  \end{split}
+\end{equation*}
 
-\begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
-\end{equation}
+Similarly to the previous section, the terms are introduced  
+\begin{align}
+  \alpha^{n}_{i} &:= -\dfrac{\lambda}{2}\sigma^2x^{2}_{i} + \dfrac{\lambda\Delta{x}}{2}x_{i}\bigg(r-\delta+\dfrac{\bar{S}^{n+1}-\bar{S}^n}{\Delta{t}\bar{S}^{n}}\bigg) \\
+  \beta^{n}_{i} &:= 1 + \lambda\sigma^2x^{2}_{i} + r\Delta{t} \\
+  \gamma^{n}_{i} &:= -\dfrac{\lambda}{2}\sigma^2x^{2}_{i} + \dfrac{\lambda\Delta{x}}{2}x_{i}\bigg(r-\delta+\dfrac{\bar{S}^{n+1}-\bar{S}^n}{\Delta{t}\bar{S}^{n}}\bigg)
+\end{align}
 
-\begin{equation}
-  y^{n+1}_{i} - \lambda (y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) = y^{n}_{i}  
-\end{equation}
+to make the expression above more manageable. Next, the PDE approximation is rearranged as
+\begin{equation*}
+  \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i}
+\end{equation*}
 
-\begin{equation}
-  K := \begin{bmatrix}
-    2 & -1     & & 0 \\ 
-   -1 & \ddots & \ddots \\
+Contrary to the explicit method, there is not an explicit expression for $\bar{S^n}$. Therefore,
+the PDE problem in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+is rewritten as
+\begin{subequations}
+  \begin{align}
+    \begin{cases}
+      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 1, \dots, M-2$ and $n = N-1,\dots,0$} \\
+      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for $i = 0, \dots, M$} \\
+      v^{n}_0 = 0 \quad v^{n}_{M-1} = (1-\Delta{x})\bar{S}^n - K \quad v^{n}_M = \bar{S}^n - K  & \text{for $n = N-1, \dots 0$} \\
+      x_{\text{min}} := 0 \quad x_{\text{max}} := 1 \\
+      t_{\text{min}} := 0 \quad t_{\text{max}} := T
+    \end{cases}
+  \end{align}
+  \begin{align}
+    \begin{cases}
+      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 2, \dots, M-1$ and $n = N-1,\dots,0$} \\
+      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for i = 0, \dots, M} \\
+      v^{n}_{0} = K - \bar{S}^{n} \quad v^{n}_{1} =  K - (1+\Delta{x})\bar{S}^{n} \quad v^{n}_{M} = 0 & \text{for $n = N-1, \dots 0$} \\
+      x_{\text{min}} := 1 \quad x_{\text{max}} := x_{\infty} \\
+      t_{\text{min}} := 0 \quad t_{\text{max}} := T
+    \end{cases}
+  \end{align}
+\end{subequations}
+
+Since there is not an explicit formula for $v^{n}_{i}$ and $\bar{S}^n$, we will 
+have to solve a non-linear system of equation. Let's define the vector $\mathbf{v}^n \in \mathbb{R}^{M-2}$ 
+ 
+\begin{subequations}
+  \begin{equation}
+    \mathbf{v}^{n} := \begin{bmatrix}
+      v^{n}_{1}, & v^{n}_{2}, & \cdots, & v^{n}_{M-2}
+    \end{bmatrix}^{\text{T}}
+  \end{equation}
+  \begin{equation}
+    \mathbf{v}^{n} := \begin{bmatrix}
+      v^{n}_{2}, & v^{n}_{3}, & \cdots, & v^{n}_{M-1}
+    \end{bmatrix}^{\text{T}}
+  \end{equation}    
+\end{subequations}
+
+the matrix $\Lambda^{n} \in \mathbb{R}^{M-1,M-2}$ 
+
+\begin{subequations}
+  \begin{equation}
+    \Lambda^{n} = \begin{bmatrix}
+      \beta^{n}_{1} & \gamma^{n}_1 \\
+      \alpha^{n}_{2} & \beta^{n}_{2} & \gamma^{n}_{2} \\
+      & \ddots & \ddots & \ddots  \\
+      & & \ddots & \ddots & \ddots  \\
+      & & & \alpha^{n}_{M-3} & \beta^{n}_{M-3} & \gamma^{n}_{M-3} \\
+      & & & & \alpha^{n}_{M-2} & \beta^{n}_{M-2} \\
+      & & & & & \alpha^{n}_{M-2} \\
+    \end{bmatrix}
+  \end{equation}
+  \begin{equation}
+    \Lambda^{n} = \begin{bmatrix}
+      \gamma^{n}_1 \\
+      \beta^{n}_2 & \gamma^{n}_2 \\
+      \alpha^{n}_3 & \beta^{n}_3 & \gamma^{n}_3 \\
       & \ddots & \ddots & \ddots \\
-    0 & & \ddots & \ddots & \\
-  \end{bmatrix} 
-\end{equation}
+      & & \ddots & \ddots & \ddots \\
+      & & & \alpha^{n}_{M-2} & \beta^{n}_{M-2} & \gamma^{n}_{M-2} \\
+      & & & & \alpha^{n}_{M-1} & \beta^{n}_{M-1} \\
+    \end{bmatrix}
+  \end{equation}
+\end{subequations}
+
+and the vector $\mathbf{f}^{n} \in \mathbb{R}^{M-1}$
+
+\begin{subequations}
+  \begin{equation}
+    \mathbf{f}^n= \begin{bmatrix}
+      v^{n+1}_{1} \\
+      \vdots \\
+      v^{n+1}_{M-2} - \gamma^{n}_{M-2}[(1-\Delta{x})\bar{S}^{n} - K] \\
+      v^{n+1}_{M-1} - \gamma^{n}_{M-1}(\bar{S}^n - K) - \beta^{n}_{M-1}[(1-\Delta{x})\bar{S}^{n} - K]
+    \end{bmatrix}
+  \end{equation}
+  \begin{equation}
+    \mathbf{f}^n= \begin{bmatrix}
+      v^{n+1}_{1} - \alpha^{n}_{1}(K - \bar{S}^{n}) - \beta^{n}_{1}[K - (1+\Delta{x})\bar{S}^{n}] \\
+      v^{n+1}_{2} - \beta^{n}_2[K - (1+\Delta{x})\bar{S}^{n}] \\
+      v^{n+1}_{3} \\
+      \vdots \\
+      v^{n+1}_{M-1}
+    \end{bmatrix}
+  \end{equation}
+\end{subequations}
+
+Thus, the non-linear system of equations that we need to solve is
 
 \begin{equation}
-  (I + \lambda K)\boldsymbol{y}^{n+1} = \boldsymbol{y}^{n}
+  F(\mathbf{v}^{n}, \bar{S}^{n}) = \Lambda^{n}\mathbf{v}^{n} - \mathbf{f}^n = 0
 \end{equation}
 
-\subsection{Theta method}
+By computing the Jacobian of the system, we con solve the non-linear system 
+using the newton's method
 
 \begin{equation}
-  \frac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = (1-\theta)\frac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} +  \theta\frac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
+  \mathbf{y}_{k+1} = \mathbf{y}_{k} - J^{-1}(\mathbf{y}_{k})F(\mathbf{y}_{k})
 \end{equation}
 
+where $y_k$ is some approximation of the solution
 \begin{equation}
-  y^{n+1}_{i} - \lambda\theta(y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) =  y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
-\end{equation}
-
-\begin{equation}
-  (1 + \lambda\theta K)\boldsymbol{y}^{n+1} = (1-\lambda\theta K)\boldsymbol{y}^{n} 
+  \mathbf{y} = \begin{bmatrix}
+    \mathbf{v}^{n} | \bar{S}^{n}
+  \end{bmatrix}^{\text{T}}
 \end{equation}

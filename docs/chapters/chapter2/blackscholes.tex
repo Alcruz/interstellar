@@ -331,21 +331,21 @@ for both put and call options. In summary, by groping equations
 \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
 and \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
 we obtain the system
-\begin{subequations}
-\begin{equation}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+\begin{align}
   \begin{cases}
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x \in (0, 1)$ and $t \in [0, T]$} \\
-    v(x, T) = 0 \qquad \bar{S}(T) = K \\
-    v(0, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = \bar{S}(t)
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x \in (0, 1)$ and $t \in [0, T)$} \\
+    v(x, T) = 0 \qquad \bar{S}(T) = K & \text{for $x\in[0, 1]$}\\
+    v(0, t) = 0 \quad v(1, t) = \bar{S}(t) - K \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = \bar{S}(t) & \text{for $t\in[0, T)$} \\
   \end{cases}
-\end{equation}
-\begin{equation}
+\end{align}
+\begin{align}
   \begin{cases}
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $t \in [0, T]$} \\
-    v(x, T) = 0 \qquad \bar{S}(T) = K \\
-    \lim_{x\rightarrow\infty}v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = -\bar{S}(t)
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $t \in [0, T)$} \\
+    v(x, T) = 0 \qquad \bar{S}(T) = K & \text{for $x \ge 1$} \\
+    v(1, t) = K - \bar{S}(t) \quad \lim_{x\rightarrow\infty}v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = -\bar{S}(t) & \text{for $t\in[0, T)$}
   \end{cases}
-\end{equation}
+\end{align}
 \end{subequations}
 
 \subsubsection{Log transformation}
@@ -412,7 +412,7 @@ and the boundary condition opposite to the optimal exercise price
 \end{subequations}
 
 Finally, grouping equations together, we have the system
-\begin{subequations}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}
   \begin{equation}
     \begin{cases}
       \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x < \log{K}$ and $t \in [0, T)$} \\
