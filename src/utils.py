@@ -1,5 +1,14 @@
 import numpy as np
 
+def black_scholes(S, T, K, r, sigma, option_type, d = 0):
+    d1 = (np.log(S / K) + (r - d + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    if option_type == "call":
+        return S * np.exp(-d*T) * np.norm.cdf(d1) - K * np.exp(-r * T) * np.norm.cdf(d2)
+    else:  # option_type == "put"
+        return K * np.exp(-r * T) * np.norm.cdf(-d2) - S * np.exp(-d*T) * np.norm.cdf(-d1)
+
+
 def solve(F, J, x0, epsilon=1e-6, max_iterations=100):
     """
     Newton's method for solving a system of nonlinear equations.

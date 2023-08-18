@@ -1,7 +1,8 @@
 import numpy as np
+from scipy import interpolate
 from option import AmericanOption
 
-def foo(option: AmericanOption,
+def solve(option: AmericanOption,
         r: float, 
         sigma: float, 
         dx: float, 
@@ -59,13 +60,17 @@ def foo(option: AmericanOption,
                 break
             v = v_new.copy()
         w = v.copy()
-        
-    S = option.K*np.exp(x_axis)
-    S[0] = 0
+    
+
+    S_axis = option.K*np.exp(x_axis)
+    S_axis[0] = 0
+
     V = option.K*w*np.exp(-(x_axis/2)*(q_delta - 1)) * np.exp(-tao_axis[-1]*((1/4)*np.power(q_delta - 1, 2) + q))
     V[0] = option.K
+    V_interp = interpolate.interp1d(S_axis, V)
     eps = 1e-5
-    S_bar = S[np.abs(V + S - option.K) <= eps][-1]
-    return S, V, S_bar
+    S_bar = S_axis[np.abs(V + S_axis - option.K) <= eps][-1]
+
+    return V_interp, S_bar
 
 

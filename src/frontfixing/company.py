@@ -9,7 +9,6 @@ from scipy.optimize import root
 from option import AmericanOption
 from utils import solve
 
-
 def solve_explicitly(
     option: AmericanOption,  # the option
     r: float,  # risk-free interest rate
@@ -29,41 +28,36 @@ def solve_explicitly(
         dx (float): Grid resolution in the spatial direction.
         dt (float): Grid resolution in the time direction.
     """
-    dx_inv = np.round(1/dx)
-    dt_inv = np.round(1/dt)  # round to the nearest integer
+    lambd = dt / np.power(dx,2)
+    print(lambd)
+    x = np.arange(0, x_max+dx, dx)
 
-    gamma = dt / np.power(dx, 2)
-    alpha = 0.5 * dt / dx
-
-    x = np.arange(1, x_max+dx, dx)
-
-    A = 0.5 * np.power(sigma*x, 2) * gamma - x * ((r-delta) - dt_inv) * alpha
-    B = 1 - np.power(sigma*x, 2) * gamma - r*dt
-    C = 0.5 * np.power(sigma*x, 2) * gamma + x * ((r-delta) - dt_inv) * alpha
-
-    V = np.zeros_like(x)
-    S_bar = option.K
-    for _ in np.arange(0, option.T, dt):
-        D = 0.5*x*dx_inv
-        D[1:-1] *= (V[2:]-V[:-2]) * (1/S_bar)
-
-        S_bar = option.K - (A[1]*V[0] + B[1]*V[1] + C[1]*V[2])
-        S_bar /= D[1] + 1 + dx
-
-        V[2:-1] = A[2:-1]*V[1:-2] + B[2:-1] * \
-            V[2:-1] + C[2:-1]*V[3:] + D[2:-1]*S_bar
-        V[0] = option.K - S_bar
-        V[1] = option.K - (1+dx)*S_bar
+    A = 0.5*lambd*np.power(sigma, 2) - 0.5*lambd*((r-delta)-np.power(sigma,2))*dx
+    B = 1 - np.power(sigma, 2) * lambd - r*dt
+    C = 0.5*lambd*np.power(sigma, 2) + 0.5*lambd*((r-delta)-np.power(sigma,2))*dx
+    alpha = 1 + r*np.power(dx/sigma, 2)
+    beta = 1 + dx + 0.5*np.power(dx, 2)
     
-    S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
-    C_region =  S_bar * x
-    P = option.payoff(S_region)
-    V_interp = interpolate.interp1d(
-        np.concatenate([S_region, C_region]), 
-        np.concatenate([P, V]), 
-        kind='cubic'
-    )
-    return V_interp, S_bar
+    p = np.zeros_like(x)
+    S_bar = 1
+    for _ in np.arange(0, option.T, dt):
+        d = alpha - (A*p[0] + B*p[1] + C*p[2] - 0.5*(p[2]-p[0])/dx)
+        d /= 0.5*(p[2]-p[0])/dx + beta*S_bar
+        
+        a = A - (d*S_bar - S_bar)/(2*dx*S_bar)
+        c = C + (d*S_bar - S_bar)/(2*dx*S_bar)
+
+        S_bar = d*S_bar
+        p[2:-1] = a*p[1:-2] + B*p[2:-1] + c*p[3:]
+        p[0] = 1 - S_bar
+        p[1] = alpha - beta*S_bar
+
+    C = S_bar * np.exp(x)
+    S = np.linspace(-1, S_bar, num=200, endpoint=False)
+    V = np.concatenate([option.payoff(S), option.K*p])
+    V_inter = interpolate.interp1d(np.concatenate([S,C]), V, kind='cubic')
+
+    return V_inter, option.K*S_bar
 
 
 def solve_implicitly(
@@ -142,28 +136,23 @@ def solve_implicitly(
     starting_time = datetime.datetime.now()
     print("Start time:", starting_time)
     S_bar = option.K
-    V = np.zeros_like(x)
+    v = np.zeros_like(x)
 
     for _ in np.arange(0, option.T, dt):
-        *V[2:-1], S_bar = solve(
-            F=lambda y: F(y, np.copy(V[:]), S_bar),
-            J=lambda y: J(y, np.copy(V[:]), S_bar),
-            x0=np.concatenate([V[2:-1], [S_bar]]),
+        *v[2:-1], S_bar = solve(
+            F=lambda y: F(y, np.copy(v[:]), S_bar),
+            J=lambda y: J(y, np.copy(v[:]), S_bar),
+            x0=np.concatenate([v[2:-1], [S_bar]]),
             epsilon=1e-10,
             max_iterations=100
         )
-        V[0] = option.K - S_bar
-        V[1] = option.K - (1+dx)*S_bar
+        v[0] = option.K - S_bar
+        v[1] = option.K - (1+dx)*S_bar
 
     end = datetime.datetime.now()
     print("Final time:", end)
     
-    S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
-    C_region =  S_bar * x
-    P = option.payoff(S_region)
-    V_interp = interpolate.interp1d(
-        np.concatenate([S_region, C_region]), 
-        np.concatenate([P, V]), 
-        kind='cubic'
-    )
-    return V_interp, S_bar
+    S = S_bar * np.arange(0, x_max+dx, step=dx)
+    V = np.concatenate([option.K - S[S < S_bar], v])
+
+    return S, V, S_bar
