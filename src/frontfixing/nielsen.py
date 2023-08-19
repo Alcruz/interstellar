@@ -7,7 +7,6 @@ from scipy.sparse import diags
 from scipy.optimize import root
 
 from option import AmericanOption
-from utils import solve
 
 
 def solve_explicitly(
@@ -29,22 +28,19 @@ def solve_explicitly(
         dx (float): Grid resolution in the spatial direction.
         dt (float): Grid resolution in the time direction.
     """
-    dx_inv = np.round(1/dx)
-    dt_inv = np.round(1/dt)  # round to the nearest integer
-
     gamma = dt / np.power(dx, 2)
     alpha = 0.5 * dt / dx
 
     x = np.arange(1, x_max+dx, dx)
 
-    A = 0.5 * np.power(sigma*x, 2) * gamma - x * ((r-delta) - dt_inv) * alpha
+    A = 0.5 * np.power(sigma*x, 2) * gamma - x * ((r-delta) - (1/dt)) * alpha
     B = 1 - np.power(sigma*x, 2) * gamma - r*dt
-    C = 0.5 * np.power(sigma*x, 2) * gamma + x * ((r-delta) - dt_inv) * alpha
+    C = 0.5 * np.power(sigma*x, 2) * gamma + x * ((r-delta) - (1/dt)) * alpha
 
     V = np.zeros_like(x)
     S_bar = option.K
     for _ in np.arange(0, option.T, dt):
-        D = 0.5*x*dx_inv
+        D = 0.5*x*(1/dx)
         D[1:-1] *= (V[2:]-V[:-2]) * (1/S_bar)
 
         S_bar = option.K - (A[1]*V[0] + B[1]*V[1] + C[1]*V[2])
@@ -85,12 +81,10 @@ def solve_implicitly(
         N (float): Grid resolution in the spatial direction.
         M (float): Grid resolution in the time direction.
     """
-
-    dx_inv = np.round(1/dt)
     lambd = dt/np.power(dx, 2)
     kappa = dt/dx
-
-    x = np.arange(1, 2+dx, dx)
+    
+    x = np.arange(1, x_max+dx, dx)
     M = x.size
 
     alpha = 1 + lambd*np.power(sigma*x, 2) + r*dt
@@ -118,8 +112,8 @@ def solve_implicitly(
         _beta = beta(s)
         _gamma = gamma(s)
 
-        dgamma_ds = - 0.5 * dx_inv * x * S_bar / s**2
-        dbeta_ds = 0.5 * dx_inv * x * S_bar / s**2
+        dgamma_ds = - 0.5 * (1/dx) * x * S_bar / s**2
+        dbeta_ds = 0.5 * (1/dx) * x * S_bar / s**2
 
         retVal = diags([_beta[3:-1], alpha[2:-1], _gamma[1:-1]],
                        [-2, -1, 0], shape=(M-2, M-2)).toarray()
@@ -145,25 +139,23 @@ def solve_implicitly(
     V = np.zeros_like(x)
 
     for _ in np.arange(0, option.T, dt):
-        *V[2:-1], S_bar = solve(
-            F=lambda y: F(y, np.copy(V[:]), S_bar),
-            J=lambda y: J(y, np.copy(V[:]), S_bar),
+        *V[2:-1], S_bar = root(
+            lambda y: F(y, np.copy(V[:]), S_bar),
+            jac=lambda y: J(y, np.copy(V[:]), S_bar),
             x0=np.concatenate([V[2:-1], [S_bar]]),
-            epsilon=1e-10,
-            max_iterations=100
-        )
+        )['x']
         V[0] = option.K - S_bar
         V[1] = option.K - (1+dx)*S_bar
 
     end = datetime.datetime.now()
     print("Final time:", end)
     
-    S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
-    C_region =  S_bar * x
-    P = option.payoff(S_region)
-    V_interp = interpolate.interp1d(
-        np.concatenate([S_region, C_region]), 
-        np.concatenate([P, V]), 
-        kind='cubic'
-    )
-    return V_interp, S_bar
+    # S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
+    # C_region =  S_bar * x
+    # P = option.payoff(S_region)
+    # V_interp = interpolate.interp1d(
+    #     np.concatenate([S_region, C_region]), 
+    #     np.concatenate([P, V]), 
+    #     kind='cubic'
+    # )
+    return V, S_bar

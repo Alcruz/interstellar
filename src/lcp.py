@@ -7,10 +7,12 @@ def solve(option: AmericanOption,
         sigma: float, 
         dx: float, 
         dt: float,
-        x_min = -1.,
-        x_max = 2.,
+        x_min = -3.,
+        x_max = 3.,
         theta = 0., 
-        delta=0.):
+        delta=0.,
+        wR = 1,
+        eps = 1e-24):
     x_axis = np.arange(x_min, x_max + dx, step=dx)
     t_axis = np.arange(0, option.T+dt, step=dt)
     tao_axis = 0.5*np.power(sigma,2)*t_axis
@@ -48,8 +50,6 @@ def solve(option: AmericanOption,
         b[-2] = w[-2] + lambd*(1-theta)*(g[-1, i]-2*w[-2] + w[-3]) + alpha*g[-1, i+1]
 
         v = np.maximum(w, g[:, i+1])
-        eps = 1e-5
-        wR = 1
         while True:
             v_new[0] = v_new[-1] = 0
             for j in range(1, v.size - 1):

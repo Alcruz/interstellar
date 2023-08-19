@@ -1,12 +1,13 @@
 import numpy as np
+from scipy import stats
 
-def black_scholes(S, T, K, r, sigma, option_type, d = 0):
+def black_scholes(S, T, K, r, sigma, option_type='put', d = 0):
     d1 = (np.log(S / K) + (r - d + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
-    if option_type == "call":
-        return S * np.exp(-d*T) * np.norm.cdf(d1) - K * np.exp(-r * T) * np.norm.cdf(d2)
+    if option_type == 'call':
+        return S * np.exp(-d*T) * stats.norm.cdf(d1) - K * np.exp(-r * T) * stats.norm.cdf(d2)
     else:  # option_type == "put"
-        return K * np.exp(-r * T) * np.norm.cdf(-d2) - S * np.exp(-d*T) * np.norm.cdf(-d1)
+        return K * np.exp(-r * T) * stats.norm.cdf(-d2) - S * np.exp(-d*T) * stats.norm.cdf(-d1)
 
 
 def solve(F, J, x0, epsilon=1e-6, max_iterations=100):
