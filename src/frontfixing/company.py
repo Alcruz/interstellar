@@ -6,11 +6,11 @@ from scipy import interpolate
 from scipy.sparse import diags
 from scipy.optimize import root
 
-from option import AmericanOption
+from option import Option
 from utils import solve
 
 def solve_explicitly(
-    option: AmericanOption,  # the option
+    option: Option,  # the option
     r: float,  # risk-free interest rate
     sigma: float,  # sigma price volatitliy
     x_max: float,  # sufficiently large value for x
@@ -29,39 +29,35 @@ def solve_explicitly(
         dt (float): Grid resolution in the time direction.
     """
     lambd = dt / np.power(dx,2)
-    print(lambd)
     x = np.arange(0, x_max+dx, dx)
 
     A = 0.5*lambd*np.power(sigma, 2) - 0.5*lambd*((r-delta)-np.power(sigma,2))*dx
     B = 1 - np.power(sigma, 2) * lambd - r*dt
     C = 0.5*lambd*np.power(sigma, 2) + 0.5*lambd*((r-delta)-np.power(sigma,2))*dx
+
     alpha = 1 + r*np.power(dx/sigma, 2)
     beta = 1 + dx + 0.5*np.power(dx, 2)
     
     p = np.zeros_like(x)
     S_bar = 1
     for _ in np.arange(0, option.T, dt):
-        d = alpha - (A*p[0] + B*p[1] + C*p[2] - 0.5*(p[2]-p[0])/dx)
-        d /= 0.5*(p[2]-p[0])/dx + beta*S_bar
+        d = alpha - (A*p[0] + B*p[1] + C*p[2] - (p[2]-p[0])/(2*dx))
+        d /= (p[2]-p[0])/(2*dx) + beta*S_bar
         
-        a = A - (d*S_bar - S_bar)/(2*dx*S_bar)
-        c = C + (d*S_bar - S_bar)/(2*dx*S_bar)
+        S_bar_new = d*S_bar
+        a = A - (S_bar_new - S_bar)/(2*dx*S_bar)
+        c = C + (S_bar_new- S_bar)/(2*dx*S_bar)
 
-        S_bar = d*S_bar
+        S_bar = S_bar_new
         p[2:-1] = a*p[1:-2] + B*p[2:-1] + c*p[3:]
         p[0] = 1 - S_bar
         p[1] = alpha - beta*S_bar
 
-    C = S_bar * np.exp(x)
-    S = np.linspace(-1, S_bar, num=200, endpoint=False)
-    V = np.concatenate([option.payoff(S), option.K*p])
-    V_inter = interpolate.interp1d(np.concatenate([S,C]), V, kind='cubic')
-
-    return V_inter, option.K*S_bar
-
+    S = S_bar * np.exp(x)
+    return S, p, S_bar
 
 def solve_implicitly(
-    option: AmericanOption,  # the option
+    option: Option,  # the option
     r: float,  # risk-free interest rate
     sigma: float,  # sigma price volatitliy
     x_max: float,  # sufficiently large value for x
@@ -136,23 +132,21 @@ def solve_implicitly(
     starting_time = datetime.datetime.now()
     print("Start time:", starting_time)
     S_bar = option.K
-    v = np.zeros_like(x)
+    V = np.zeros_like(x)
 
     for _ in np.arange(0, option.T, dt):
-        *v[2:-1], S_bar = solve(
-            F=lambda y: F(y, np.copy(v[:]), S_bar),
-            J=lambda y: J(y, np.copy(v[:]), S_bar),
-            x0=np.concatenate([v[2:-1], [S_bar]]),
+        *V[2:-1], S_bar = solve(
+            F=lambda y: F(y, np.copy(V[:]), S_bar),
+            J=lambda y: J(y, np.copy(V[:]), S_bar),
+            x0=np.concatenate([V[2:-1], [S_bar]]),
             epsilon=1e-10,
             max_iterations=100
         )
-        v[0] = option.K - S_bar
-        v[1] = option.K - (1+dx)*S_bar
+        V[0] = option.K - S_bar
+        V[1] = option.K - (1+dx)*S_bar
 
     end = datetime.datetime.now()
     print("Final time:", end)
     
     S = S_bar * np.arange(0, x_max+dx, step=dx)
-    V = np.concatenate([option.K - S[S < S_bar], v])
-
     return S, V, S_bar
