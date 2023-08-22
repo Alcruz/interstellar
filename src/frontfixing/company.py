@@ -24,12 +24,15 @@ class ExplicitSolver(ABC):
         self.delta = delta    
         self.lambd = self.dt / np.power(self.dx,2)
 
-        self.A = 0.5*self.lambd*np.power(self.sigma, 2) - 0.5*self.lambd*((self.r-self.delta)-np.power(self.sigma,2))*self.dx
+        self.A = np.power(self.sigma, 2)
+        self.A -= (self.r-self.delta-0.5*np.power(self.sigma,2))*self.dx
+        self.A *= self.lambd / 2
+        
         self.B = 1 - np.power(self.sigma, 2) * self.lambd - self.r*self.dt
-        self.C = 0.5*self.lambd*np.power(self.sigma, 2) + 0.5*self.lambd*((self.r-self.delta)-np.power(self.sigma,2))*self.dx
-
-        self.alpha = 1 + self.r*np.power(self.dx/self.sigma, 2)
-        self.beta = 1 + self.dx + 0.5*np.power(self.dx, 2)
+        
+        self.C = np.power(self.sigma, 2) 
+        self.C += (self.r-self.delta-0.5*np.power(self.sigma,2))*self.dx
+        self.C *= self.lambd / 2
 
     @abstractmethod
     def compute_time_iteration(self, p: np.ndarray, S_bar: float) -> float:
@@ -65,8 +68,11 @@ class CallExplicitSolver(ExplicitSolver):
         dt: float,  # grid resolution along t-axis
         delta=0  # dividends
     ):                 
-        self.x_axis = np.arange(x_min-dx, 0, dx)
+        self.x_axis = np.arange(x_min, dx, dx)
+        self.x_axis[-1] = 0
         super().__init__(r=r, sigma=sigma, dx=dx, dt=dt, delta=delta)
+        self.alpha = self.r*np.power(self.dx/self.sigma, 2) - 1
+        self.beta = 0.5*np.power(self.dx, 2) + self.dx - 1 
 
     def compute_time_iteration(self, p: np.ndarray, S_bar: float) -> float:
         d = self.alpha + (self.A*p[-3] + self.B*p[-2] + self.C*p[-1] - (p[-1]-p[-3])/(2*self.dx))
@@ -78,7 +84,7 @@ class CallExplicitSolver(ExplicitSolver):
 
         S_bar = S_bar_new
         p[1:-2] = a*p[:-3] + self.B*p[1:-2] + c*p[2:-1]
-        p[-2] = self.beta*S_bar - self.alpha 
+        p[-2] = self.alpha - self.beta*S_bar 
         p[-1] = S_bar - 1
         return S_bar_new
 
@@ -94,19 +100,20 @@ class PutExplicitSolver(ExplicitSolver):
     ):                 
         self.x_axis = np.arange(0, x_max+dx, dx)
         super().__init__(r=r, sigma=sigma, dx=dx, dt=dt, delta=delta)
+        self.alpha = 1 + self.r*np.power(self.dx/self.sigma, 2)
+        self.beta = 1 + self.dx + 0.5*np.power(self.dx, 2)
 
     def compute_time_iteration(self, p: np.ndarray, S_bar: float) -> float:
         d = self.alpha - (self.A*p[0] + self.B*p[1] + self.C*p[2] - (p[2]-p[0])/(2*self.dx))
         d /= (p[2]-p[0])/(2*self.dx) + self.beta*S_bar
-        
         S_bar_new = d*S_bar
+
         a = self.A - (S_bar_new - S_bar)/(2*self.dx*S_bar)
         c = self.C + (S_bar_new- S_bar)/(2*self.dx*S_bar)
 
-        S_bar = S_bar_new
         p[2:-1] = a*p[1:-2] + self.B*p[2:-1] + c*p[3:]
-        p[0] = 1 - S_bar
-        p[1] = self.alpha - self.beta*S_bar
+        p[1] = self.alpha - self.beta*S_bar_new
+        p[0] = 1 - S_bar_new
         return S_bar_new
 
 def solve_explicitly(
@@ -134,7 +141,7 @@ def solve_explicitly(
             return CallExplicitSolver(r, sigma, x_min, dx, dt, delta).solve(option)
         case OptionType.PUT:
             x_max = kwargs.get('x_max', 2)
-            return CallExplicitSolver(r, sigma, x_max, dx, dt, delta).solve(option)
+            return PutExplicitSolver(r, sigma, x_max, dx, dt, delta).solve(option)
 
 def solve_implicitly(
     option: Option,  # the option
