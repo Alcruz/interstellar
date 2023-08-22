@@ -2,11 +2,13 @@
 
 % loads already mathtools, graphicx,
 % but you may want to add other packages, like
-\usepackage{listings} % to include code in python see https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
-\usepackage{xcolor}
-\usepackage{biblatex}
 \usepackage{algorithm}
 \usepackage{algpseudocodex}
+\usepackage{biblatex}
+\usepackage{booktabs}
+\usepackage{listings} % to include code in python see https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+\usepackage{xcolor}
+
 \addbibresource{progress.bib}
 % other useful pagackes include booktabs, hyperref, amsthm, xcolor, todonotes, showkeys, ...
 % see https://www.overleaf.com/learn 
@@ -14,24 +16,26 @@
 % change the following to
 % to \PJA = MATH4041, \PJS = MATH4042 or \DIS = MATH4001 (for BSc and MMAth)
 % or \MSc (for all Msc dissertations)
-\PJA
+\MSc
 
 % adjust the following
-\title{Title of the report goes here\\ and it may have several lines}
+\title{Numerical solutions to the free boundary problem and the linear complementary problem 
+arisen from American options.}
 \author{Alvin Jonel De la Cruz Guerrero}
 \academicyear{2022/23}
-\supervisor{Dr. Your Supervisor}
+\supervisor{Dr. Anna Kalogirou}
 
 % the following are irrelevant for Msc:
-\assessmenttype{Review} % or Investigation
+% \assessmenttype{Dissertation} % or Investigation
 
 % the following are irrelevant for PJS, PJA, DIS:
 % Msc: change it to G14PMD and Pure Mathematics, etc ...
-\msccode{MATH4021}
-\msctitle{Statistics}
+\msccode{MATH4062}
+\msctitle{Financial and Computational Mathematics}
 
 % put your own definitions and shorthands here
 \newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\expnumber}[2]{{#1}\mathrm{e}{#2}}
 
 \parindent 0cm
 
@@ -60,6 +64,7 @@ concise and clear. The typical length is one paragraph.
 \include{chapters/chapter4/numericalresults}
 \include{chapters/chapter5/lcp}
 \include{chapters/chapter5_conclusion}
+\include{chapters/chapter3_frontfixing}
 
 \section{Conclusions} \label{sec:conclusions}
 

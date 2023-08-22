@@ -10,7 +10,7 @@
 \frame{\titlepage}
 
 \begin{frame}
-\frametitle{American options pricing problem}
+\frametitle{Introduction}
 \framesubtitle{Definitions}
 
 \begin{itemize}
@@ -28,22 +28,28 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{American options pricing problem}
-\framesubtitle{Definitions}
-
-\begin{itemize}
-    \item \textbf{Options} are classified based on the holder's \textbf{position}.
+    \frametitle{Introduction}
+    \framesubtitle{Definitions}
+    
     \begin{itemize}
-        \item \textbf{Call options} when the holder's position is to buy.
-        \item \textbf{Put options} when the holder's position is to sell.
+        \item \textbf{Options} are contracts that give \textbf{the holders} the right to buy/sell an \textbf{underlying asset} at a pre-established at some point in the future before or at the expiration date.
+        
+        \item The \textbf{strike} price is the pre-established price at which the holder will buy/sell the \textbf{option}.
+    
+        \item The \textbf{maturity} date is the expiration date of the contract.
+    
+        \item \textbf{Exercising} the option refers to the act of buying/selling the underlying asset.
+    
+        \item The \textbf{premium} is the money charged by the writer to the holder for entering the contract.
     \end{itemize}
     
-    \item \textbf{Options} are also classified based on their \textbf{exercise style}.
-    \begin{itemize}
-        \item \textbf{European options} when the holders can only exercise the option \textbf{at} the maturity date. 
-        \item \textbf{American options} when the holders can exercise the option at any time \textbf{before and at} the maturity date. 
-    \end{itemize}
-\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{American options pricing problem}
+\framesubtitle{Definitions}
+\centering
+\includegraphics[width=.9\textwidth]{images/Call_Option}
 
 \end{frame}
 
@@ -127,12 +133,7 @@
     \frametitle{American options pricing problem}
     \framesubtitle{Free boundary problem}
 
-    \begin{equation}
-        \begin{cases}
-            \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2{V}}{\partial{S^2}} + (r-\delta)\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
-            V(S, t) = H(S, t) & \text{for $(S, t) \in \partial{\mathcal{C}}$}
-        \end{cases}
-    \end{equation}
+
 \end{frame}
 
 \end{document}

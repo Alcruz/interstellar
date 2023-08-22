@@ -1,1 +1,21 @@
 \section{Numerical results}
+
+\subsection{Testing}
+
+To
+
+\subsection{Convergence Analysis}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[H]
+    \begin{tabular}{@{}lllllll@{}}
+    \toprule
+    Asset value & 0.125  & 0.0625  & 3.125e-2 & 1.5625e-2  & 7.812e-3  & True value     \\ \midrule
+    90          & 11.102891 & 11.585003 & 11.666996 & 11.690004 & 11.695703 & 11.6974    \\
+    100         & 6.693394  & 6.863127  & 6.915119  & 6.928041  & 6.931177  & 6.9320     \\
+    110         & 3.983953  & 4.116267  & 4.146001  & 4.152923  & 4.154515  & 4.1550     \\
+    120         & 2.421640  & 2.490109  & 2.506015  & 2.509375  & 2.510070  & 2.5102     \\ \bottomrule
+    \end{tabular}
+\caption{Convergence in space for fixed time step $\Delta{t} = \expnumber{1}{-6}$ for the problem with parameters}
+\end{table}
