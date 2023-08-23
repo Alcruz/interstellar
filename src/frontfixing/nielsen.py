@@ -169,18 +169,12 @@ class ImplicitSolver(Solver):
             N (float): Grid resolution in the spatial direction.
             M (float): Grid resolution in the time direction.
         """
-        starting_time = datetime.datetime.now()
-        print("Start time:", starting_time)
-
         S_bar = self.option.K
         V = np.zeros_like(self.x_axis)
 
         for _ in np.arange(0, self.option.T, self.dt):
             S_bar = self.solve_non_linear_system(V, S_bar)
 
-        end = datetime.datetime.now()
-        print("Final time:", end)
-        
         # S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
         # C_region =  S_bar * x
         # P = option.payoff(S_region)
@@ -260,10 +254,16 @@ class PutOptionImplicitSolver(ImplicitSolver):
         dx: float,  # grid resolution along x-axis
         dt: float,  # grid resolution along t-axis
         delta=0, # dividends
-        x_max=2
+        x_max=2,
+        maxiter=1000,
+        tolerance=1e-24,
+        method='lm'
     ) -> None:
         self.x_axis = np.arange(1, x_max+dx, dx)
         super().__init__(option, r, sigma, dx, dt, delta)
+        self.maxiter=maxiter
+        self.tolerance=tolerance
+        self.method=method
     
     def jacobian(self, y, S_bar):
         p, s, = y[:-1], y[-1]
@@ -306,8 +306,10 @@ class PutOptionImplicitSolver(ImplicitSolver):
     def solve_non_linear_system(self, V: np.ndarray, S_bar: np.ndarray):
         *V[2:-1], S_bar = root(
             lambda y: self.system(y, np.copy(V[:]), S_bar),
-            jac=lambda y: self.jacobian(y, S_bar),
-            x0=np.concatenate([V[2:-1], [S_bar]])
+            # jac=lambda y: self.jacobian(y, S_bar),
+            method=self.method,
+            x0=np.concatenate([V[2:-1], [S_bar]]),
+            options=dict(xtol=self.tolerance, maxiter=self.maxiter)
         )['x']
         V[0] = self.option.payoff(S_bar)
         V[1] = self.option.payoff((1+self.dx)*S_bar)    
@@ -335,7 +337,10 @@ def solve_implicitly(
     dx: float,  # grid resolution along x-axis
     dt: float,  # grid resolution along t-axis
     delta=0.,  # dividends
-    x_max = 2.
+    x_max = 2.,
+    maxiter=1000,
+    tolerance=1e-24,
+    method='lm'
 ):
 
     """Solve front-fixing method explicitly.
@@ -352,4 +357,4 @@ def solve_implicitly(
         case OptionType.CALL:
             return CallOptionImplicitSolver(option, r, sigma, dx, dt, delta=delta).solve()
         case OptionType.PUT:
-            return PutOptionImplicitSolver(option, r, sigma, dx, dt, delta,x_max).solve()
+            return PutOptionImplicitSolver(option, r, sigma, dx, dt, delta,x_max, maxiter, tolerance, method).solve()
