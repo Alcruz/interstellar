@@ -8,6 +8,12 @@
 \usepackage{booktabs}
 \usepackage{listings} % to include code in python see https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
 \usepackage{xcolor}
+\usepackage{float}
+\usepackage{aliascnt}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
 
 \addbibresource{progress.bib}
 % other useful pagackes include booktabs, hyperref, amsthm, xcolor, todonotes, showkeys, ...
@@ -36,6 +42,21 @@ arisen from American options.}
 % put your own definitions and shorthands here
 \newcommand{\ZZ}{\mathbb{Z}}
 \newcommand{\expnumber}[2]{{#1}\mathrm{e}{#2}}
+
+\newaliascnt{eqfloat}{equation}
+\newfloat{eqfloat}{h}{eqflts}
+\floatname{eqfloat}{Equation}
+
+\newcommand*{\ORGeqfloat}{}
+\let\ORGeqfloat\eqfloat
+\def\eqfloat{%
+  \let\ORIGINALcaption\caption
+  \def\caption{%
+    \addtocounter{equation}{-1}%
+    \ORIGINALcaption
+  }%
+  \ORGeqfloat
+}
 
 \parindent 0cm
 

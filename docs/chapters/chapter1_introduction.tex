@@ -29,12 +29,13 @@ to price European options, he stated that, in general, a closed-from solution
 was not attainable for American options. In 1977, Schwartz \cite*{schwartz_197779}
 and \cite{brennan_1997} proposed using finite difference schemes 
 to solve the price problem for American options. The work of Merton and Schwartz
-served as foundation of the free boundary pricing problem of the American options.
+served as foundation for the free boundary problem for American options pricing.
 Based on the work of Landau \cite*{landau_1950_heat_ci}, 
 Wu et al. \cite{wu1997front} formulated the front fixing mention as an approach 
-to solve the free boundary problem for options. Since, multiple transformation has 
+to solve the free boundary problem for options in which the Landau transformation
+is used to transform the moving boundary to fixed boundary. Since, multiple transformation has 
 been proposed by Huang et al. \cite*{huang_2000}, Nielsen et al. \cite*{nielsen_2001},
-and Company et al. \cite*{company_egorova_jodar_2014}. During the same period 
+and Company et al. \cite*{company_egorova_jodar_2014}. During the same period, 
 Dewynne et al. \cite*{dewynne_howison_rupf_wilmott_1993} proposed the linear 
 complementary formulation of the pricing problem and introduced the PSOR method.
 
@@ -54,7 +55,6 @@ formulation for the pricing problem proposed in \cite*{seydel_2009} and
 \cite*{wilmott_howison_dewynne_1995}. Similarly, we consider a price model in which
 assets pay out dividends.
 
-
 \subsection{Aim} 
 
 The goal of this work is to implement the numerical methods proposed by 
@@ -64,7 +64,6 @@ that pay out with dividends. Additionally, we compare how well these methods app
 the price using as a reference the binomial model which is a widely used method 
 for pricing American options in the industry. Finally, we explore the 
 trade-off in terms of CPU time and memory, and do convergence analysis for each method.
-
 
 \subsection{Testing methodology}
 
