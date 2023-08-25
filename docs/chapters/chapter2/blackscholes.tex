@@ -1,430 +1,344 @@
-
-\section{Black-Scholes equation} \label{sec:blackscholes}
+\section{Black-Scholes model} \label{sec:blackscholes}
 
 \subsection{Preliminaries}
 
-A common problem in finance is pricing financial derivatives, often referred to 
-simply as derivatives. In essence, derivatives are contracts set between parties 
-whose value over time derives from the price of their underlying assets. A 
-notorious family of derivatives in financial markets are "options". Options are 
-contracts set between two parties in which the holder has the right to sell or 
-buy, commonly referred to as exercising, an underlying asset at a 
-pre-established price, also known as the "strike price", in the future. Options 
-are referred to as "call options" or "put options" if the exercise position is 
-to buy or to sell, respectively. Similarly, options are classified depending on 
-their exercise style. In that regard, the simplest options are European options. 
-European options give the right to exercise on the expiration date of the contract. 
-Another well-known type of option is the American option. American options work 
-similarly to European options, with the difference that they can be exercised at
-any point in time between the beginning and the expiration date of the contract.
+A common problem in finance is pricing financial derivatives, often referred to simply as derivatives. In essence, derivatives are contracts set between parties whose value over time derives from the price of their underlying assets. A notorious family of derivatives in financial markets are "options". Options are contracts set between two parties in which the holder has the right to sell or buy, commonly referred to as exercising, an underlying asset at a pre-established price, also known as the "strike price", in the future. Options are referred to as "call options" or "put options" if the exercise position is to buy or to sell, respectively. Similarly, options are classified depending on their exercise style. In that regard, the simplest options are European options. European options give the right to exercise at the expiration date of the contract. Another well-known type of option is the American option. American options work similarly to European options, with the difference that they can be exercised at any point in time between the beginning and the expiration date of the contract. Obviously, American and European options are almost similar, and they only differ in at the times which the holder can exercise them. Therefore, we will start describing the pricing problem from the European options perspective and extended to the case of American options.
 
-Let's define the payoff as
-
-\begin{subequations} \label{eq:blackscholes:preliminaries:payoff_function}
-\begin{equation}
-H(S, t) = \max(S - K, 0)
-\end{equation}
-\begin{equation}
-H(S, t) = \max(K - S, 0)
-\end{equation}
+Let us define the payoff function of European option as
+\begin{subequations}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad H_{\text{Eur}}(S) = \max(S - K, 0) \\
+    \text{\textbf{Put:}} \qquad H_{\text{Eur}}(S) = \max(K - S, 0)
+  \end{align}
+  \label{eq:blackscholes:preliminaries:european_put_payoff}
 \end{subequations}
+where $K$ is the strike price and remains constant through lifespan of the option,
+$S \in [0, \infty]$ is the asset price at the maturity date. We can extend the European payoff to American options by introducing
+the time axis to equation above.
+\begin{subequations}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad H(S, t) = \max(S - K, 0) \\
+    \text{\textbf{Put:}} \qquad H(S,t) = \max(K - S, 0)
+  \end{align}
+  \label{eq:blackscholes:preliminaries:american_put_payoff}
+\end{subequations}
+The interval $[0, T]$ represent the lifespan of option where $T$ is the elapsed time, in years, since the starting and expiration date of the contract. For example, $T=1$ indicates that the contract expires one year after starting date. Moreover, $t\in[0, T]$ is the elapsed time, in years, since the starting date of the contract. While the payoff of European options is defined only at $t=T$, American option's payoff is defined for all $(S, t) \in [0, \infty]\times[0, T]$.
 
-where $K$ is the strike price, $S \in [0, \infty]$ is the asset price, and
-$t \in [0, T]$ is the current time. Note that $t$ is measured in years, where 
-$t=0$ and $t=T$ denote the beginning of the contract and the expiration date, 
-respectively, and the interval $[0, T]$ represents the lifespan of the option. 
-While an American option's payoff is defined for all $(S, t)$, a European 
-option's payoff is only defined at $t=T$.
-
-Obviously, options provide greater flexibility to holders by eliminating their 
-exposure to negative payoffs. This is why the writers charge a premium to the holders
-at the time they enter the contract. The premium is often referred to as the price 
-or value of the option, and the problem of determining 
-this value is called option pricing. When pricing options, it is crucial to find
-the fair price; otherwise, the writer or holder of the option could devise a 
-scheme in which the option will always be profitable for them. In other words,
-options pricing must adhere to the principle of no-arbitrage. Therefore, we 
-assume that the writer of the option uses the premium to construct a portfolio 
-consisting of $\phi_0$ units of the asset and invests $\psi_0$ units of cash in 
-a risk-free asset, such as US Treasury bills, certificates of deposit, or a bank 
-account. Then, the writer rebalances the portfolio $(\phi_0, \psi_0)$ to hedge 
-against any potential claims from the holder of the option at any future time 
-$0 < t \le T$. Consequently, at any time $t$, the writer holds a portfolio 
-$(\phi_t, \psi_t)$ with a value
-
-\begin{equation}
+Options provide greater flexibility to holders by eliminating their exposure to negative payoffs. Therefore, writers charge premiums to the holders to acquire the contract. The premium is often referred to as the price or value of the option, and the problem of determining this value is called option pricing. Let $V_t$ represent the value of the option at time $t$. For instance, $V_0$ represents the value of the option at the beginning of the contract. When pricing options, it is crucial to find the fair price; otherwise, the writer or holder of the option could devise a scheme in which the option will always be profitable for them. In other words, options pricing must adhere to the principle of no-arbitrage. Therefore, we assume that the writer of the option uses the premium to construct a portfolio consisting of $\phi_0$ units of the asset and invests $\psi_0$ units of cash in a risk-free asset $B_t$, such as a US Treasury bills, certificates of deposit, or a bank account. Then, the writer rebalances the portfolio $(\phi_0, \psi_0)$ to hedge against any potential claims from the holder at any future time $0 < t \le T$. Consequently, at any time $t$, the writer holds a portfolio $(\phi_t, \psi_t)$ with a value
+\begin{equation*}
   \Pi_t = \phi_t S_t + \psi_t B_t
-\end{equation}
-
+\end{equation*}
 Moreover, the portfolio is self-financing. In other words, the changes in
-portfolio depend on the changes in $S_t$ and $B_t$, 
+portfolio depend on the changes in $S_t$ and $B_t$,
 and the rebalancing of portfolio $(\phi_t, \psi_t)$
-
 \begin{align*}
-  & d\Pi_t = \phi_tdS_t + \psi_t dB_t \\
-  & S_t d\phi_t + B_t d\psi_t = 0
+   & d\Pi_t = \phi_tdS_t + \psi_t dB_t \\
+   & S_t d\phi_t + B_t d\psi_t = 0
 \end{align*}
-
 Finally, the portfolio value matches the option value
-
-\begin{equation}
+\begin{equation*}
   \Pi_t = V_t
-\end{equation}
-
-at any time $0 \le t \le T$. Using the self-financing portfolio hedging 
-strategy, The Black-Scholes model presents a mathematical model for the dynamics of an option's price. 
-The model makes certain assumptions about the market. A complete list of all the
-assumptions can be found in \cite{seydel_2009} and \cite{wilmott_howison_dewynne_1995}. 
-In the next part, we enumerate some them. 
-First, the 
-asset price $S_t$ is distributed as a log-normally,
-
-{
-\color{red}
+\end{equation*}
+at any time $0 \le t \le T$. Using the self-financing portfolio hedging strategy, The Black-Scholes model presents a mathematical model for the dynamics of an option's price. The model makes certain assumptions about the market. A complete list of all the assumptions can be found in \cite{merton_1973} and \cite{wilmott_howison_dewynne_1995}. In the next part, we enumerate some them. Firstly, the asset price $S_t$ is distributed as a log-normally
 \begin{equation}
   S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
+  \label{eq:blackscholes:preliminaries:asset_price}
 \end{equation}
-}
-
-where the risk-free interest $r(t)$ and the price volatility $\sigma(t)$ are 
-deterministic functions of time during the life of the option. Secondly, the 
-bank account $B(t)$ is a deterministic function
-
-\begin{equation}
+where the risk-free interest rate $r(t)$ and the price volatility $\sigma(t)$ are deterministic functions of time during the life of the option. Secondly, the bank account $B(t)$ is a deterministic function
+\begin{equation*}
   dB = r(t)B(t)dt
-\end{equation}
-
-Finally, the asset does not pay dividends. Additionally, we will assume that 
-the risk-free interest rate and asset price volatility are constant during the 
+\end{equation*}
+Finally, the asset does not pay dividends. Additionally, we will assume that
+the risk-free interest rate and asset price volatility are constant during the
 life of the option. Later on, we will address the assumption about dividends.
 
-By applying the Black-Scholes model to price European options, the famous Black-Scholes 
-PDE is obtained
+By applying the Black-Scholes model to price European options, the famous
+Black-Scholes PDE is obtained
 
-\begin{equation}
+\begin{equation*}
   \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + r S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
-    V(S, T) = H(S, T) & \text{for $S\in[0, \infty)$}
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + r S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\ V(S, T) =
+    H(S, T) & \text{for $S\in[0, \infty)$}
   \end{cases}
   \label{eq:blackscholes:preliminaries:european_option_pde}
+\end{equation*}
+
+where $V(S, t)$ is a deterministic function. A derivation of the Black-Scholes PDE for European options can be found in \cite{merton_1973} and \cite{wilmott_howison_dewynne_1995}. We previously mentioned that Black-Scholes model assumes that the underlying asset does not pay dividends. In most cases, assets such as stocks pay out dividends just a few times at year. In this case, dividends are to be modelled discretely. However, there are certain assets that pay out a proportion of the current price during and interval of time. For instance, indexes such as the SPX. Thus, in such cases, it is useful to model dividends as a continuous yield. \cite{wilmott_howison_dewynne_1995} shows a slight adjusted asset price model that includes continuous yield dividends
+\begin{equation}
+  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \delta(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
+  \label{eq:blackscholes:preliminaries:dividends_asset_price}
 \end{equation}
-
-where $V(S, t)$ is a deterministic function. A derivation of
-\eqref{eq:blackscholes:preliminaries:european_option_pde} can be found in \cite{seydel_2009}
-and \cite{wilmott_howison_dewynne_1995}.
-
-We previously mention that the one of the assumptions of the Black-Scholes model is
-that the underlying asset does not pay dividends. In most cases, assets such as stocks
-pay out dividends just a few times at year. In this case, dividends are to be 
-modelled discretely. However, there are certain assets that pay out a proportion
-of the current price during and interval of time. Thus, in such cases, it is
-useful to model dividends as a continuous yield. \cite{wilmott_howison_dewynne_1995}
-shows as reasonable model of the asset price with volatility $\sigma(t)$, 
-rate of return $r(t)$, and continuous dividend yield $\delta(S,t)$ paid at instant
-of time $dt$ is modeled as
-\begin{align}
-  dS = (r(t) - \delta(S, t))Sdt + \sigma(t) S dW
-  \label{eq:blackscholes:preliminaries:bs_price_model_with_dividends}
-\end{align}
-
-Similarly to
-as we did for the risk-free interest rate and the volatility of the asset price,
-we will assume that continuous dividends yield is as constant from now on.
-In \cite{wilmott_howison_dewynne_1995}, it is shown by applying the Black-Scholes 
-model under \eqref{eq:blackscholes:preliminaries:bs_price_model_with_dividends} 
-to price European options, the slightly modified version of \eqref{eq:blackscholes:preliminaries:european_option_pde}
-is obtained
-
+Note that when the asset does not pay out dividends $\delta(t) = 0$, the asset price model will be exactly as in \eqref{eq:blackscholes:preliminaries:asset_price}. Similarly to as we did for the risk-free interest rate and the volatility of the asset price, we will assume that continuous dividends yield is as constant from now on. As a consequence of
+the asset price mode \eqref{eq:blackscholes:preliminaries:dividends_asset_price}, the Black-Scholes PDE changes to 
 \begin{equation}
   \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\
-    V(S, T) = H(S, T) & \text{for $S\in[0, \infty)$}
+    \dfrac{\partial{V}}{\partial{t}} + \mathcal{L}V = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\ 
+    V(S, T) = H(S,T) & \text{for $S\in[0, \infty)$}
   \end{cases}
   \label{eq:chapter2:european_option_pde_with_dividens}
 \end{equation}
- 
-Similarly, the Black-Scholes model is applied to price American options.
-The work of \cite{wilmott_howison_dewynne_1995} derives some important facts 
-about the value surface of American options. Firstly, the value function is 
-bounded from below by the payoff function:
-\begin{align}
-V_{\text{Am}}(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}
-\label{eq:blackscholes:american_options_price_lower_bound}
-\end{align}
 
-Moreover, the domain of $V(S, t)$ can be separated into the exercise region, 
-where it is profitable for the holder to exercise the option,
+where $\mathcal{L}$ is the linear parabolic operator
+
 \begin{equation}
-\mathcal{S} := {(S, t) : V(S, t) = H(S, t)}
-\label{eq:blackscholes:preliminaries:exercise_region}
+  \mathcal{L}V := \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \dfrac{\partial{V}}{\partial{S}} - rV
+  \label{eq:blackscholes:preliminaries:linear_parabolic_operator}
 \end{equation}
 
-The continuation region, where it is preferable to continue holding the option 
-because exercising is not profitable:
-\begin{equation}
-\mathcal{C} := {(S, t) : V(S, t) > H(S, t)}
-\end{equation}
-
-The boundary of the continuation region, where it is most optimal for the 
-holder to exercise the option:
-\begin{equation}
-\partial \mathcal{C} := {(S, t) : S = \bar{S}(t)}
-\label{eq:blackscholes:preliminaries:continuation_region}
-\end{equation}
-
-where $\bar{S}(t)$ is the optimal exercise price. Lastly, the price dynamics of 
-American options behaves as European options within
-the continuation region. Since we know $V(S, t)$ at the stopping region, we only
-need to solve $V(S,t)$ at continuation region and determine its boundary $\partial\mathcal{C}$
-at the same time. Therefore, this is known as the free boundary problem formulation
-of the American option pricing problem and is equivalent to solve:
+Similarly, to the asset price model with dividends, the Black-Scholes PDE
+with dividends fall back to the original Black-Scholes PDE if the asset does not pay out dividends $\delta = 0$. So far, we have presented an equation that
+describes the dynamics of the value $V(S,t)$ of European options. So now, we will consider the pricing of American options. By applying the Black-Scholes model to price American options, Merton \cite*{merton_1973} derives some important facts. Firstly, the value $V(S,t)$ is bounded from below by the payoff function:
+\begin{align*}
+  V(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}
+  \label{eq:blackscholes:american_options_price_lower_bound}
+\end{align*}
+Moreover, the domain of $V(S, t)$ can be separated into the exercise region in 
+\begin{equation*}
+  \mathcal{S} := \{(S, t) : V(S, t) = H(S, t)\}
+  \label{eq:blackscholes:preliminaries:exercise_region}
+\end{equation*}
+in which it is profitable for the holder to exercise the option, the continuation region
+\begin{equation*}
+  \mathcal{C} := \{(S, t) : V(S, t) > H(S, t)\}
+\end{equation*} 
+in which it is preferable to continue holding the option because exercising is not profitable, and the optimal exercise boundary that separates the continuation region and exercise region
+\begin{equation*}
+  \partial \mathcal{C} := \{(S, t) : S = \bar{S}(t)\}
+  \label{eq:blackscholes:preliminaries:continuation_region}
+\end{equation*}
+where $\bar{S}(t)$ is the optimal exercise price. 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/AmericanCallOptionValue}
+    \caption{Call option}
+    \label{fig:blackscholes:preliminaries:american_call_value_vs_curve}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/AmericanPutOptionValue.pdf}
+    \caption{Put option}
+    \label{fig:blackscholes:preliminaries:american_put_value_vs_curve}
+  \end{subfigure}
+  \caption{Value $V(S, t)$ of American option value curve. }
+  \label{fig:blackscholes:preliminaries:american_option_value_vs_curve}
+\end{figure}
+Lastly, the price dynamics of
+American options is governed by the same Black-Scholes PDE as European options in the continuation region. Pricing American options only requires solving $V(S,t)$ at continuation region and finding the optimal exercise price that serves as a boundary of continuation region. 
 \begin{align}
   \begin{cases}
-  \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\
-  V(S, t) = H(S, t) & \text{for $(S,t)\in \partial\mathcal{C}$}
+    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $(S, t) \in \mathcal{C}$} \\ V(S, t) = H(S, t) &
+    \text{for $(S,t)\in \partial\mathcal{C}$}
   \end{cases}
   \label{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
 \end{align}
-
-at time $T$, the value of the option at exercise region will overlap with linear
-segment of the payoff function $H(S, T)$, in that case, the optimal exercise 
-$S(T)$ will be equal to the strike price $K$ payoff function. Therefore, 
-we can use this information to define the terminal conditions of 
-\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
+The problem above is also known as the free boundary formulation of the pricing problem because it requires to solve a PDE with a moving boundary. The terminal
+condition of the PDE will be given at time $T$. At the expiration date of the contract, the holder will either exercise or not the option. Therefore, the value of the option will be equal to the payoff function. Obviously, in that case, the optimal exercise price $S(T)$ will be equal to the strike price $K$. Hence,
 \begin{align}
-  V(S,T) = H(S, T) \quad \bar{S}(T) = K
+  V(S,T) = H(S, T), \qquad \bar{S}(T) = K
   \label{eq:blackscholes:preliminaries:american_options_terminal_condition}
 \end{align}
-
-Next, we need to establish boundary conditions for the system 
-\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}. 
-Generally, when pricing options, we would need two boundaries conditions 
-for option pricing. However, the free boundary problem in 
-\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}
-is expressed in terms on the moving boundary condition $\bar{S}(t)$. Therefore,
-we only need to determine one extra boundary condition. In case of 
-American put options, the left boundary condition would be given by $\bar{S}(t)$,
-and the right boundary condition by $V(S, t) = 0$ for a sufficiently large $S$. 
-Analogously, $\bar{S}(t)$ would be the right boundary condition for 
-an American call option and its left boundary condition by $V(S, t) = 0$ for $S = 0$. 
-Finally, $V(S,t)$ touches tangentially the exercise region $S$ at $(\bar{S}(t), t)$.
-Since the exercise region is a linear segment, the derivative at that point is
+Next, we need to establish boundary conditions for the system
+\eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}.
+Generally, when pricing options, we need two boundaries conditions. 
+As it can be observed in figure (\ref{fig:blackscholes:preliminaries:american_option_value_vs_curve}), for call options, the left boundary condition $V(0,t)=0$ is given at $S=0$ and the right boundary conditions $V(\bar{S}(t),t)=\bar{S}(t) - K$ is given at the optimal exercise price $\bar{S}(t)$. Analogously, for put options, the left boundary condition $V(\bar{S}(t),t)=K - \bar{S}(t)$ at $\bar{S}(t)$ and right boundary is $V(S, t)=0$ for an arbitrary large $S$. Finally, $V(S,t)$ touches the payoff $H(S,t)$ tangentially at the optimal exercise price $\bar{S}(t)$
 \begin{subequations} \label{eq:blackscholes:preliminaries:smooth_passing_condition}
-  \begin{equation}
-    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1 
-  \end{equation}
-  \begin{equation}
-    \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
-  \end{equation}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad &\dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1\\
+    \text{\textbf{Put:}} \qquad &\dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
+  \end{align}
 \end{subequations}
-
-which is called the smooth pasting condition in \cite{seydel_2009} and \cite{wilmott_howison_dewynne_1995}.
-Grouping \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}, \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}
-and \eqref{eq:blackscholes:preliminaries:smooth_passing_condition} in one equation, we obtain the system.
+which is called the smooth pasting condition and later on will help us in obtaining $\bar{S}(t)$. By grouping \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem}, \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition} and \eqref{eq:blackscholes:preliminaries:smooth_passing_condition} in one equation,
+we obtain the system
 
 \begin{subequations} \label{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full}
-\begin{equation}
-  \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $0 \le S < \bar{S}(t)$ and $0 \le t < T$} \\
-    V(S, T) = S - K \qquad \bar{S}(T) = K \\
-    V(0, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1
-  \end{cases}
-\end{equation}
-\begin{equation}
-  \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $\bar{S}(t) < S < \infty$ and $0 \le t < T$} \\
-    V(S, T) = K - S \qquad \bar{S}(T) = K \\
-    \lim_{S\rightarrow\infty}V(S, t) = 0 \quad \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
-  \end{cases}
-\end{equation}
-
+  \begin{align}
+    \text{\textbf{Call}:} \quad &
+    \begin{cases}
+      \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $S \in (0,\bar{S}(t))$ and $t \in [0, T)$} \\ 
+      V(S, T) = S - K \\
+      \bar{S}(T) = K \\ 
+      V(0, t) = 0 \\
+      \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = 1
+    \end{cases} \\
+    \text{\textbf{Put}:} \quad &
+    \begin{cases}
+      \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S}^2} + (r - \delta)S\dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $S \in (\bar{S}(t), \infty)$, and $t \in [0, T)$} \\
+      V(S, T) = K - S \\
+      \bar{S}(T) = K \\ 
+      \lim_{S\rightarrow\infty}V(S, t) = 0 \\ 
+      \dfrac{\partial{V}}{\partial{S}}(\bar{S}(t), t) = -1
+    \end{cases}
+  \end{align}
 \end{subequations}
-
 \subsection{Front-Fixing method}
-
 In the previous section, we presented the pricing of American options problem.
-By applying the Black-Scholes model, we derived the Black-Scholes PDE that describes 
-the price dynamics in the continuation region $\mathcal{C}$ of call and put options.
-Moreover, we presented the moving boundary condition $\bar{S}(t)$ for this PDE.
-The moving boundary condition $\bar{S}(t)$ makes the Black-Scholes PDE more 
-involved since we also need to determine this boundary as time changes. This type 
-of problem are known as free boundary problems. The front fixing method
-was first introduced by \cite{landau_1950_heat_ci} and is a strategy in which 
-we define a map from the original domain to new domain where moving boundary
-remains constant as time changes. In this section, we explore two transformation
-based on the work of Nielsen and others \cite{nielsen_2001}, and the work of
-Company and others \cite{company_egorova_jodar_2014}.
-
-\subsubsection{Inverse transformation} \label{sec:blackscholes:frontfixingmethod:inversetransform}
-
-This method proposes the transformation 
+By applying the Black-Scholes model, we derived the Black-Scholes PDE that
+describes the price dynamics in the continuation region $\mathcal{C}$ of call
+and put options. Moreover, we presented the moving boundary condition
+$\bar{S}(t)$ for this PDE. The moving boundary condition $\bar{S}(t)$ makes the
+Black-Scholes PDE more involved since we also need to determine this boundary
+as time changes. This type of problems are known as free boundary problems. The
+front fixing method is a strategy in which a transformation is used to map the  domain from the original problem to a new domain where moving boundary remains fixed as time changes. In this section, we explore two transformation based on the work of Nielsen et al. \cite{nielsen_2001}, and the work of Company and et al. \cite{company_egorova_jodar_2014}.
+\subsubsection{Nielsen transformation} \label{sec:blackscholes:frontfixingmethod:inversetransform}
+The Nielsen transformation suggests a really simple transformation in which
+the asset price $S$ is divided by the optimal exercise price $\bar{S}$
 \begin{equation}
-    x = \dfrac{S}{\bar{S}(t)}
-    \label{eq:blackscholes:frontfixingmethod:inversetransform}
+  x = \dfrac{S}{\bar{S}(t)}
+  \label{eq:blackscholes:frontfixingmethod:inversetransform}
 \end{equation}
-
-which maps the boundary of the continuation region $\partial C$ defined in 
-\eqref{eq:blackscholes:preliminaries:exercise_region} to the fixed boundary 
-\begin{equation}
-  \mathcal{\partial C}_x := \{(x, t): x = 1\} 
-\end{equation}
-
-which remain constant as t changes. Now, let us define the value $v(x,t)$ 
-under this new map
+Clearly, the moving boundary in the original problem will be fixed when $S=\bar{S}(t)$ at $x=1$. Now, we define $v(x,t)$ as the value function of the option but under the front fixing domain given by $x$
 \begin{equation}
   v(x, t) := V(S, t)
   \label{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
 \end{equation}
+Moreover, we want to understand how this transformation affects the Black-Scholes PDE, the boundary, terminal and contact point conditions given in equation in \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full}.
 
-which fixes the moving boundary $\bar{S}(t)$ at $x=1$ when $S(t)$. Next, we compute
-the partial derivatives of $V$ with respect of the partial derivatives of $v$ which
-will allow us to rewrite the PDE in \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full} 
-with respect of \eqref{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
-
-\begin{align*}
-  \dfrac{\partial{x}}{\partial{S}} &= \dfrac{1}{\bar{S}(t)} \\\\
-  \dfrac{\partial{x}}{\partial{t}} &= -x\dfrac{\bar{S}'(t)}{\bar{S}(t)} \\\\
-  \dfrac{\partial{V}}{\partial{S}} &= \dfrac{\partial{v}}{\partial{x}}\dfrac{\partial{x}}{\partial{S}} = \dfrac{1}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}} \\\\
-  \dfrac{\partial^2{V}}{\partial{S^2}} &= \dfrac{1}{\bar{S}(t)} \dfrac{\partial{x}}{\partial{S}} \dfrac{\partial^2{v}}{\partial{x^2}} = \dfrac{1}{\bar{S}(t)^2} \dfrac{\partial^2{v}}{\partial{x}^2} \\\\
-  \dfrac{\partial{V}}{\partial{t}} &=  \dfrac{\partial{v}}{\partial{t}} + \dfrac{\partial{v}}{\partial{x}} \dfrac{\partial{x}}{\partial{t}} = \dfrac{\partial{v}}{\partial{t}} - x\dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\dfrac{\partial{v}}{\partial{x}}
-\end{align*}
-
-Substituting these partial derivatives in the Black-Scholes PDE given by \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full},
-we obtain the non-linear PDE
+Firstly, we start with the Black-Scholes PDE which is defined at the interval 
+$S\in(0, \bar{S}(t))$ for call options or the open interval $S\in(\bar{S}(t), \infty)$ for put options. Under the front fixing domain, the transformed PDE will be defined in the interval $x\in(0, 1)$ for call and $x\in(1, \infty)$ for put. Moreover, we apply the chain rule to rewrite the Black-Scholes PDE in terms of $v$, so that, the new PDE is given as
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:american_options_pde}
-  \begin{align}  
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x \in [0, 1)$ and $t \in [0, T)$}\\
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x > 1$ and $t \in (0, T]$}
-  \end{align}  
-\end{subequations}
-
-Likewise, we rewrite the terminal condition as
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}
-  \begin{equation}
-    v(x, T) = \max(x\bar{S}(T) - K) = K \max(x - 1, 0) = 0
-  \end{equation}
-  \begin{equation}
-    v(x, T) = \max(K - x\bar{S}(T)) = K \max(1 - x, 0) = 0
-  \end{equation}
-\end{subequations}
-
-Note that $x$ is always less than one for put options. Analogously, $x$ is 
-always greater than one for call options. Finally, we rewrite the boundary condition
-given by the optimal exercise price $\bar{S}(t)$ as
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc}
-  \begin{equation}
-    \dfrac{\partial v}{\partial x}(1, t) = 1
-  \end{equation}  
-  \begin{equation}
-    \dfrac{\partial v}{\partial x}(1, t) = -1
-  \end{equation}
-\end{subequations}
-
-and the boundary condition opposite to the optimal exercise price as  
-\begin{equation} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_option_opposite_bc}
-  v(0, t) = 0
-\end{equation} 
-
-for both put and call options. In summary, by groping equations 
-\eqref{eq:blackscholes:frontfixingmethod:american_options_pde},
-\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition},
-\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
-and \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
-we obtain the system
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
-\begin{align}
-  \begin{cases}
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x \in (0, 1)$ and $t \in [0, T)$} \\
-    v(x, T) = 0 \qquad \bar{S}(T) = K & \text{for $x\in[0, 1]$}\\
-    v(0, t) = 0 \quad v(1, t) = \bar{S}(t) - K \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = \bar{S}(t) & \text{for $t\in[0, T)$} \\
-  \end{cases}
-\end{align}
-\begin{align}
-  \begin{cases}
-    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $t \in [0, T)$} \\
-    v(x, T) = 0 \qquad \bar{S}(T) = K & \text{for $x \ge 1$} \\
-    v(1, t) = K - \bar{S}(t) \quad \lim_{x\rightarrow\infty}v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(1, t) = -\bar{S}(t) & \text{for $t\in[0, T)$}
-  \end{cases}
-\end{align}
-\end{subequations}
-
-\subsubsection{Log transformation}
-
-In this section, we define the transformations
-\begin{equation}
-  x := \log \dfrac{KS}{\bar{S}(t)} \qquad v(x, t) := \dfrac{V(S, t)}{K}
-\end{equation}
-
-which maps the boundary $\partial \mathcal{C}$ to the region
-\begin{equation}
-  \partial{\mathcal{C}_x} := \{ (x, t): x = \log{K} \}  
-\end{equation}
-
-\newpage
-
-Similarly to the previous section, we compute the partial derivatives of $v(x,t)$,
-\begin{align*}
-  \dfrac{\partial x}{\partial t} &= -\dfrac{\bar{S}'(t) }{\bar{S}(t)} \\\\
-  \dfrac{\partial x}{\partial S} &= \dfrac{1}{S} \\\\ 
-  \dfrac{\partial V}{\partial S} &= \dfrac{K}{S} \dfrac{\partial v}{\partial x} \\\\
-  \dfrac{\partial^2 V}{\partial^2 S} &= \dfrac{K}{S^2}\dfrac{\partial^2 v}{\partial x^2} - \dfrac{K}{S^2} \dfrac{\partial v}{\partial x} \\\\
-  \dfrac{\partial V}{\partial t} &= K \dfrac{\partial v}{\partial t} - K\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x}
-\end{align*}
-
-Using the partial derivates, we rewrite the Black-Scholes PDE as follows
-\begin{subequations}
   \begin{align}
-      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x < \log{K}$ and $t \in [0, T)$} \\
-      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x > \log{K}$ and $t \in [0, T)$}
+    \text{\textbf{Call:}} \qquad
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x \in [0, 1)$ and $t \in [0, T)$} \\
+    \text{\textbf{Put:}} \qquad
+    \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x > 1$ and $t \in (0, T]$}
   \end{align}
 \end{subequations}
+Similarly, we express the boundary conditions in the front fixing domain. We already stated that the Nielsen transformation fixes the moving boundary $\bar{S}$ at $x=1$. Additionally, $x$ goes to infinity as $S$ goes to infinity, and $x=0$ for $S=0$. Therefore, the boundary condition opposite to the optimal exercise price $\bar{S}(t)$ will remain as in the original problem. Hence,
+as it can be observed in figure (\ref{fig:blackscholes:frontfixingmethod:nielsen_value_vs_curve}), the call option has left boundary condition $v(0, t) = 0$ at $x=0$ and right boundary condition $v(1, t) = \bar{S}(t) - K$ at $x=1$. Alternatively, 
+the put option has left boundary condition $v(1, t) = K - \bar{S}(t)$ at $x=1$ and right boundary condition $v(x, t) = 0$ at a sufficiently large $x$.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/NielsenCallOption}
+    \caption{Call option}
+    \label{fig:blackscholes:frontfixingmethod:nielsen_call_value_vs_curve}
+  \end{subfigure}
+  \begin{subfigure}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/NielsenPutOption}
+    \caption{Put option}
+    \label{fig:blackscholes:frontfixingmethod:nielsen_put_value_vs_curve}
+  \end{subfigure}
+  \caption{Value $v(x,t) := V(S,t)$ in the front fixing domain defined by Nielsen transformation.}
+  \label{fig:blackscholes:frontfixingmethod:nielsen_value_vs_curve}
+\end{figure}
+Likewise, we express the contact point condition in terms of $v(x,t)$. Recall that at the contact point, the slope $V(S,t)$ with respect to $S$ is the same as the slope of the linear segment in the payoff function. This can be seen clearly in figure (\ref{fig:blackscholes:preliminaries:american_option_value_vs_curve}). Moreover, an infinitesimal change in $S$ translates to an infinitesimal change in $v(x,t)$ that is proportional to an infinitesimal change in $V(S, t)$ times $\bar{S}(t)$, and we know that infinitesimal change in $V(S, t)$ is either $1$ for call options or $-1$ for put options. Therefore, we have that
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = \bar{S}(t) \\
+    \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = -\bar{S}(t)
+  \end{align}
+\end{subequations}
+Finally, recall that the terminal condition of $\bar{S}(t)$ is given by \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}. Moreover, by simple substitution, we can rewrite the terminal conditions of $v(x, t)$ as
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad & v(x, T) = \max(x\bar{S}(T) - K) = K \max(x - 1, 0) = 0 \\
+    \text{\textbf{Put:}} \qquad & v(x, T) = \max(K - x\bar{S}(T)) = K \max(1 - x, 0) = 0
+  \end{align}
+\end{subequations}
+In summary, by groping equations
+\eqref{eq:blackscholes:frontfixingmethod:american_options_pde},
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}, and
+\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc},
+we obtain the system
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+  \begin{align}
+    \text{\textbf{Call:}} \quad &
+    \begin{cases}
+      \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) -
+      \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x \in (0, 1)$ and $t \in [0, T)$} \\ 
+      v(x, T) = 0 & \text{for $x\in[0, 1]$}  \\
+      \bar{S}(T) = K \\ 
+      v(0, t) = 0 & \text{for $t\in[0, T)$}\\ 
+      v(1, t) = \bar{S}(t) - K & \text{for $t\in[0, T)$}\\ 
+      \dfrac{\partial{v}}{\partial{x}}(1, t) = \bar{S}(t) & \text{for $t\in[0, T)$}
+    \end{cases}\\
+    \text{\textbf{Put:}} \quad &
+    \begin{cases}
+      \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) -
+      \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 & \text{for $x > 1$ and $t \in [0, T)$} \\ 
+      v(x, T) = 0 & \text{for $x \ge 1$} \\
+      \bar{S}(T) = K \\ 
+      v(1, t) = K - \bar{S}(t) & \text{for $t\in[0, T)$} \\
+      \lim_{x\rightarrow\infty}v(x, t) = 0 & \text{for $t\in[0, T)$} \\
+      \dfrac{\partial{v}}{\partial{x}}(1, t) = -\bar{S}(t) & \text{for $t\in[0, T)$}
+    \end{cases}
+  \end{align}
+\end{subequations}
+\subsubsection{Company transformation}
+The Company transformation proposes set of change of variable for the asset price $S$, the time $t$, the value function $V(S,t)$ and the moving boundary
+\begin{equation}
+  x := \log \dfrac{S}{\bar{S}_f(t)}, \quad \tau := T - t, \quad v(x, \tau) := \dfrac{V(S, t)}{K}, \quad \bar{S}_f(\tau) := \dfrac{\bar{S}(t)}{K} 
+\end{equation}
+Let us break down the transformations. Firstly, the transformation proposed are written forward in time. Therefore, $\tau = 0$ refers to the expiration date of the options $t=T$. Secondly, both the value function and the optimal exercise price is scaled by the strike price. Finally, the new moving boundary is fixed at $S=\bar{S}_f(t)$ or $x=0$.
 
-with terminal condition
+Similarly, as we did for the Nielsen method, we rewrite the Black-Scholes PDE in terms of $v(x, \tau)$. Note that as $x$ goes to infinity $S$ goes to infinity. Conversely, as $x$ goes to negative infinity $S$ goes to zero. Moreover, $S=\bar{S}(t)$ at $x=0$. Using the previous information, we deduce  that the Black-Scholes PDE is defined in the intervals $x\in(-\infty, 0)$ for call options and $x\in(0, \infty)$ for put options. Therefore, we have
+\begin{subequations}
+  \begin{align}
+      \text{\textbf{Call:}} \quad \dfrac{\partial v}{\partial \tau} - \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} - \bigg((r-\delta) + \dfrac{\sigma^2}{2} - \dfrac{\bar{S}'(\tau)}{\bar{S}(\tau)} \bigg)\dfrac{\partial v}{\partial x} + rv = 0 \quad \text{for $x < 0$ and $\tau \in (0, T]$} \\
+      \text{\textbf{Put:}} \quad \dfrac{\partial v}{\partial \tau} - \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} - \bigg((r-\delta) - \dfrac{\sigma^2}{2} - \dfrac{\bar{S}'(\tau)}{\bar{S}(\tau)} \bigg)\dfrac{\partial v}{\partial x} + rv = 0 \quad \text{for $x > 0$ and $\tau \in (0, T]$}
+  \end{align}
+\end{subequations}
+Note that the term on the new PDE that correspond to the terms in the linear parabolic operator $\mathcal{L}V$ defined in \eqref{eq:blackscholes:preliminaries:linear_parabolic_operator} are negative because the Black-Scholes PDE was inverted in time.
+
+Again, the boundary conditions for the call option in the original domain are
+$V(0,t)$ at $S=0$ and $V(\bar{S}, t) = \bar{S} - K$  at $S=\bar{S}(t)$, and when transforming those boundary conditions to the front fixing domain, they become $v(x, \tau) = 0$ for a sufficiently negative $x$ and $v(0, \tau) := \bar{S}_f(\tau) - 1 = V(\bar{S}, t) / K$ at $x=0$. Similarly, the boundary conditions for the put option in the original domain are $V(\bar{S}(t), t) = K - \bar{S}$ at $S=\bar{S}(t)$ and $V(S, t) = 0$ for a sufficiently large $S$, and under the front fixing domain, they become $v(0, \tau) = 1 - \bar{S}_f(\tau) = V(\bar{S}, t) / K$ at $x=0$ and $v(x, \tau) = 0$ for a sufficiently large $x$. Similarly, to as we did for the Nielsen transformation, we also rewrite the contact point condition
+\begin{subequations}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(0, \tau) =  \bar{S}_f(\tau)\\
+    \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(0, \tau) = -\bar{S}_f(\tau)
+  \end{align}
+\end{subequations}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/CompanyCallOption.pdf}
+    \caption{Call option}
+    \label{fig:blackscholes:frontfixingmethod:company_call_value_vs_curve}
+  \end{subfigure}
+  \begin{subfigure}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter2/CompanyPutOption.pdf}
+    \caption{Put option}
+    \label{fig:blackscholes:frontfixingmethod:company_put_value_vs_curve}
+  \end{subfigure}
+  \caption{Value $v(x,t) := V(S,t) / K$ in the front fixing domain defined by Company transformation.}
+  \label{fig:blackscholes:frontfixingmethod:company_value_vs_curve}
+\end{figure}
+Since the transformed PDE is forward in time, we have to come up with initial conditions for $\bar{S}_f(\tau)$ and $v(x, \tau)$. For $\bar{S}_f(\tau)$, the initial condition is given by
+\begin{equation}
+  \bar{S}_f(0) = \dfrac{\bar{S}(T)}{K} = 1
+\end{equation}
+Moreover, for call options, the initial condition is given by $v(x, 0) = V(S, T) / K = \max\big(\bar{S}_f(0)e^{x} - 1, 0\big) = \max\big(e^{x} - 1, 0\big) = 0$ since $x$ is always negative. Similarly, for put options, the initial condition is given by $v(x, 0) = V(S, T) / K = \max\big(1 - \bar{S}_f(0)e^x, 0\big) = \max\big(1 - e^x, 0\big) = 0$ since $x$ is always positive. Hence,
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:logtransform:american_options_terminal_condition}
-  \begin{equation}
-    v(x, T) = \max\bigg(\dfrac{e^x}{K} - 1, 0\bigg) = 0
-  \end{equation}
-  \begin{equation}
-    v(x, T) = \max\bigg(1 - e^x, 0\bigg) = 0
-  \end{equation}
+  \begin{align}
+    \text{\textbf{Call:}} \qquad & v(x, 0) = 0 \\
+    \text{\textbf{Put:}} \qquad & v(x, 0) = 0
+  \end{align}
 \end{subequations}
-
-\newpage
-
-Next, we rewrite the boundary condition given by the optimal exercise price
-\begin{subequations}
-  \begin{equation}
-    \dfrac{\partial v}{\partial x}(\log{K}, t) = \dfrac{\bar{S}(t)}{K} 
-  \end{equation}
-  \begin{equation}
-    \dfrac{\partial v}{\partial x}(\log{K}, t) = -\dfrac{\bar{S}(t)}{K}
-  \end{equation}
-\end{subequations}
-
-and the boundary condition opposite to the optimal exercise price
-\begin{subequations}
-  \begin{equation}
-    \lim_{x\rightarrow-\infty} v(x, t) = 0
-  \end{equation}
-  \begin{equation}
-    \lim_{x\rightarrow\infty} v(x, t) = 0
-  \end{equation}
-\end{subequations}
-
-Finally, grouping equations together, we have the system
+Finally, grouping the equations together, we have the system
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:logtransform:american_options_bs_pde}
-  \begin{equation}
+  \begin{align}
+    \text{\textbf{Call:}} \quad &
     \begin{cases}
-      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x < \log{K}$ and $t \in [0, T)$} \\
-      v(x, T) = 0 \qquad \bar{S}(T) = K \\
-      \lim_{x\rightarrow-\infty} v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(\log{K}, t) = \dfrac{\bar{S}(t)}{K}
-    \end{cases}
-  \end{equation}
-  \begin{equation}
+      \dfrac{\partial v}{\partial \tau} - \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} - \bigg((r-\delta) + \dfrac{\sigma^2}{2} - \dfrac{\bar{S}'(\tau)}{\bar{S}(\tau)} \bigg)\dfrac{\partial v}{\partial x} + rv = 0 & \text{for $x < 0$ and $\tau \in (0, T]$}  \\ 
+      v(x, 0) = 0 & \text{for $x < 0$} \\ 
+      \bar{S}_f(0) = 1  \\ 
+      \lim_{x\rightarrow-\infty}{v(x, \tau)} = 0 & \text{for $\tau \in (0, T]$}  \\ 
+      \dfrac{\partial{v}}{\partial{x}}(0, \tau) = \bar{S}_f(\tau) & \text{for $\tau \in (0, T]$} 
+    \end{cases} \\
+    \text{\textbf{Put:}} \quad &
     \begin{cases}
-      \dfrac{\partial v}{\partial t} + \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} + \bigg((r-\delta) - \dfrac{\sigma^2}{2} \bigg)\dfrac{\partial v}{\partial x} -\dfrac{\bar{S}'(t)}{\bar{S}(t)}\dfrac{\partial v}{\partial x} - rv = 0 \quad \text{for $x > \log{K}$ and $t \in [0, T)$} \\
-      v(x, T) = 0 \qquad \bar{S}(T) = K \\
-      \lim_{x\rightarrow\infty} v(x, t) = 0 \quad \dfrac{\partial{v}}{\partial{x}}(\log{K}, t) = -\dfrac{\bar{S}(t)}{K}
+      \dfrac{\partial v}{\partial \tau} - \dfrac{1}{2}\sigma^2\dfrac{\partial^2 v}{\partial x^2} - \bigg((r-\delta) - \dfrac{\sigma^2}{2} - \dfrac{\bar{S}'(\tau)}{\bar{S}(\tau)} \bigg)\dfrac{\partial v}{\partial x} + rv = 0 & \text{for $x > 0$ and $\tau \in (0, T]$} \\ 
+      v(x, 0) = 0 & \text{for $x > 0$}\\
+      \bar{S}_f(0) = 1 \\ 
+      \lim_{x\rightarrow\infty} v(x, \tau) = 0 & \text{for $\tau \in (0, T]$} \\ 
+      \dfrac{\partial{v}}{\partial{x}}(0, \tau) = -\bar{S}_f(\tau) & \text{for $\tau \in (0, T]$}
     \end{cases}
-  \end{equation}
+  \end{align}
 \end{subequations}
