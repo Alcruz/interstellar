@@ -226,14 +226,15 @@ the put option has left boundary condition $v(1, t) = K - \bar{S}(t)$ at $x=1$ a
   \caption{Value $v(x,t) := V(S,t)$ in the front fixing domain defined by Nielsen transformation.}
   \label{fig:blackscholes:frontfixingmethod:nielsen_value_vs_curve}
 \end{figure}
-Likewise, we express the contact point condition in terms of $v(x,t)$. Recall that at the contact point, the slope $V(S,t)$ with respect to $S$ is the same as the slope of the linear segment in the payoff function. This can be seen clearly in figure (\ref{fig:blackscholes:preliminaries:american_option_value_vs_curve}). Moreover, an infinitesimal change in $S$ translates to an infinitesimal change in $v(x,t)$ that is proportional to an infinitesimal change in $V(S, t)$ times $\bar{S}(t)$, and we know that infinitesimal change in $V(S, t)$ is either $1$ for call options or $-1$ for put options. Therefore, we have that
+Likewise, we express the contact point condition in terms of $v(x,t)$. Recall that at the contact point, the slope $V(S,t)$ with respect to $S$ is the same as the slope of the linear segment in the payoff function. This can be seen clearly in figure (\ref{fig:blackscholes:preliminaries:american_option_value_vs_curve}). Hence, by the chain rule, the contact point condition of $v(x,t)$ is given by
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_bc}
   \begin{align}
     \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = \bar{S}(t) \\
     \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = -\bar{S}(t)
   \end{align}
 \end{subequations}
-Finally, recall that the terminal condition of $\bar{S}(t)$ is given by \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}. Moreover, by simple substitution, we can rewrite the terminal conditions of $v(x, t)$ as
+Finally, recall that the terminal condition of $\bar{S}(t)$ is given by \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}. Moreover,
+$x>=1$ for call options, and $x<=1$ for put options. Hence, by simple substitution, we can rewrite the terminal conditions of $v(x, t)$ as
 \begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}
   \begin{align}
     \text{\textbf{Call:}} \qquad & v(x, T) = \max(x\bar{S}(T) - K) = K \max(x - 1, 0) = 0 \\
