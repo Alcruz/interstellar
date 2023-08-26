@@ -7,11 +7,13 @@ Then, we presented the front fixing method as a strategy to fix the moving bound
 
 Recall that the solution $v(x,t)$ of 
 \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is defined in the continuous region 
-\begin{align*}
-  \mathcal{F}: \quad & \mathcal{X} \times \mathcal{T} \\
-  \mathcal{T}: \quad & [0, T] \\
-  \mathcal{X}: \quad & [0, \infty)
-\end{align*}
+\begin{subequations}
+  \label{eq:finitedifferencesschemes:overview:continous_domain}
+\begin{align}
+  \text{\textbf{Call:}} \qquad& \mathcal{T}: [0, T], \qquad \mathcal{X}: [0, 1], \qquad  \mathcal{F}: \mathcal{X} \times \mathcal{T} \\
+  \text{\textbf{Put:}} \qquad& \mathcal{T}:[0, T], \qquad \mathcal{X}:[1, \infty), \qquad \mathcal{F}: \mathcal{X} \times \mathcal{T},
+\end{align}
+\end{subequations}
 Now, we want to discretize $\mathcal{F}$ using the grid $\mathcal{G}$ with $N+1$ and $M+1$ nodes
 \begin{align*}
   \mathcal{G} := \{(x_i, t_n): (i, n) \in \{0,\dots,M+1\}\times\{0,\dots,N+1\}\}
@@ -23,46 +25,70 @@ where
   \Delta{x} &:= \dfrac{x_{\text{max}} - x_{\text{min}}}{M+1} \\ 
   \Delta{t} &:= \dfrac{t_{\text{max}} - t_{\text{min}}}{N+1}
 \end{align*}
-At each node of the grid $\mathcal{G}$, we want to approximate the value function $v(x, t)$ and the optimal exercise price $\bar{S}(t)$ 
-\begin{align*}
-  v^{n}_i \approx v(x_i,t_n), \quad \bar{S}^{n} \approx \bar{S}(t_n)
-\end{align*}
-such as $\Delta{x}$ and $\Delta{t}$ decrease, the approximations $v^{n}_i$ and $\bar{S}^n$ get closer to the true value $v(x_i, t_n)$ and $\bar{S}(t_n)$, respectively. Additionally, given the PDE problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}, it is clear that $t_\text{min} = 0$ and $t_\text{max}=T$. Moreover, for call options, $x_\text{min} = 0$ and $x_\text{max}=1$. Likewise, for put options, $x_\text{min}=1$ and $x_\text{max}=x_\infty$ where $x_\infty$ is arbitrary large value.
-\begin{figure}
+Each contiguous node will be separated by $\Delta{x}$ on the spatial axis and $\Delta{t}$ on the temporal axis. As $\Delta{x}$ and $\Delta{t}$ decreases, the number of nodes in the grid will increase. Therefore, we refer to $\Delta{x}$ and $\Delta{t}$ as the resolution of the grid.
+\begin{figure}[H]
+  \label{fig:finitedifferencesschemes:overview:gr id}
   \centering
   \includegraphics[scale=0.5]{chapters/chapter3/GridAproximation.pdf}
   \caption{The grid $\mathcal{G}$ and the approximation $v^{n}_{i} \approx v(x_i, t_n)$ in each node.}
-  \label{fig:finitediferencesschemes:grid}
 \end{figure}
-\newpage
+From \eqref{eq:finitedifferencesschemes:overview:continous_domain}, it is clear that $t_\text{min} = 0$ and $t_\text{max}=T$. Moreover, for call options, $x_\text{min} = 0$ and $x_\text{max}=1$. Likewise, for put options, $x_\text{min}=1$ and $x_\text{max}=x_\infty$ where $x_\infty$ is arbitrary large value.
+Now that we defined our grid, our goal is to approximate the value function $v(x, t)$ and the optimal exercise price $\bar{S}(t)$ at each node of the grid $\mathcal{G}$
+\begin{align*}
+  v^{n}_i \approx v(x_i,t_n), \quad \bar{S}^{n} \approx \bar{S}(t_n)
+\end{align*}
+Moreover, we want that the error of the approximation converges to zero value. Specifically, we want that the approximation error at each node 
+\begin{align}
+  \label{eq:finitedifferencesschemes:overview:local_truncation_error}
+  e^{n}_i := v^{n}_i-v(x_i, t_n)
+\end{align}
+goes to zero as $\Delta{x}$ and $\Delta{t}$ decrease. \eqref{eq:finitedifferencesschemes:overview:local_truncation_error} is the local truncation error, and it measures the approximation error at time $t_n$. It is important to state if a single node has inferior order than the rest of the nodes, it might degrade the order of the truncation error in overall.   
+
+Finally, we need ways to approximate derivatives. Here is where finite differences schemes come into play. The idea of finite differences is trivial which is approximating derivatives as the difference of contiguous nodes in the grid. Let us say we are at point $x$, then the forward differences approximate the derivative as
+\begin{align*}
+ \dfrac{f(x + h) - f(x)}{h} = \dfrac{df}{dx} + O(h)
+\end{align*}
+Conversely, the backward difference approximate the derivative as 
+\begin{align*}
+  \dfrac{f(x) - f(x-h)}{h} = \dfrac{df}{dx} + O(h)
+\end{align*}
+As you can observe forward and backward difference approximation yield a local truncation error of $O(h)$. Moreover, the central finite difference approximate the first order derivative as 
+\begin{align*}
+  \dfrac{f(x+h) - f(x-h)}{2h} = \dfrac{df}{dx} + O(h^2)
+ \end{align*}
+and for second order derivatives as
+\begin{align*}
+  \dfrac{f(x+h) - 2f(x) + f(x-h)}{h^2} = \dfrac{d^2f}{dx^2} + O(h^2)
+ \end{align*}
+Note that both approximation offers a better order of convergence that forward and backward difference, but you are required to come up with strategies for approximating the derivative at the boundary of your grid where $x+h$ or $x-h$ is not defined.
+
 \subsection{Explicit scheme}
-Generally, explicit schemes use forward finite difference at $t_n$ to approximate the temporal partial derivative and central finite difference to approximate the spatial derivative at $x_i$. However, since the problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is written backward in time, we use backward finite difference at $t_{n+1}$, and a central finite difference at $x_i$.
+Generally, explicit schemes use forward finite difference to approximate the temporal partial derivative and central finite difference to approximate the spatial derivative at time $t_{n+1}$ and position $x_i$. However, since the problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is written backward in time, we use backward finite difference at $t_{n+1}$, and a central finite difference at $x_i$.
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{chapters/chapter3/ExplicitStencil.pdf}
   \caption{Stencil diagram of the explicit scheme.}
-  \label{fig:finitediferencesschemes:explicit_stencil}
+  \label{fig:finitedifferencesschemes:explicit_stencil}
 \end{figure}
 
 The central finite difference for the first order and second order spatial partial derivative is given by
 \begin{align}
-  \label{eq:finitediferencesschemes:explicit:spatial_first_order_central_finite_difference}
+  \label{eq:finitedifferencesschemes:explicit:spatial_first_order_central_finite_difference}
   \dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{2 \Delta{x}} =& \dfrac{\partial{v}}{\partial{x}}+ O(\Delta{x}^2) \qquad & \text{for $i = 1, \dots, M$} \\
-  \label{eq:finitediferencesschemes:explicit:spatial_second_order_central_finite_difference}
+  \label{eq:finitedifferencesschemes:explicit:spatial_second_order_central_finite_difference}
   \dfrac{v^{n+1}_{i+1} - 2v^{n+1}_{i} + v^{n+1}_{i-1}}{\Delta{x}^2} =& \dfrac{\partial^2{v}}{\partial{x^2}}+ O(\Delta{x}^2) \qquad & \text{for $i = 1, \dots, M$}
 \end{align}
-
-As it can be observed in figure (\ref*{fig:finitediferencesschemes:explicit_stencil}), the first and second order central finite difference approximations at node $(x_i, t_{n+1})$ require to compute the difference at the nodes $(x_{i-1}, t_{n+1})$ and $(x_{i+1}, t_{n+1})$. Hence, we can only approximate the spatial partial derivative at the internal region of the grid $\mathcal{G}$ given by the nodes $(x_i, t_n)$ for $i=1,\dots,M$. Also note, that the central finite difference has second order convergence in space. In other words, as we decrease $\Delta{x}$ by one decimal place, the approximation error will decrease by two decimal places.
+As it can be observed in figure (\ref*{fig:finitedifferencesschemes:explicit_stencil}), the first and second order central finite difference approximations at node $(x_i, t_{n+1})$ require to compute the difference at the nodes $(x_{i-1}, t_{n+1})$ and $(x_{i+1}, t_{n+1})$. Hence, we can only approximate the spatial partial derivative at the internal region of the grid $\mathcal{G}$ given by the nodes $(x_i, t_n)$ for $i=1,\dots,M$. Also note, that the central finite difference has second order convergence in space. In other words, as we decrease $\Delta{x}$ by one decimal place, the approximation error will decrease by two decimal places.
 
 Analogously, the backward difference approximation at $t_{n+1}$ for $v(x, t)$ and the optimal exercise price $\bar{S}(t)$ is given by
 \begin{align}
-  \label{eq:finitediferencesschemes:explicit:temporal_backward_finite_difference}
+  \label{eq:finitedifferencesschemes:explicit:temporal_backward_finite_difference}
   \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} &= \dfrac{\partial{v}}{\partial{t}}+ O(\Delta{t}) \qquad & \text{for $n = N,\dots,0$ } \\
-  \label{eq:finitediferencesschemes:explicit:front_temporal_backward_finite_difference}
+  \label{eq:finitedifferencesschemes:explicit:front_temporal_backward_finite_difference}
   \dfrac{\bar{S}^{n+1}-\bar{S}^{n}}{\Delta t} &= \bar{S}'(t) + O(\Delta{t}) \qquad & \text{for $n = N,\dots,0$ }
 \end{align}
-Contrary to the central finite difference, the backward finite difference approximations have first order convergence in time. While it would be desirable to have second order convergence for the temporal partial derivative approximation, it is not possible use central finite difference because we would be required to have two boundary conditions in the time axis. By combining the finite difference approximations \eqref{eq:finitediferencesschemes:explicit:spatial_first_order_central_finite_difference}, \eqref{eq:finitediferencesschemes:explicit:spatial_second_order_central_finite_difference}, \eqref{eq:finitediferencesschemes:explicit:temporal_backward_finite_difference}, and \eqref{eq:finitediferencesschemes:explicit:temporal_backward_finite_difference},the approximation of the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is given by 
+Contrary to the central finite difference, the backward finite difference approximations have first order convergence in time. While it would be desirable to have second order convergence for the temporal partial derivative approximation, it is not possible use central finite difference because we would be required to have two boundary conditions in the time axis. By combining the finite difference approximations \eqref{eq:finitedifferencesschemes:explicit:spatial_first_order_central_finite_difference}, \eqref{eq:finitedifferencesschemes:explicit:spatial_second_order_central_finite_difference}, \eqref{eq:finitedifferencesschemes:explicit:temporal_backward_finite_difference}, and \eqref{eq:finitedifferencesschemes:explicit:temporal_backward_finite_difference},the approximation of the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is given by 
 \begin{equation*}
   \begin{split}
     \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} & + \dfrac{1}{2}\sigma^2 x_i^2 \dfrac{v^{n+1}_{i-1} - 2v^{n+1}_{i} + v^{n+1}_{i+1}}{(\Delta{x})^2} \\ 
@@ -80,11 +106,11 @@ for $i = 1, \dots, M$ and $n = N, \dots, 0$. To simplify the expression above, w
 Then, we rearrange the finite difference approximation of the PDE as 
 \begin{equation}
   v^{n}_{i} - D^{n+1}_{i}\bar{S}^n = A_i v^{n+1}_{i-1} + B_{i}v^{n+1}_{i} + C_{i}v^{n+1}_{i+1}
-  \label{eq:finitediferencesschemes:explicit:pde_simplified}
+  \label{eq:finitedifferencesschemes:explicit:pde_simplified}
 \end{equation}
 for $i = 1, \dots, M$ and $t = N, \dots, 0$. Moreover, the PDE problem in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} have well-defined spatial boundary conditions. For call options, the boundary conditions are located at $x=0$ and $x=1$. Similarly, for put options, the boundary conditions are located at $x=1$ and at a sufficient large $x$. However, since the $\mathcal{G}$ is defined in terms of $x_\text{min}$ and $x_\text{max}$, regardless of the option type, the boundary conditions will be always at $x_0$ and $x_{M+1}$.
 \begin{subequations}
-  \label{eq:finitediferencesschemes:explicit:boundary_conditions}
+  \label{eq:finitedifferencesschemes:explicit:boundary_conditions}
   \begin{align}
     \text{\textbf{Call:}} \qquad & v^{n}_{0} = 0, \qquad v^{n}_{M+1} = \bar{S}^{n} - K\\
     \text{\textbf{Put:}} \qquad & v^{n}_{0} = K - \bar{S}^{n}, \qquad v^{n}_{M+1} = 0
@@ -92,7 +118,7 @@ for $i = 1, \dots, M$ and $t = N, \dots, 0$. Moreover, the PDE problem in \eqref
 \end{subequations}
 Likewise, the terminal conditions are located at $t_{N+1}$ $i=0,\dots,M+1$
 \begin{subequations}
-  \label{eq:finitediferencesschemes:explicit:terminal_conditions}
+  \label{eq:finitedifferencesschemes:explicit:terminal_conditions}
   \begin{equation}
     v^{N+1}_{i} = 0, \qquad \bar{S}^{N+1} = K
   \end{equation}
@@ -104,25 +130,25 @@ Moreover, for the problem \eqref{eq:blackscholes:frontfixingmethod:inversetransf
 \end{align*}
 Using the contact point condition, we obtain an explicit expression for $v^{n}_{M}$
 \begin{subequations}
-  \label{eq:finitediferencesschemes:explicit:contact_point_approximation_2}
+  \label{eq:finitedifferencesschemes:explicit:contact_point_approximation_2}
   \begin{align}
     \text{\textbf{Call:}} \qquad& v^{n}_{M} = v^{n}_{M+1} - \Delta{x}\bar{S}^{n} = (1-\Delta{x})\bar{S}^n - K & \qquad \text{for $n = N,\dots,0$ }\\
     \text{\textbf{Put:}} \qquad& v^{n}_{1} = v^{n}_{0} - \Delta{x}\bar{S}^{n} = K - (1+\Delta{x})\bar{S}^n & \qquad \text{for $n = N,\dots,0$ }
   \end{align}    
 \end{subequations}
-Note that the approximation for $v^{n}_{M}$ has first order convergence in space which could degrade the global convergence of the explicit method to first order in space even if we are using central finite difference to approximate the spatial partial derivatives of $v(x,t)$. Similarly, we can obtain explicit expression for $\bar{S}^{n}$ by computing \eqref{eq:finitediferencesschemes:explicit:pde_simplified} at $x_M$ and at $x_1$ for call and put options, respectively. Then, rearranging the resulting expression in terms of $\bar{S}^n$ 
+Note that the approximation for $v^{n}_{M}$ has first order convergence in space which could degrade the global convergence of the explicit method to first order in space even if we are using central finite difference to approximate the spatial partial derivatives of $v(x,t)$. Similarly, we can obtain explicit expression for $\bar{S}^{n}$ by computing \eqref{eq:finitedifferencesschemes:explicit:pde_simplified} at $x_M$ and at $x_1$ for call and put options, respectively. Then, rearranging the resulting expression in terms of $\bar{S}^n$ 
 \begin{subequations}
-  \label{eq:finitediferencesschemes:explicit:optimal_exercise_price_approximation}
+  \label{eq:finitedifferencesschemes:explicit:optimal_exercise_price_approximation}
   \begin{align}
     \text{\textbf{Call:}} \qquad& \bar{S}^{n} = \dfrac{K + A_{M}v^{n+1}_{M-1} + B_{M}v^{n+1}_{M} + C_{M}v^{n+1}_{M+1}}{(1-\Delta{x}) - D^{n+1}_{M}} \\
     \text{\textbf{Put:}} \qquad& \bar{S}^{n} = \dfrac{K - (A_{1}v^{n+1}_{0} + B_{1}v^{n+1}_{1} + C_{1}v^{n+1}_{2})}{D^{n+1}_1 + (1+\Delta{x})}
   \end{align}
 \end{subequations}
-for $n = N,\dots,0$. Thus, combining \eqref{eq:finitediferencesschemes:explicit:pde_simplified}, \eqref{eq:finitediferencesschemes:explicit:boundary_conditions}, 
-\eqref{eq:finitediferencesschemes:explicit:terminal_conditions},
-\eqref{eq:finitediferencesschemes:explicit:contact_point_approximation_2}, and \eqref{eq:finitediferencesschemes:explicit:optimal_exercise_price_approximation}, the explicit scheme of PDE problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is given by
+for $n = N,\dots,0$. Thus, combining \eqref{eq:finitedifferencesschemes:explicit:pde_simplified}, \eqref{eq:finitedifferencesschemes:explicit:boundary_conditions}, 
+\eqref{eq:finitedifferencesschemes:explicit:terminal_conditions},
+\eqref{eq:finitedifferencesschemes:explicit:contact_point_approximation_2}, and \eqref{eq:finitedifferencesschemes:explicit:optimal_exercise_price_approximation}, the explicit scheme of PDE problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is given by
 \begin{subequations}
-  \label{eq:finitediferencesschemes:explicit:nielsen_system_of_equation}
+  \label{eq:finitedifferencesschemes:explicit:nielsen_system_of_equation}
   \begin{align}
     \text{\textbf{Call:}} \quad& \begin{cases}
       v^{n}_{i} - D^{n+1}_{i}\bar{S}^n = A_i v^{n+1}_{i-1} + B_{i}v^{n+1}_{i} + C_{i}v^{n+1}_{i+1} & \text{for $i = 1, \dots, M-1$ and $n = N,\dots, 0$}\\
@@ -142,9 +168,9 @@ for $n = N,\dots,0$. Thus, combining \eqref{eq:finitediferencesschemes:explicit:
     \end{cases}
   \end{align}
 \end{subequations}
-Finally, we formulate an algorithm for solving the system \eqref{eq:finitediferencesschemes:explicit:nielsen_system_of_equation}
+Finally, we formulate an algorithm for solving the system \eqref{eq:finitedifferencesschemes:explicit:nielsen_system_of_equation}
 \begin{algorithm}[H]
-  \caption{Explicit method for call options} \label{alg:finitediferencesschemes:explicit:call_explicit_method_algorithm}
+  \caption{Explicit method for call options} \label{alg:finitedifferencesschemes:explicit:call_explicit_method_algorithm}
   \begin{algorithmic}
   \Ensure $\lambda \le 0.5$
   
@@ -176,7 +202,7 @@ Finally, we formulate an algorithm for solving the system \eqref{eq:finitedifere
 \end{algorithm}
 
 \begin{algorithm}[H]
-  \caption{Explicit method for put options}\label{alg:finitediferencesschemes:explicit:put_explicit_method_algorithm}
+  \caption{Explicit method for put options}\label{alg:finitedifferencesschemes:explicit:put_explicit_method_algorithm}
   \begin{algorithmic}
   \For{$i = 0,\dots,M+1$} 
     \State $v^{N+1}_i = 0 $
@@ -201,57 +227,71 @@ Finally, we formulate an algorithm for solving the system \eqref{eq:finitedifere
   \EndFor
 \end{algorithmic}
 \end{algorithm}
-
+\newpage
 \subsection{Implicit scheme}
-
-Analogously to the previous section, the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} 
-is approximated using forward central difference  
+Analogously to the previous section, implicit methods approximate the temporal partial derivative using backward difference and the spatial partial derivative using a central difference at time $t_n$ and position $x_i$. Since the PDE in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} is written backward in time, we use a forward difference instead.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{chapters/chapter3/ImplicitStencil.pdf}
+  \caption{Stencil diagram of the implicit scheme.}
+  \label{fig:finitedifferencesschemes:implicit_stencil}
+\end{figure}
+Therefore, the central difference for the first and second order spatial partial derivative at time $t_n$ is 
+\begin{align}
+  \label{eq:finitedifferencesschemes:implicit:spatial_first_order_central_finite_difference}
+  \dfrac{v^{n}_{i+1} - v^{n}_{i-1}}{2 \Delta{x}} =& \dfrac{\partial{v}}{\partial{x}}+ O(\Delta{x}^2) \\
+  \label{eq:finitedifferencesschemes:implicit:spatial_second_order_central_finite_difference}
+  \dfrac{v^{n}_{i+1} - 2v^{n}_{i} + v^{n}_{i-1}}{\Delta{x}^2} =& \dfrac{\partial^2{v}}{\partial{x^2}}+ O(\Delta{x}^2)
+\end{align}
+for $i = 1, \dots, M$. Likewise, the forward difference of $v(x, t)$ and $\bar{S}(t)$ at position $x_i$ is  
+\begin{align}
+  \label{eq:finitedifferencesschemes:implicit:temporal_backward_finite_difference}
+  \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} &= \dfrac{\partial{v}}{\partial{t}}+ O(\Delta{t}) \\
+  \label{eq:finitedifferencesschemes:implicit:front_temporal_backward_finite_difference}
+  \dfrac{\bar{S}^{n+1}-\bar{S}^{n}}{\Delta t} &= \bar{S}'(t) + O(\Delta{t}) \qquad & \text{ }
+\end{align}
+for $n = N,\dots,0$. Hence, combining \eqref{eq:finitedifferencesschemes:implicit:spatial_first_order_central_finite_difference}, \eqref{eq:finitedifferencesschemes:implicit:spatial_second_order_central_finite_difference}, \eqref{eq:finitedifferencesschemes:implicit:temporal_backward_finite_difference} and \eqref{eq:finitedifferencesschemes:implicit:front_temporal_backward_finite_difference},we obtain the implicit approximation of the PDE \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde} as
 \begin{equation*}
   \begin{split}
     \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} & + \dfrac{1}{2}\sigma^2 x_i^2 \dfrac{v^{n}_{i-1} - 2v^{n}_{i} + v^{n}_{i+1}}{(\Delta{x})^2} \\ 
      & + x_i\bigg( (r-\delta) - \dfrac{1}{\bar{S}^{n}}\dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta{t}} \bigg)\dfrac{v^{n}_{i+1} - v^{n}_{i-1}}{2\Delta{x}} - rv^{n}_{i} = 0
   \end{split}
 \end{equation*}
-
-Similarly to the previous section, the terms are introduced  
+for $i=1,\dots,M$ and $n=N,\dots,0$. Similar to the explicit method, the approximation error is second order in space and first order in time. Again, to make the implicit  approximation more manageable, we introduce the following terms  
 \begin{align}
   \alpha^{n}_{i} &:= -\dfrac{\lambda}{2}\sigma^2x^{2}_{i} + \dfrac{\lambda\Delta{x}}{2}x_{i}\bigg(r-\delta+\dfrac{\bar{S}^{n+1}-\bar{S}^n}{\Delta{t}\bar{S}^{n}}\bigg) \\
   \beta^{n}_{i} &:= 1 + \lambda\sigma^2x^{2}_{i} + r\Delta{t} \\
   \gamma^{n}_{i} &:= -\dfrac{\lambda}{2}\sigma^2x^{2}_{i} + \dfrac{\lambda\Delta{x}}{2}x_{i}\bigg(r-\delta+\dfrac{\bar{S}^{n+1}-\bar{S}^n}{\Delta{t}\bar{S}^{n}}\bigg)
 \end{align}
-
-to make the expression above more manageable. Next, the PDE approximation is rearranged as
-\begin{equation*}
+and rearrange the PDE as
+\begin{equation}
+  \label{eq:finitedifferencesschemes:implicit:implicit_scheme_simplified}
   \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i}
-\end{equation*}
-
-Contrary to the explicit method, there is not an explicit expression for $\bar{S^n}$. Therefore,
-the PDE problem in \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
-is rewritten as
+\end{equation}
+The boundary and terminal conditions are given by \eqref{eq:finitedifferencesschemes:explicit:boundary_conditions} and \eqref{eq:finitedifferencesschemes:explicit:terminal_conditions}. Likewise, the approximation of $v^{n}_{M}$ or $v^{n}_{1}$ for put and call, respectively, is given by \eqref{eq:finitedifferencesschemes:explicit:contact_point_approximation_2}. Similar to the explicit method, the approximation $v^{n}_{M}$ and $v^{n}_{0}$ given by the contact point condition is first order in space. Hence, the global approximation error of implicit scheme might be degraded to first order in space. Contrary to the explicit method, there is not an explicit expression for $\bar{S^n}$. Now, we formulate the system of equations of the problem \eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+using \eqref{eq:finitedifferencesschemes:explicit:boundary_conditions}, \eqref{eq:finitedifferencesschemes:explicit:terminal_conditions}, \eqref{eq:finitedifferencesschemes:explicit:contact_point_approximation_2} and \eqref{eq:finitedifferencesschemes:implicit:implicit_scheme_simplified}
 \begin{subequations}
   \begin{align}
-    \begin{cases}
-      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 1, \dots, M-2$ and $n = N-1,\dots,0$} \\
-      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for $i = 0, \dots, M$} \\
-      v^{n}_0 = 0 \quad v^{n}_{M-1} = (1-\Delta{x})\bar{S}^n - K \quad v^{n}_M = \bar{S}^n - K  & \text{for $n = N-1, \dots 0$} \\
-      x_{\text{min}} := 0 \quad x_{\text{max}} := 1 \\
-      t_{\text{min}} := 0 \quad t_{\text{max}} := T
-    \end{cases}
-  \end{align}
-  \begin{align}
-    \begin{cases}
-      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 2, \dots, M-1$ and $n = N-1,\dots,0$} \\
-      v^{N}_i = 0 \qquad \bar{S}^N = K & \text{for i = 0, \dots, M} \\
-      v^{n}_{0} = K - \bar{S}^{n} \quad v^{n}_{1} =  K - (1+\Delta{x})\bar{S}^{n} \quad v^{n}_{M} = 0 & \text{for $n = N-1, \dots 0$} \\
-      x_{\text{min}} := 1 \quad x_{\text{max}} := x_{\infty} \\
-      t_{\text{min}} := 0 \quad t_{\text{max}} := T
+    \text{\textbf{Call:}} \quad& \begin{cases}
+      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 1, \dots, M-1$ and $n = N,\dots,0$} \\
+      v^{N+1}_i = 0 & \text{for $i = 0, \dots, M+1$}\\
+      \bar{S}^{N+1} = K \\
+      v^{n}_0 = 0 & \text{for $n = N, \dots 0$}\\
+      v^{n}_{M} = (1-\Delta{x})\bar{S}^n - K & \text{for $n = N, \dots 0$}\\
+      v^{n}_{M+1} = \bar{S}^n - K  & \text{for $n = N, \dots 0$}
+    \end{cases}\\
+    \text{\textbf{Put:}} \quad& \begin{cases}
+      \alpha^{n}_{i}v^{n}_{i-1} + \beta^{n}_{i}v^{n}_{i} + \gamma^{n}_{i}v^{n}_{i+1} = v^{n+1}_{i} & \text{for $i = 2, \dots, M$ and $n = N,\dots,0$} \\
+      v^{N+1}_i = 0 & \text{for $i = 0, \dots, M+1$} \\
+      \bar{S}^{N+1} = K \\
+      v^{n}_{0} = K - \bar{S}^{n} & \text{for $n = N, \dots 0$}\\
+      v^{n}_{1} =  K - (1+\Delta{x})\bar{S}^{n} & \text{for $n = N, \dots 0$}\\
+      v^{n}_{M} = 0 & \text{for $n = N, \dots 0$}
     \end{cases}
   \end{align}
 \end{subequations}
-
 Since there is not an explicit formula for $v^{n}_{i}$ and $\bar{S}^n$, we will 
 have to solve a non-linear system of equation. Let's define the vector $\mathbf{v}^n \in \mathbb{R}^{M-2}$ 
- 
 \begin{subequations}
   \begin{equation}
     \mathbf{v}^{n} := \begin{bmatrix}
@@ -264,7 +304,6 @@ have to solve a non-linear system of equation. Let's define the vector $\mathbf{
     \end{bmatrix}^{\text{T}}
   \end{equation}    
 \end{subequations}
-
 the matrix $\Lambda^{n} \in \mathbb{R}^{M-1,M-2}$ 
 
 \begin{subequations}
