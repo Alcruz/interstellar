@@ -8,6 +8,8 @@ from scipy.sparse import diags
 from option import Option, OptionType
 from utils import solve
 
+import matplotlib.pyplot as plt
+
 class ExplicitSolver(ABC):
     def __init__(
         self,
@@ -49,14 +51,12 @@ class ExplicitSolver(ABC):
                 dx (float): Grid resolution in the spatial direction.
                 dt (float): Grid resolution in the time direction.
             """
-
             p = np.zeros_like(self.x_axis)
             S_bar = 1
             for _ in np.arange(0, option.T, self.dt):
                 S_bar = self.compute_time_iteration(p, S_bar)
-
             S = S_bar * np.exp(self.x_axis)
-            return S, p, S_bar
+            return option.K*S, option.K*p, S_bar
     
 class CallExplicitSolver(ExplicitSolver):
     def __init__(
@@ -71,11 +71,11 @@ class CallExplicitSolver(ExplicitSolver):
         self.x_axis = np.arange(x_min, dx, dx)
         self.x_axis[-1] = 0
         super().__init__(r=r, sigma=sigma, dx=dx, dt=dt, delta=delta)
-        self.alpha = self.r*np.power(self.dx/self.sigma, 2) - 1
-        self.beta = 0.5*np.power(self.dx, 2) + self.dx - 1 
+        self.alpha = -self.r*np.power(self.dx/self.sigma, 2) - 1
+        self.beta = -1 + self.dx - 0.5*np.power(self.dx, 2) - np.power(self.dx/self.sigma, 2)*self.delta 
 
     def compute_time_iteration(self, p: np.ndarray, S_bar: float) -> float:
-        d = self.alpha + (self.A*p[-3] + self.B*p[-2] + self.C*p[-1] - (p[-1]-p[-3])/(2*self.dx))
+        d = self.alpha - (self.A*p[-3] + self.B*p[-2] + self.C*p[-1] - (p[-1]-p[-3])/(2*self.dx))
         d /= (p[-1]-p[-3])/(2*self.dx) + self.beta*S_bar
         
         S_bar_new = d*S_bar
@@ -101,7 +101,7 @@ class PutExplicitSolver(ExplicitSolver):
         self.x_axis = np.arange(0, x_max+dx, dx)
         super().__init__(r=r, sigma=sigma, dx=dx, dt=dt, delta=delta)
         self.alpha = 1 + self.r*np.power(self.dx/self.sigma, 2)
-        self.beta = 1 + self.dx + 0.5*np.power(self.dx, 2)
+        self.beta = 1 + self.dx + 0.5*np.power(self.dx, 2) + np.power(self.dx/self.sigma, 2)*self.delta 
 
     def compute_time_iteration(self, p: np.ndarray, S_bar: float) -> float:
         d = self.alpha - (self.A*p[0] + self.B*p[1] + self.C*p[2] - (p[2]-p[0])/(2*self.dx))
@@ -137,7 +137,7 @@ def solve_explicitly(
     """
     match option.type:
         case OptionType.CALL:
-            x_min = kwargs.get('x_min', -2)
+            x_min = kwargs.get('x_min', -20)
             return CallExplicitSolver(r, sigma, x_min, dx, dt, delta).solve(option)
         case OptionType.PUT:
             x_max = kwargs.get('x_max', 2)

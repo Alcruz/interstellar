@@ -66,15 +66,6 @@ class ExplicitSolver(ABC):
             D[1:-1] *= (V[2:]-V[:-2]) * (1/S_bar)
             
             S_bar = self.compute_time_iteration(V, D)
-
-        # S_region =  np.linspace(0, S_bar, num=200, endpoint=False)
-        # C_region =  S_bar * x
-        # P = option.payoff(S_region)
-        # V_interp = interpolate.interp1d(
-        #     np.concatenate([S_region, C_region]), 
-        #     np.concatenate([P, V]), 
-        #     kind='cubic'
-        # )
         return S_bar*self.x_axis, V, S_bar
     
     @abstractmethod
@@ -96,7 +87,7 @@ class CallOptionExplicitSolver(ExplicitSolver):
 
     def compute_time_iteration(self, V: np.ndarray, D: np.ndarray):
         S_bar = self.option.K + self.A[-2]*V[-3] + self.B[-2]*V[-2] + self.C[-2]*V[-1]
-        S_bar /= (1 - self.dx) - D[-2]
+        S_bar /= 1 - self.dx - D[-2]
 
         V[1:-2] = self.A[1:-2]*V[:-3] + self.B[1:-2]*V[1:-2] \
             + self.C[1:-2]*V[2:-1] + D[1:-2]*S_bar
@@ -192,10 +183,16 @@ class CallOptionImplicitSolver(ImplicitSolver):
         sigma: float,  # sigma price volatitliy
         dx: float,  # grid resolution along x-axis
         dt: float,  # grid resolution along t-axis
-        delta=0, # dividends
+        delta=0, #dividends
+        maxiter=1000,
+        tolerance=1e-24,
+        method='lm'
     ) -> None:
         self.x_axis = np.arange(0, 1+dx, dx)
         super().__init__(option, r, sigma, dx, dt, delta)
+        self.maxiter=maxiter
+        self.tolerance=tolerance
+        self.method=method
 
     def jacobian(self, y, S_bar):
         p, s, = y[:-1], y[-1]
@@ -225,25 +222,27 @@ class CallOptionImplicitSolver(ImplicitSolver):
         return retVal
 
     def system(self, y, b, S_bar):
-        p, s, = y[:-1], y[-1]
+        *v, s = y
         beta = self.beta(s, S_bar)
         gamma = self.gamma(s, S_bar)
         A = diags([self.alpha[2:-1], beta[1:-2], gamma[1:-3]],
                 [-1, 0, 1], shape=(self.M-2, self.M-3)).toarray()
         f = b[1:-1]
-        f[-2] -= gamma[-3]*self.option.payoff((1-self.dx)*s)
-        f[-1] -= gamma[-2]*self.option.payoff(s) + beta[-2]*self.option.payoff((1-self.dx)*s)
-        res = A@p - f
+        f[-2] -= gamma[-3]*((1-self.dx)*s-self.option.K)
+        f[-1] -= gamma[-2]*(s-self.option.K) + beta[-2]*((1-self.dx)*s - self.option.K)
+        res = A@v - f
         return res
     
     def solve_non_linear_system(self, V: np.ndarray, S_bar: np.ndarray):
         *V[1:-2], S_bar = root(
             lambda y: self.system(y, np.copy(V[:]), S_bar),
             # jac=lambda y: self.jacobian(y, S_bar),
-            x0=np.concatenate([V[1:-2], [S_bar]])
+            x0=np.concatenate([V[1:-2], [S_bar]]),
+            method=self.method,
+            options=dict(xtol=self.tolerance, maxiter=self.maxiter)
         )['x']
-        V[-2] = self.option.payoff((1-self.dx)*S_bar)    
-        V[-1] = self.option.payoff(S_bar)
+        V[-2] = (1-self.dx)*S_bar-self.option.K
+        V[-1] = S_bar-self.option.K
         return S_bar
 
 class PutOptionImplicitSolver(ImplicitSolver):
@@ -307,8 +306,8 @@ class PutOptionImplicitSolver(ImplicitSolver):
         *V[2:-1], S_bar = root(
             lambda y: self.system(y, np.copy(V[:]), S_bar),
             # jac=lambda y: self.jacobian(y, S_bar),
-            method=self.method,
             x0=np.concatenate([V[2:-1], [S_bar]]),
+            method=self.method,
             options=dict(xtol=self.tolerance, maxiter=self.maxiter)
         )['x']
         V[0] = self.option.payoff(S_bar)
