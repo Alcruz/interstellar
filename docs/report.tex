@@ -14,6 +14,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{hyperref}
+\usepackage{amssymb}
 
 \addbibresource{progress.bib}
 % other useful pagackes include booktabs, hyperref, amsthm, xcolor, todonotes, showkeys, ...
@@ -76,22 +77,22 @@ concise and clear. The typical length is one paragraph.
 \setcounter{tocdepth}{3}  % this will list subsections, but not subsubsections
 \tableofcontents 
 \newpage
-% this is a comment in the file that won't appear in the output
-
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\numberwithin{algorithm}{section}
 
 \include{chapters/chapter1_introduction}
 \include{chapters/chapter2/blackscholes}
 \include{chapters/chapter3/finitediferencesschemes}
-\include{chapters/chapter4/numericalresults}
+% \include{chapters/chapter4/numericalresults}
 \include{chapters/chapter5/lcp}
 \include{chapters/chapter5_conclusion}
-\include{chapters/chapter3_frontfixing}
-
-\section{Conclusions} \label{sec:conclusions}
-
+% \include{chapters/chapter3_frontfixing}
 \newpage
 
 \appendix
+
+\include{chapters/appendix}
 
 \newpage
 

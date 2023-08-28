@@ -1,295 +1,164 @@
 \section{Linear complementary problem}
-
 \subsection{Overview}
-
-In section \ref{sec:blackscholes}, we defined some
-
-
+A linear complementary problem (LCP) is an optimization problem in which goal is to solve a system of linear equations subject to a complementary condition. In other words, given the matrix $\mathbf{A}\in\mathbb{R}^{d \times d}$ and vector $\mathbf{r}\in\mathbb{R}^{d}$, we want to find the vectors $\mathbf{v}\in\mathbb{R}^{d}$ and $\mathbf{w}\in\mathbb{R}^{d}$ such as
 \begin{align*}
-  &V(S, t) - H(S, t) > 0 \qquad \text{for all $(S,t) \in \mathcal{C}$} \\ 
-  &V(S, t) - H(S, t) = 0 \qquad \text{for all $(S,t) \in \mathcal{S}$}
+  \mathbf{A}\mathbf{v} - \mathbf{w} = \mathbf{b}
 \end{align*}
-
-Additionally,
-
+subject to the complementary conditions 
 \begin{align*}
-    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV = 0 \qquad \text{for $(S,t) \in \mathcal{C}$} \\
+  v_i &\ge 0 \qquad \text{for $i = 1,\dots,d$} \\
+  w_i &\ge 0 \qquad \text{for $i = 1,\dots,d$} \\
+  \mathbf{v}^{T}\mathbf{w} &= 0
 \end{align*}
-  
-Moreover
-
+Note that the complementary conditions require that either $v_i=0$ or $w_i=0$ for each component. As you will see later, the pricing problem for American options can be reformulated as a linear complementary problem. But first, we need to reconsider the results obtained from applying the Black-Scholes to pricing problem in section \ref{sec:blackscholes}. Recall that the value curve of American options $V(S,t)$ is bounded from below by the payoff function 
 \begin{align*}
-    \frac{\partial{V}}{\partial{t}} + \frac{1}{2}\sigma^{2} S^2 \frac{\partial^2{V}}{\partial{S^2}} + (r - \delta)S \frac{\partial{V}}{\partial{S}} - rV < 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
+  V(S, t) - H(S, t) \ge 0 \qquad \text{for all $(S,t)$}
 \end{align*}
-
-Therefore, grouping the bounds above we form a linear complementary system of equations
-{
-  \color{red}  
-  \begin{align}
-    \begin{cases}
-      \big[\frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,t) - H(S,t)] = 0 & \text{for all $(S,t)$} \\
-      V(S, t) - H(S, t) \ge 0 & \text{for all $(S, t)$}\\
-      \frac{\partial V}{\partial t} - \mathcal{L}_{\text{BS}}(V) \le 0 &  \text{for all $(S, t)$}\\
-      V(S, T) = H(S, T) \\  
-    \end{cases}
-    \label{eq:background:finance:linear_complementary_problem}
-  \end{align}
-}
-
-The benefit of the reformulation (\ref*{eq:background:finance:linear_complementary_problem})
-is that there is no dependence on the unknown boundary of the continuation region.
-Later in section (XXX) and section (XXX), we will explore numerical methods for solving 
-both type of problems.
-
-
-
-The Black-Scholes PDE can be transformed to heat diffusion PDE using the following
-change of variables
-
+Moreover, the value function can be divided in two complementary regions: the exercise region \eqref{eq:blackscholes:preliminaries:exercise_region} where  
+\begin{align}
+  \label{eq:lcp:overview:value_in_continuation_region}
+  &V(S, t) - H(S, t) > 0 \qquad \text{for $(S,t) \in \mathcal{C}$} \\ 
+\end{align}
+and continuation region \eqref{eq:blackscholes:preliminaries:continuation_region} where 
+\begin{align}
+  \label{eq:lcp:overview:value_in_exercise_region}
+  &V(S, t) - H(S, t) = 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
+\end{align}
+and the value function $V(S,t)$ is the solution to the Black-Scholes PDE  within the continuation region
 \begin{align*}
-  S &= Ke^x \\
-  t &= T - \dfrac{2\tau}{\sigma^2} \\ 
-  q &:= \dfrac{2r}{\sigma^2} \\
-  q_{\delta} &:= \dfrac{2(r-\delta)}{\sigma^2} \\
-  \alpha &:= \dfrac{1}{2}(q_{\delta} - 1) \\
-  \beta &:= \dfrac{1}{4}(q_{\delta} - 1)^2 + q \\
-  v(x, \tau) &:= e^{-(\alpha x + \beta \tau)}y(x, \tau)= V(S, t)
+    \frac{\partial{V}}{\partial{t}} + \mathcal{L}_{\text{BS}}(V) = 0 \qquad \text{for $(S,t) \in \mathcal{C}$}
 \end{align*}
-
-The system (\ref{eq:background:finance:free_boundary_problem}) 
-is the free boundary formulation for the pricing problem for American options.
-A detailed derivation of (\ref{eq:background:finance:american_options_pde}) 
-can be found at [REFERENCES].
-
-
-The equation (\ref*{eq:background:finance:american_options_pde}) 
-is a paraboblic PDE. Moreover, by applying the transformation,
-
-
-the equation (\ref*{eq:background:finance:american_options_pde}) converts 
-to the heat diffusion PDE.
-
-\begin{equation}
-  h(x, \tau) := \dfrac{H(S, t)}{K} = \begin{cases}
-    \max(e^{x} - 1, 0)\\
-    \max(1 - e^{x}, 0)
-  \end{cases} 
-\end{equation}
-
-\begin{equation}
-  \bar{x}(\tau) := \log{\bar{S}(t)} - \log{K} 
-\end{equation}
-
+where $\mathcal{L}_{\text{BS}}(V)$ is the linear parabolic operator \eqref{eq:blackscholes:preliminaries:linear_parabolic_operator} applied to the function $V(S,t)$. Finally, by plugin $V(S,t)=H(S,t)$ into the Black-Scholes PDE, we obtain the bound for PDE in the exercise region
+\begin{align}
+    \label{eq:lcp:overview:blackscholes_in_exercise_region}
+    \frac{\partial{V}}{\partial{t}} + \mathcal{L}_{\text{BS}} < 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
+\end{align}
+By grouping \eqref{eq:lcp:overview:value_in_continuation_region}, \eqref{eq:lcp:overview:value_in_exercise_region}, \eqref{eq:lcp:overview:blackscholes_in_exercise_region}, we reformulate the problem of pricing American options as system of variational inequalities
 \begin{align}
   \begin{cases}
-    \dfrac{\partial y}{\partial \tau} = \dfrac{\partial^2 y}{\partial x^2} & \text{for $\tau\in[0,\dfrac{\sigma^2}{2}T)$ and $x\in(\bar{x}(t), \infty)$} \\
-    y(x, \tau) = e^{(\alpha x + \beta \tau)}h(x, \tau) & \text{for $\tau\in[0, \dfrac{\sigma^2}{2}T]$ and $x\in(-\infty, \bar{x}(\tau)]$} \\
-    \bar{x}(0) = 0
+    \big[\frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,T-\tau) - H(S,T-\tau)] = 0 & \text{for all $(S,t)$} \\
+    V(S, T-\tau) - H(S, T-\tau) \ge 0 & \text{for $(S, t) \ $}\\
+    \frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V) \ge 0 &  \text{for all $(S, t)$}\\
+    V(S, T) = H(S, T) \\  
   \end{cases}
-  \label{eq:background:finance:american_option_heat_equation}
+  \label{eq:lcp:overview:variational_inequalities}
 \end{align}
-
-We can reformulate equation (\ref*{eq:background:finance:american_option_heat_equation})
-as:
-
-\begin{equation}
-  g := e^{\alpha x + \beta \tau}h(x, \tau)
-\end{equation}
-
+The benefit of the variational inequalities is that there is no explicit dependence on the optimal exercise boundary defined in \eqref{eq:blackscholes:preliminaries:optimal_exercise_boundary}. Also, note that we rewrote the Black-Scholes PDE forward in time by introducing the transformation $\tau = T - t$ deliberately so that the variational inequalities' formulation looks similar in structure to LCP problem. But before elaborating more about the relationship between the variational inequalities and LCP problems, we introduce the transformations
+\begin{align}
+\label{eq:lcp:overview:heat_diffusion_domain_transformation}
+S = Ke^x, \quad t = T - \dfrac{2\tau}{\sigma^2},\quad h(x,\tau) := e^{(\alpha x + \beta \tau)}\dfrac{H(S,t)}{K}, \quad v(x, \tau) := V(S, t) =: Ke^{-(\alpha x + \beta \tau)}y(x, \tau)
+\end{align}
+where
+\begin{align}
+  \label{eq:lcp:overview:heat_diffusion_domain_transformation_2}
+  q &:= \dfrac{2r}{\sigma^2}, \quad q_{\delta} := \dfrac{2(r-\delta)}{\sigma^2}, \quad \alpha := \dfrac{1}{2}(q_{\delta} - 1) \quad \beta := \dfrac{1}{4}(q_{\delta} - 1)^2 + q 
+\end{align}
+so that the Black-Scholes PDE \eqref{eq:chapter2:european_option_pde_with_dividens} to transform to the heat diffusion equation
+\begin{align}
+  \label{eq:lcp:overview:heat_diffusion_equation_PDE}
+  \dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}} = 0
+\end{align}
+with boundary conditions, its solution $y(x,\tau)$ lies within the continuous region 
+\begin{align}
+  \label{eq:lcp:overview:heat_diffusion_equation_solution_region}
+  \mathcal{F}: \mathbb{R} \times [0, \sigma^2T/2]
+\end{align}
+Although we might solve \eqref{eq:lcp:overview:variational_inequalities} without transforming the problem, Dewynne et al. \cite{dewynne_howison_rupf_wilmott_1993} and Seydel \cite{seydel_2009} suggest that transformation to the heat diffusion equation \eqref{eq:lcp:overview:heat_diffusion_equation_PDE} introduces desirable numerical properties when applying finite difference schemes. Hence, under given transformation, the system of variational inequalities \eqref{eq:lcp:overview:variational_inequalities} becomes
 \begin{align}
   \begin{cases}
-    \big(\dfrac{\partial y}{\partial \tau} - \dfrac{\partial^2 y}{\partial x^2}\big)(y  - g) =0 \\
-    \dfrac{\partial y}{\partial \tau} - \dfrac{\partial^2 y}{\partial x^2} \ge 0 \quad y - g \ge 0 \\
-    y(x, 0) = g(x, 0)
+    \bigg[\dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}}\bigg] \cdot [y(x, \tau) - h(x, \tau)] = 0 & \text{for all $(x,\tau)$} \\
+    y(x, \tau) - h(x, \tau) \ge 0 & \text{for all $(x, \tau)$}\\
+    \dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}} \ge 0 &  \text{for all $(x, \tau)$}\\
+    y(x, 0) = h(x, 0) \\  
   \end{cases}
+  \label{eq:lcp:overview:variational_inequalities_heat_equation}
 \end{align}
-
-
-By exploring the geometric properties of the value function $V(S,t)$, 
-we can determine useful conditions that will later help on in solving the equation 
-(\ref*{eq:background:finance:american_options_pde}). Firstly, at
-any given time $0 \le t \le T$, American options match the linear segment of the payoff
-function within the stopping region. Therefore, we could say that 
-
+Now that we have formulated the linear complementary problem in terms of the heat equation, we proceed to apply the finite difference scheme framework presented in section \ref{sec:finitedifferencesschemes}. Specifically, we want to approximate $y(x, \tau)$ at each of the nodes within the grid 
 \begin{align}
-  \dfrac{\partial V}{\partial S}(S, t) =  \begin{cases}
-    -1 & \text{(put)} \\ 
-    1 & \text{(call)}
-  \end{cases}
-  \label{eq:background:finance:american_option_left_boundary}
+  \mathcal{G} := \{(x_i, \tau_n): (i, n) \in \{0, \dots, M+1\} \times \{0, \dots, N+1\}\}
 \end{align}
-
-Moreover, as the price goes to infinity the value of the option tends to zero
-
+where 
 \begin{align}
-  \lim_{S \rightarrow \infty}V(S, t) = 0 
-  \label{eq:background:finance:american_option_stopping_right_boundary}
+  \label{eq:finitedifferencesschemes:overview:grid_2}
+  x_i &:= x_{\text{min}} + i\Delta{x} &  \qquad \text{for $i = 0,\dots, M+1$} \\
+  \tau_n &:= t_{\text{min}} + i{\Delta{\tau}} & \qquad \text{for $i = 0,\dots, N+1$} \\
+  \Delta{x} &:= \dfrac{x_{\text{max}} - x_{\text{min}}}{M+1} \\ 
+  \Delta{t} &:= \dfrac{t_{\text{max}} - t_{\text{min}}}{N+1}
 \end{align}
 
+where $x_{\text{min}}$ is set to a sufficiently small value, $x_{\text{max}}$ to a sufficiently large value, $\tau_{\text{min}}$ to 0 and $\tau_{\text{max}}$ to $\dfrac{\sigma^2}{2}T$
 
-
-Pricing American options requires using numerical methods. The Black-Scholes PDE 
-in (XXX) can be converted to the heat diffusion equation
-
-
-
-To obtain such approximation, we rely on central difference approximations (REFERENCE).
-
-
-
-\subsection{Explicit scheme}
-
-An explicit scheme is one where we approximate the time partial derivative using
-a forward difference approximation. Hence, the PDE in (XXX) is approximated as
-
+We dedicate the Crank-Nicholson scheme. Morover, the Crank-Nicholson approximation is given by 
 \begin{equation}
-  \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2}
+  \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \dfrac{1}{2}\bigg(\dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} + \dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}\bigg)
 \end{equation}
 
-By rearranging the terms,
+\begin{figure}[H]
+  \label{fig:lcp:thetamethod:stencil}
+  \centering
+  \includegraphics[scale=0.75]{chapters/chapter5/CrankNicholsonStencil.pdf}
+  \caption{Stencil diagram for the Crank-Nicholson scheme.}
+\end{figure}
 
+\subsection{Theta method}
+The theta method is a combination of the explicit and implicit method controlled by parameter $\theta\in[0,1]$
 \begin{equation}
-  \lambda := \dfrac{\Delta \tau}{(\Delta x)^2}
+  \label{eq:lcp:thetamethod:finitedifference_approximation}
+  \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = (1-\theta)\dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} +  \theta\dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
 \end{equation}
-
+for $i = 1,\dots,M$, and $n = 0,\dots,N$. The PDE approximation is fully explicit for $\theta = 0$, fully implicit for $\theta = 1$, and Crank-Nicholson for $\theta=1/2$. Introducing $\lambda = \Delta{t} / \Delta{x}^2$, and rearranging \eqref{eq:lcp:thetamethod:finitedifference_approximation}, we have
 \begin{equation}
-  y^{n+1}_i = \lambda y^{n}_{i-1} + (1 - 2\lambda)y^{n}_{i} + \lambda y^{n}_{i+1}
+  \label{eq:lcp:thetamethod:finitedifference_approximation_2}
+  y^{n+1}_{i} - \lambda\theta(y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) =  y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
 \end{equation}
-
-It is shown by reference [REFERENCE] that method (XXX) is stable and consistent 
-under the following condition
-
+for $i = 1,\dots,M$, and $n = 0,\dots,N$. Also, let us define $b^n_i$
 \begin{equation}
-  0 < \Delta \tau \le \dfrac{(\Delta x)^2}{2}
+  b^{n}_i := y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
 \end{equation}
-
-Moreover, the method has order of convergence $O(\Delta \tau, (\Delta x)^{2})$.
-
-\subsection{Implicit scheme}
-
-The implicit scheme approximates the time derivative using a backward difference
-
-\begin{equation}
-  \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-\begin{equation}
-  y^{n+1}_{i} - \lambda (y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) = y^{n}_{i}  
-\end{equation}
-
-\begin{equation}
-  K := \begin{bmatrix}
-    2 & -1     & & 0 \\ 
-   -1 & \ddots & \ddots \\
+for $i = 1,\dots,M$, and $n = 0,\dots,N$. Then, we define the vectors $\mathbf{b}^n\in\mathbb{R}^{M}$, $\mathbf{y}^{n+1}\in\mathbb{R}^{M}$ and $\mathbf{h}^n\in\mathbb{R}^{M}$ ad
+\begin{align}
+  \mathbf{b}^{n} :=& \begin{bmatrix}
+    b^{n}_1, \dots, b^{n}_{M}
+  \end{bmatrix}^{T}\\
+  \mathbf{y}^{n+1} :=& \begin{bmatrix}
+    y^{n+1}_1, \dots, y^{n+1}_{M}
+  \end{bmatrix}^{T}\\
+  \mathbf{h}^{n+1} :=& \begin{bmatrix}
+    h(x_1, \tau_{n+1}), \dots, h(x_M, \tau_{n+1})
+  \end{bmatrix}^{T}
+\end{align}
+and the matrix $\mathbf{A}\in\mathbb{R}^{M \times M}$ as
+\begin{align}
+  A :=& \begin{bmatrix}
+    1+2\theta & -\lambda\theta & & 0 \\ 
+   -\lambda\theta & \ddots & \ddots \\
       & \ddots & \ddots & \ddots \\
     0 & & \ddots & \ddots & \\
   \end{bmatrix} 
-\end{equation}
-
-\begin{equation}
-  (I + \lambda K)\boldsymbol{y}^{n+1} = \boldsymbol{y}^{n}
-\end{equation}
-
-\subsection{Theta method}
-
-\begin{equation}
-  \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = (1-\theta)\dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} +  \theta\dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}
-\end{equation}
-
-\begin{equation}
-  y^{n+1}_{i} - \lambda\theta(y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}) =  y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
-\end{equation}
-
-\begin{equation}
-  (1 + \lambda\theta K)\boldsymbol{y}^{n+1} = (1-\lambda\theta K)\boldsymbol{y}^{n} 
-\end{equation}
-
-\subsubsection{Theta method}
-
-We discretize the system of equation containing (3.17) and (3.18) to solve it. 
-Firstly, we define an uniform meshgrid within the region $[1, x_\text{max}]\times [0, T]$ and 
-with resolution $\Delta x$ and $\Delta t$.
-
+\end{align}
+Hence, we can write the equations in \eqref{eq:lcp:overview:variational_inequalities_heat_equation} as  
+\begin{align}
+  \begin{cases}
+    (\mathbf{A}\mathbf{y}^{n+1} + \mathbf{b}^{n})^{T}(\mathbf{y}^{n+1}- \mathbf{h}^{n+1}) = 0\\
+    \mathbf{A}\mathbf{y}^{n+1} + \mathbf{b}^{n} \ge 0\\
+    \mathbf{y}^{n+1}- \mathbf{h}^{n+1} \ge 0 \\
+    \mathbf{y}^{0} = \mathbf{h}^{0} \\  
+  \end{cases}
+  \label{eq:lcp:overview:variational_inequalities_heat_equation}
+\end{align}
+which is the LCP formulation. Note that if we define the vectors
 \begin{align*}
-    M := \dfrac{x_{\text{max}} - 1}{\Delta x}
-    \qquad
-    N := \dfrac{T}{\Delta t}
+  \mathbf{v} := \mathbf{y}^{n+1} - \mathbf{h}^{n+1} \\
+  \mathbf{w} := \mathbf{A}\mathbf{y}^{n+1} - \mathbf{b}^{n} \\
+  \mathbf{r} := \mathbf{b}^n - \mathbf{A}\mathbf{h}^{n+1}
 \end{align*}
 
-\begin{align*}
-   & & x_i &:= 1 + i{\Delta x} &\text{for $i = 0,\dots,M$} & & \\ 
-   & & t_n &:= n{\Delta t} &\text{for $n = 0,\dots,N$} & &
-\end{align*}
-
-Now we define the approximations
-
-\begin{equation}
-    v^{n}_{i} \approx v(x_{i}, t_{n}) \qquad \text{for $(x_{i}, t_{n}) \in \{x_k\}^{M}_{0} \times \{t_k\}^{N}_{0}$} 
-\end{equation}
-\begin{equation}
-    \bar{S}^{n} \approx \bar{S}(t_{n}) \qquad \text{for $t_{n} \in \{t_k\}^{N}_{0}$} 
-\end{equation}
-
-By the boundary conditions, we can derive an expression for
-
 \begin{align}
-    v^{n}_{0} &= K - \bar{S}^{n} \qquad \text{for $n = 0, \dots, N - 1, N$} \\
-    v^{n}_{M+1} &= 0 \qquad \text{for $n = 0, \dots, N - 1, N$}
+    b^{n}_{i} := y^{n}_{i} + (1-\theta)\lambda(y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1})
 \end{align}
 
-Additionally by using the smothness condition, we get:
-
 \begin{align}
-    \dfrac{v^{n}_{1} - v^{n}_0}{\Delta x} = -\bar{S}^{n}
+  h^{n}_{i} := h(x_i, \tau_n)
 \end{align}
 
-or 
-
-\begin{align}
-    v^{n}_{1}= K - (1 + {\Delta x})\bar{S}^{n}
-\end{align}
-
-Next, we equation (3.XX) discretize using centered finite difference. The discretization
-method, we use is the theta method which a interpolation between an implicit and explicit scheme.
-
-\begin{equation}
-    \begin{split}
-        v^{t+1}_{i} &- v^{t}_{i} + \theta \bigg\{ \dfrac{1}{2}\sigma^2 x^{2}_{i} \dfrac{\Delta t}{(\Delta x)^2} (v^{t}_{i-1} - 2 v^{t}_{i} + v^{t}_{i+1}) + \bigg[ (r - \delta) - \dfrac{1}{\bar{S}^t} \dfrac{\bar{S}^{t+1} - \bar{S}^{t}}{\Delta t} \bigg] \dfrac{\Delta t}{2\Delta x} (v_{i+1}^{t} - v_{i-1}^{t}) - r v^{t}_{i} \Delta t \bigg\}
-        \\ & + (1-\theta) \bigg\{ \dfrac{1}{2}\sigma^2 x^{2}_{i} \dfrac{\Delta t}{(\Delta x)^2}(v^{t+1}_{i-1} - 2 v^{t+1}_{i} + v^{t+1}_{i+1}) 
-        \\ &  + \bigg[ (r - \delta) - \dfrac{1}{\bar{S}^{t+1}} \dfrac{\bar{S}^{t+1} - \bar{S}^{t}}{\Delta t} \bigg]\dfrac{\Delta t}{2\Delta x}(v_{i+1}^{t+1} - v_{i-1}^{t+1}) - r v^{t+1}_{i} \Delta t \bigg\} = 0
-    \end{split}
-\end{equation}
-
-To simplify the expression above, we introduce the following terms
-
-\begin{equation}
-    \lambda := \dfrac{\Delta t}{(\Delta x)^2}
-\end{equation}
-
-\begin{align}
-    \alpha_i &:= 1 + \theta (\lambda \sigma^2 x_{i}^{2} + r{\Delta t}) \\
-    \beta_i &:= - \dfrac{1}{2} \lambda \theta \bigg[ \sigma^{2} x_{i}^{2} - x_i \Delta x (r - \delta) \bigg]  - \dfrac{1}{2} \lambda \theta   x_i \Delta x \dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta t \bar{S}^n}  \\
-    \gamma_i &:= -\dfrac{1}{2} \lambda \theta \bigg[ \sigma^{2} x_{i}^{2} + x_i \Delta x (r - \delta) \bigg]  + \dfrac{1}{2} \lambda \theta  x_i \Delta x  \dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta t \bar{S}^n}\\
-    a_i &:= 1 - (1-\theta) (\lambda \sigma^2 x_{i}^{2} +  r{\Delta t}) \\
-    b_i &:= \dfrac{1}{2} (1-\theta) \lambda \bigg[\sigma^{2} x_{i}^{2} - x_i \Delta x \bigg( (r - \delta) - \dfrac{1}{\Delta t} \bigg) \bigg] \\
-    c_i &:= \dfrac{1}{2} (1-\theta) \lambda \bigg[ \sigma^{2} x_{i}^{2} +  x_i \Delta x \bigg( (r - \delta) - \dfrac{1}{\Delta t} \bigg) \bigg] \\
-    d^{n+1}_i &:= (1-\theta) \dfrac{x_i}{2 \Delta x}  \dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{\bar{S}^{n+1}}
-\end{align}
-
-Now, the expression above becomes
-
-\begin{equation}
-    \beta^{n}_{i} v^{n}_{i-1} + \alpha^{n}_{i} v^{n}_{i} + \gamma^{n}_{i} v^{n}_{i+1} = b_i v^{n+1}_{i-1} + a_i v^{n+1}_{i} + c_i v^{n+1}_{i+1} + d^{n+1}_{i}\bar{S}^{n}
-\end{equation}
-
-\begin{align}
-    \gamma^{n}_{1} v^{n}_{2} = b_1 v^{n+1}_{0} + a_1 v^{n+1}_{1} + c_1 v^{n+1}_{2} + d^{n+1}_{1}\bar{S}^{n} - \beta^{n}_{1} (K - \bar{S}^n) - \alpha^{n}_{1} (K - (1+\Delta x)\bar{S}^n) 
-\end{align}
-
-\begin{equation}
-    \alpha^{n}_{2} v^{n}_{2} + \gamma^{n}_{2} v^{n}_{3} = b_2 v^{n+1}_{1} + a_2 v^{n+1}_{2} + c_2 v^{n+1}_{3} + d^{n+1}_{2}\bar{S}^{n} - \beta^{n}_{2} (K - (1+\Delta x)\bar{S}^n) 
-\end{equation}
-
-\begin{equation}
-    \beta^{n}_{M} v^{n}_{M-1} + \alpha^{n}_{M} v^{n}_{M} = b_i v^{n+1}_{i-1} + a_i v^{n+1}_{i} + c_i v^{n+1}_{i+1} + d^{n+1}_{i}\bar{S}^{n}
-\end{equation}
+\subsection{PSOR method}

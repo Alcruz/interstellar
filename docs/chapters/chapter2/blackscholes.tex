@@ -41,8 +41,8 @@ Finally, the portfolio value matches the option value
 \end{equation*}
 at any time $0 \le t \le T$. Using the self-financing portfolio hedging strategy, The Black-Scholes model presents a mathematical model for the dynamics of an option's price. The model makes certain assumptions about the market. A complete list of all the assumptions can be found in \cite{merton_1973} and \cite{wilmott_howison_dewynne_1995}. In the next part, we enumerate some them. Firstly, the asset price $S_t$ is distributed as a log-normally
 \begin{equation}
-  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
   \label{eq:blackscholes:preliminaries:asset_price}
+  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
 \end{equation}
 where the risk-free interest rate $r(t)$ and the price volatility $\sigma(t)$ are deterministic functions of time during the life of the option. Secondly, the bank account $B(t)$ is a deterministic function
 \begin{equation*}
@@ -54,58 +54,52 @@ life of the option. Later on, we will address the assumption about dividends.
 
 By applying the Black-Scholes model to price European options, the famous
 Black-Scholes PDE is obtained
-
 \begin{equation*}
+  \label{eq:blackscholes:preliminaries:european_option_pde}
   \begin{cases}
     \dfrac{\partial{V}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + r S \dfrac{\partial{V}}{\partial{S}} - rV = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\ V(S, T) =
     H(S, T) & \text{for $S\in[0, \infty)$}
   \end{cases}
-  \label{eq:blackscholes:preliminaries:european_option_pde}
 \end{equation*}
-
 where $V(S, t)$ is a deterministic function. A derivation of the Black-Scholes PDE for European options can be found in \cite{merton_1973} and \cite{wilmott_howison_dewynne_1995}. We previously mentioned that Black-Scholes model assumes that the underlying asset does not pay dividends. In most cases, assets such as stocks pay out dividends just a few times at year. In this case, dividends are to be modelled discretely. However, there are certain assets that pay out a proportion of the current price during and interval of time. For instance, indexes such as the SPX. Thus, in such cases, it is useful to model dividends as a continuous yield. \cite{wilmott_howison_dewynne_1995} shows a slight adjusted asset price model that includes continuous yield dividends
 \begin{equation}
-  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \delta(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
   \label{eq:blackscholes:preliminaries:dividends_asset_price}
+  S_t = S_0 \exp\bigg\{\int_{0}^{t} \big(r(s) - \delta(s) - \dfrac{1}{2}\sigma(s)\big)ds + \sqrt{t}Z\bigg\}
 \end{equation}
 Note that when the asset does not pay out dividends $\delta(t) = 0$, the asset price model will be exactly as in \eqref{eq:blackscholes:preliminaries:asset_price}. Similarly to as we did for the risk-free interest rate and the volatility of the asset price, we will assume that continuous dividends yield is as constant from now on. As a consequence of
 the asset price mode \eqref{eq:blackscholes:preliminaries:dividends_asset_price}, the Black-Scholes PDE changes to 
 \begin{equation}
+  \label{eq:chapter2:european_option_pde_with_dividens}
   \begin{cases}
-    \dfrac{\partial{V}}{\partial{t}} + \mathcal{L}V = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\ 
+    \dfrac{\partial{V}}{\partial{t}} + \mathcal{L}_{\text{BS}}(V) = 0 & \text{for $t\in[0,T)$ and $S\in[0, \infty)$} \\ 
     V(S, T) = H(S,T) & \text{for $S\in[0, \infty)$}
   \end{cases}
-  \label{eq:chapter2:european_option_pde_with_dividens}
 \end{equation}
-
-where $\mathcal{L}$ is the linear parabolic operator
-
+where $\mathcal{L}_{\text{BS}}(f)(x)$ is the linear parabolic operator applied to the function $f \in \mathcal{C}^2$
 \begin{equation}
-  \mathcal{L}V := \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \dfrac{\partial{V}}{\partial{S}} - rV
   \label{eq:blackscholes:preliminaries:linear_parabolic_operator}
+  \mathcal{L}_{\text{BS}}(f)(x) := \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{f}}{\partial{x^2}} + (r - \delta) x \dfrac{\partial{f}}{\partial{x}} - rf(x)
 \end{equation}
-
-Similarly, to the asset price model with dividends, the Black-Scholes PDE
-with dividends fall back to the original Black-Scholes PDE if the asset does not pay out dividends $\delta = 0$. So far, we have presented an equation that
-describes the dynamics of the value $V(S,t)$ of European options. So now, we will consider the pricing of American options. By applying the Black-Scholes model to price American options, Merton \cite*{merton_1973} derives some important facts. Firstly, the value $V(S,t)$ is bounded from below by the payoff function:
-\begin{align*}
-  V(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}
+Note that for conciseness, we write $\mathcal{L}_\text{BS}(V)(S)$ as $\mathcal{L}_\text{BS}(V)$. Similarly, to the asset price model with dividends, the Black-Scholes PDE with dividends fall back to the original Black-Scholes PDE if the asset does not pay out dividends $\delta = 0$. So far, we have presented an equation that describes the dynamics of the value $V(S,t)$ of European options. So now, we will consider the pricing of American options. By applying the Black-Scholes model to price American options, Merton \cite*{merton_1973} derives some important facts. Firstly, the value $V(S,t)$ is bounded from below by the payoff function:
+\begin{align}
   \label{eq:blackscholes:american_options_price_lower_bound}
-\end{align*}
+  V(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}
+\end{align}
 Moreover, the domain of $V(S, t)$ can be separated into the exercise region in 
-\begin{equation*}
+\begin{equation}
   \mathcal{S} := \{(S, t) : V(S, t) = H(S, t)\}
   \label{eq:blackscholes:preliminaries:exercise_region}
-\end{equation*}
+\end{equation}
 in which it is profitable for the holder to exercise the option, the continuation region
-\begin{equation*}
-  \mathcal{C} := \{(S, t) : V(S, t) > H(S, t)\}
-\end{equation*} 
-in which it is preferable to continue holding the option because exercising is not profitable, and the optimal exercise boundary that separates the continuation region and exercise region
-\begin{equation*}
-  \partial \mathcal{C} := \{(S, t) : S = \bar{S}(t)\}
+\begin{equation}
   \label{eq:blackscholes:preliminaries:continuation_region}
-\end{equation*}
+  \mathcal{C} := \{(S, t) : V(S, t) > H(S, t)\}
+\end{equation} 
+in which it is preferable to continue holding the option because exercising is not profitable, and the optimal exercise boundary that separates the continuation region and exercise region
+\begin{equation}
+  \label{eq:blackscholes:preliminaries:optimal_exercise_boundary}
+  \partial \mathcal{C} := \{(S, t) : S = \bar{S}(t)\}
+\end{equation}
 where $\bar{S}(t)$ is the optimal exercise price. 
 \begin{figure}[H]
   \centering

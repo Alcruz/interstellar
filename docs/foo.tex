@@ -1,0 +1,90 @@
+
+\subsubsection{Theta method}
+
+We discretize the system of equation containing (3.17) and (3.18) to solve it. 
+Firstly, we define an uniform meshgrid within the region $[1, x_\text{max}]\times [0, T]$ and 
+with resolution $\Delta x$ and $\Delta t$.
+
+\begin{align*}
+    M := \dfrac{x_{\text{max}} - 1}{\Delta x}
+    \qquad
+    N := \dfrac{T}{\Delta t}
+\end{align*}
+
+\begin{align*}
+   & & x_i &:= 1 + i{\Delta x} &\text{for $i = 0,\dots,M$} & & \\ 
+   & & t_n &:= n{\Delta t} &\text{for $n = 0,\dots,N$} & &
+\end{align*}
+
+Now we define the approximations
+
+\begin{equation}
+    v^{n}_{i} \approx v(x_{i}, t_{n}) \qquad \text{for $(x_{i}, t_{n}) \in \{x_k\}^{M}_{0} \times \{t_k\}^{N}_{0}$} 
+\end{equation}
+\begin{equation}
+    \bar{S}^{n} \approx \bar{S}(t_{n}) \qquad \text{for $t_{n} \in \{t_k\}^{N}_{0}$} 
+\end{equation}
+
+By the boundary conditions, we can derive an expression for
+
+\begin{align}
+    v^{n}_{0} &= K - \bar{S}^{n} \qquad \text{for $n = 0, \dots, N - 1, N$} \\
+    v^{n}_{M+1} &= 0 \qquad \text{for $n = 0, \dots, N - 1, N$}
+\end{align}
+
+Additionally by using the smothness condition, we get:
+
+\begin{align}
+    \dfrac{v^{n}_{1} - v^{n}_0}{\Delta x} = -\bar{S}^{n}
+\end{align}
+
+or 
+
+\begin{align}
+    v^{n}_{1}= K - (1 + {\Delta x})\bar{S}^{n}
+\end{align}
+
+Next, we equation (3.XX) discretize using centered finite difference. The discretization
+method, we use is the theta method which a interpolation between an implicit and explicit scheme.
+
+\begin{equation}
+    \begin{split}
+        v^{t+1}_{i} &- v^{t}_{i} + \theta \bigg\{ \dfrac{1}{2}\sigma^2 x^{2}_{i} \dfrac{\Delta t}{(\Delta x)^2} (v^{t}_{i-1} - 2 v^{t}_{i} + v^{t}_{i+1}) + \bigg[ (r - \delta) - \dfrac{1}{\bar{S}^t} \dfrac{\bar{S}^{t+1} - \bar{S}^{t}}{\Delta t} \bigg] \dfrac{\Delta t}{2\Delta x} (v_{i+1}^{t} - v_{i-1}^{t}) - r v^{t}_{i} \Delta t \bigg\}
+        \\ & + (1-\theta) \bigg\{ \dfrac{1}{2}\sigma^2 x^{2}_{i} \dfrac{\Delta t}{(\Delta x)^2}(v^{t+1}_{i-1} - 2 v^{t+1}_{i} + v^{t+1}_{i+1}) 
+        \\ &  + \bigg[ (r - \delta) - \dfrac{1}{\bar{S}^{t+1}} \dfrac{\bar{S}^{t+1} - \bar{S}^{t}}{\Delta t} \bigg]\dfrac{\Delta t}{2\Delta x}(v_{i+1}^{t+1} - v_{i-1}^{t+1}) - r v^{t+1}_{i} \Delta t \bigg\} = 0
+    \end{split}
+\end{equation}
+
+To simplify the expression above, we introduce the following terms
+
+\begin{equation}
+    \lambda := \dfrac{\Delta t}{(\Delta x)^2}
+\end{equation}
+
+\begin{align}
+    \alpha_i &:= 1 + \theta (\lambda \sigma^2 x_{i}^{2} + r{\Delta t}) \\
+    \beta_i &:= - \dfrac{1}{2} \lambda \theta \bigg[ \sigma^{2} x_{i}^{2} - x_i \Delta x (r - \delta) \bigg]  - \dfrac{1}{2} \lambda \theta   x_i \Delta x \dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta t \bar{S}^n}  \\
+    \gamma_i &:= -\dfrac{1}{2} \lambda \theta \bigg[ \sigma^{2} x_{i}^{2} + x_i \Delta x (r - \delta) \bigg]  + \dfrac{1}{2} \lambda \theta  x_i \Delta x  \dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{\Delta t \bar{S}^n}\\
+    a_i &:= 1 - (1-\theta) (\lambda \sigma^2 x_{i}^{2} +  r{\Delta t}) \\
+    b_i &:= \dfrac{1}{2} (1-\theta) \lambda \bigg[\sigma^{2} x_{i}^{2} - x_i \Delta x \bigg( (r - \delta) - \dfrac{1}{\Delta t} \bigg) \bigg] \\
+    c_i &:= \dfrac{1}{2} (1-\theta) \lambda \bigg[ \sigma^{2} x_{i}^{2} +  x_i \Delta x \bigg( (r - \delta) - \dfrac{1}{\Delta t} \bigg) \bigg] \\
+    d^{n+1}_i &:= (1-\theta) \dfrac{x_i}{2 \Delta x}  \dfrac{v^{n+1}_{i+1} - v^{n+1}_{i-1}}{\bar{S}^{n+1}}
+\end{align}
+
+Now, the expression above becomes
+
+\begin{equation}
+    \beta^{n}_{i} v^{n}_{i-1} + \alpha^{n}_{i} v^{n}_{i} + \gamma^{n}_{i} v^{n}_{i+1} = b_i v^{n+1}_{i-1} + a_i v^{n+1}_{i} + c_i v^{n+1}_{i+1} + d^{n+1}_{i}\bar{S}^{n}
+\end{equation}
+
+\begin{align}
+    \gamma^{n}_{1} v^{n}_{2} = b_1 v^{n+1}_{0} + a_1 v^{n+1}_{1} + c_1 v^{n+1}_{2} + d^{n+1}_{1}\bar{S}^{n} - \beta^{n}_{1} (K - \bar{S}^n) - \alpha^{n}_{1} (K - (1+\Delta x)\bar{S}^n) 
+\end{align}
+
+\begin{equation}
+    \alpha^{n}_{2} v^{n}_{2} + \gamma^{n}_{2} v^{n}_{3} = b_2 v^{n+1}_{1} + a_2 v^{n+1}_{2} + c_2 v^{n+1}_{3} + d^{n+1}_{2}\bar{S}^{n} - \beta^{n}_{2} (K - (1+\Delta x)\bar{S}^n) 
+\end{equation}
+
+\begin{equation}
+    \beta^{n}_{M} v^{n}_{M-1} + \alpha^{n}_{M} v^{n}_{M} = b_i v^{n+1}_{i-1} + a_i v^{n+1}_{i} + c_i v^{n+1}_{i+1} + d^{n+1}_{i}\bar{S}^{n}
+\end{equation}
