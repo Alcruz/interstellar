@@ -1,7 +1,8 @@
 import numpy as np
-from scipy import stats
+from scipy import stats, interpolate
 
-from option import Option
+from option import CallOption, Option, PutOption
+
 
 def calculate_amer_option(option: Option, S0, r, sigma, M, delta=0):
     dt = option.T / M 
@@ -70,3 +71,15 @@ def solve(F, J, x0, epsilon=1e-6, max_iterations=100):
         x = x + delta_x
     return x
 
+def put_call_parity(S, K, T, r, V_put):
+    return V_put + S - K*np.exp(-r*T)
+
+def interpolate_call_amer(call: CallOption, S_bar, S_max, S_contreg, V_contreg):
+    S_exreg = np.linspace(S_bar, S_max, num=200, endpoint=False)
+    V_call = interpolate.interp1d(np.concatenate([S_contreg, S_exreg]), np.concatenate([V_contreg, call.payoff(S_exreg)]))
+    return V_call
+
+def interpolate_put_amer(put: PutOption, S_bar, S_contreg, V_contreg):
+    S_exreg = np.linspace(0, S_bar, num=200, endpoint=False)
+    V_put = interpolate.interp1d(np.concatenate([S_exreg, S_contreg]), np.concatenate([put.payoff(S_exreg), V_contreg]))
+    return V_put

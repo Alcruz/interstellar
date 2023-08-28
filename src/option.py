@@ -12,14 +12,6 @@ class Option(ABC):
         self.K = K # Strike price
         self.T = T # Maturity
 
-    @staticmethod
-    def call(K: float, T: float):
-        return CallOption(K, T)
-
-    @staticmethod
-    def put(K: float, T: float):
-        return PutOption(K, T)
-    
     @abstractmethod
     def payoff(self, S: float):
         pass
@@ -37,3 +29,9 @@ class PutOption(Option):
 
     def payoff(self, S: float):
         return np.maximum(self.K - S, 0)
+
+def call(K: float, T: float):
+    return CallOption(K, T)
+
+def put(K: float, T: float):
+    return PutOption(K, T)
