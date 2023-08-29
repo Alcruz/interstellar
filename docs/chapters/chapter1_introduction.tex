@@ -10,78 +10,30 @@ index and individual equities contracts \cite{statista_2019}.
 An enormous market, such as the option market, demands for reliable pricing 
 mechanisms, so that arbitrage opportunities are minimized. Naturally, pricing 
 American options is a wide research area because there is not a closed-form
-solution to PDE resulting from Black-Scholes model. In this work,
-we consider the free boundary and the linear complementary formulations of the 
-pricing problem for American options. To solve the free boundary formulation,
-we apply the front fixing method along with two transformations that allow to fix
-the moving boundaries in the original problem. Alternatively, to solve the linear complementary problem, we apply the PSOR 
-method. Moreover, for both the front-fixing and PSOR method, we present explicit 
-and implicit central finite difference schemes. Finally, we conduct numerical 
-experiments that allow us to compare the trade-offs and properties of each of 
-the methods.
-
-\subsection{Brief history}
-
-Merton \cite{merton_1973} was the first to consider the Black-Scholes model 
+solution to PDE resulting from Black-Scholes model.  Merton \cite{merton_1973} was the first to consider the Black-Scholes model 
 proposed by Black, and Scholes \cite{black_scholes_1973} to price European
 and American options. Although, in his work, Merton derived a nice formula 
 to price European options, he stated that, in general, a closed-from solution 
 was not attainable for American options. In 1977, Schwartz \cite*{schwartz_197779}
 and \cite{brennan_1997} proposed using finite difference schemes 
 to solve the price problem for American options. The work of Merton and Schwartz
-served as foundation for the free boundary problem for American options pricing.
-Based on the work of Landau \cite*{landau_1950_heat_ci}, 
-Wu et al. \cite{wu1997front} formulated the front fixing mention as an approach 
-to solve the free boundary problem for options in which the Landau transformation
-is used to transform the moving boundary to fixed boundary. Since, multiple transformation has 
-been proposed by Huang et al. \cite*{huang_2000}, Nielsen et al. \cite*{nielsen_2001},
-and Company et al. \cite*{company_egorova_jodar_2014}. During the same period, 
-Dewynne et al. \cite*{dewynne_howison_rupf_wilmott_1993} proposed the linear 
-complementary formulation of the pricing problem and introduced the PSOR method.
-
-\subsection{Motivation}
-
-In their work, Company et al. \cite*{company_egorova_jodar_2014} and Nielsen 
-et al. \cite*{nielsen_2001} proposed changes of variables for solving the free
-boundary problems for American put options with non-paying dividends underlies.
- As part of our work, we consider a price model in which
-the assets have continuous dividends yield. Such assets are found in index
-equity derivates. Consequently, we present methods for solving the price problem
-for both put and call options. Moreover, Company et al. \cite*{company_egorova_jodar_2014} 
-proposed an explicit finite difference scheme. Therefore, we formulate an implicit 
-finite difference scheme based on the transformation proposed in 
-\cite*{company_egorova_jodar_2014}. Additionally, we solve the linear complementary
-formulation for the pricing problem proposed in \cite*{seydel_2009} and 
-\cite*{wilmott_howison_dewynne_1995}. Similarly, we consider a price model in which
-assets pay out dividends.
+served as foundation for the free boundary problem for American options pricing. The motivation behind the free boundary problem formulation is that for American options there exists the optimal exercise price that marks the boundary between the region where exercising the option is profitable and the region where is not. Moreover, this optimal exercise price changes with time making impossible for holder to determine when to exercise. Based on the work of Landau \cite*{landau_1950_heat_ci}, Wu et al. \cite{wu1997front} formulated the front fixing method as an approach to solve the free boundary problem for options in which the Landau transformation is used to transform the optimal exercise price or the moving boundary to fixed boundary. Since, multiple transformation has been proposed by Huang et al. \cite*{huang_2000}, Nielsen et al. \cite*{nielsen_2001}, and Company et al. \cite*{company_egorova_jodar_2014}. Around the period, 
+Dewynne et al. \cite*{dewynne_howison_rupf_wilmott_1993}, took a different approach to solve the pricing problem. The idea was to reformulate the free boundary problem as a problem with variational inequalities that, when finite difference is applied, transform to a linear complementary problem \cite{dantzig_1968}.
 
 \subsection{Aim} 
 
 The goal of this work is to implement the numerical methods proposed by 
-Nielsen, et al. \cite{nielsen_2001}, Company, et al. \cite{company_egorova_jodar_2014}
-and Seydel \cite*{seydel_2009} to price American options for underlying assets 
-that pay out with dividends. Additionally, we compare how well these methods approximate 
-the price using as a reference the binomial model which is a widely used method 
-for pricing American options in the industry. Finally, we explore the 
-trade-off in terms of CPU time and memory, and do convergence analysis for each method.
-\subsection{Main results}
+Nielsen, et al. \cite{nielsen_2001}, and Company, et al. \cite{company_egorova_jodar_2014} to solve the free boundary formulation of the pricing problem for American options. \cite*{dewynne_howison_rupf_wilmott_1993}. Moreover, Company et al. \cite*{company_egorova_jodar_2014} and Nielsen et al. \cite*{nielsen_2001} proposed schemes for pricing American put options with non-paying dividends underlies. However, we would like derived analogous schemes for pricing call contracts, as well as, considering underlying assets that have a continuous dividend yield such as the S\&P500. Finally, we want to a convergence analysis of the 
+Additionally, we also consider linear complementary formulation proposed by Dewynne \cite{dewynne_howison_rupf_wilmott_1993} \cite{wilmott_howison_dewynne_1995}. Finally, we do convergence analysis of each of the methods
+
+\subsection{Main Achievements}
+
+In this work, we were able to derive corresponding the PDE problem resulting from applying the transformations proposed by Nielsen, et al. \cite{nielsen_2001} and Company, et al. \cite{company_egorova_jodar_2014} for call and put options with underlies with a continuous dividend yield. Moreover, we implement explicit and implicit schemes for Nielsen, et al. \cite{nielsen_2001}, explicit scheme for \cite{company_egorova_jodar_2014}, and theta method for the linear complementary problem proposed by \cite{wilmott_howison_dewynne_1995} using python. Finally, we were able derived order of convergence of each of the methods implemented.
 
 \subsection{Outline}
 
 The outline of this paper is the following. In section 2, we explore the 
-Black-Scholes model for American options which results in the free boundary 
-formulation of the pricing problem. Moreover, we explore the front fixing method
-as a strategy for fixing the moving boundary by applying a change of variable. 
-We considered the changes of variable proposed by Nielsen, et al. \cite*{nielsen_2001} 
-and Company, et al. \cite*{company_egorova_jodar_2014}. In section 3, we explore
+Black-Scholes model for American options for assets that pay dividends which results in the free boundary formulation of the pricing problem. Moreover, we explore the front fixing method as a strategy for fixing the moving boundary by applying a change of variable. We considered the changes of variable proposed by Company, et al. \cite*{company_egorova_jodar_2014} and Nielsen, et al. \cite*{nielsen_2001}. In section 3, we explore
 an explicit and implicit schemes to solve partial differential equations that 
-result from applying the front fixing method to the free boundary problem. 
-In section 4, we discuss the results obtained from pricing American options using
-explicit and implicit methods given in section 3 and appendix 1. In section 5, 
-we explore a reformulation of the pricing problem as the obstacle problem and 
-the linear complementary system of equation resulted from it. Moreover, we 
-explore the theta method that combines both explicit and implicit numerical 
-scheme to solve obstacle problem. Finally, in the same section, we discuss the 
-results of pricing American options using the theta method to solve the linear 
-complementary problem.
+result from applying the front fixing method and the Nielsen transformation to the free boundary problem obtained in section 1. We conclude section 3 with numerical experiments and convergence analysis for the numerical schemes presented base on the work of Nielsen and Company (appendix \ref{sec:company_explicit_scheme}). In section 5, we explore a reformulation of the pricing problem as a variational inequality and the linear complementary system of equation resulted from it. Moreover, we explore the theta method which a more general numerical method that yields to explicit, implicit and Crank-Nicholson schemes. Finally, in the same section, we discuss the results of solving the linear complementary problem reformulation of pricing American options using the theta method.
 
