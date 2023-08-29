@@ -1,5 +1,5 @@
-\section{FD schemes for Company transformation}
-\subsection{Explicit scheme}
+
+\section{Explicit scheme for Company transformation} 
 The explicit scheme is given by
 \begin{equation*}
     \begin{split}
@@ -36,10 +36,11 @@ for $n=0,\dots,N$. Moreover, the contact point condition is approximated using c
 \end{align*}
 
 for $n=0,\dots,N$. Moreover, the contact point condition is approximated using central finite difference
-\begin{align*}
+\begin{align}
+    \label{eq:appendix:explicitmethodcompany:contact_point_approximation}
     \text{\textbf{Call:}} \qquad & \dfrac{v^{n}_{M+2} - v^{n}_{M}}{2\Delta{x}^2} = \bar{S}^{n}_{f} \\
     \text{\textbf{Put:}} \qquad & \dfrac{v^{n}_{1} - v^{n}_{-1}}{2\Delta{x}}  = -\bar{S}^{n}_{f}  
-\end{align*}
+\end{align}
 
 By combining the central difference approximation for the PDE, the boundary conditions and the contact point, it is obtained 
 
@@ -77,5 +78,270 @@ By combining the central difference approximation for the PDE, the boundary cond
     \EndFor
   \end{algorithmic}
   \end{algorithm}
+\section{Python implementation}
+The following python code is simplified version of the final implementation. A complete version can be found at \url{https://github.com/Alcruz/math4062-dissertation}.
 
-\subsection{Implicit Scheme}
+\begin{lstlisting}[language=Python, caption=Base classses for options solver.]
+    class Option(ABC):
+        def __init__(self, type: OptionType, K: float, T: float):
+            self.type = type
+            self.K = K # Strike price
+            self.T = T # Maturity
+
+        @abstractmethod
+        def payoff(self, S: float):
+            pass
+    class CallOption(Option):
+        def __init__(self, K: float, T: float):
+            super().__init__(OptionType.CALL, K, T)
+        def payoff(self, S: float):
+            return np.maximum(S - self.K, 0) 
+    class PutOption(Option):
+        def __init__(self, K: float, T: float):
+            super().__init__(OptionType.PUT, K, T)
+        def payoff(self, S: float):
+            return np.maximum(self.K - S, 0)
+    class Solver(ABC): 
+        def __init__(self, 
+            option: Option,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta # dividends
+        ) -> None:
+            self.option = option
+            self.r = r
+            self.sigma = sigma
+            self.dx = dx
+            self.dt = dt
+            self.delta = delta
+\end{lstlisting}
+\begin{lstlisting}[language=Python, caption=Explicit solver for Nielsen transformation.]
+    class ExplicitSolver(Solver):
+        def __init__(self, 
+            option: Option,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta # dividends
+        ) -> None:
+            self.option = option
+            self.r = r
+            self.sigma = sigma
+            self.dx = dx
+            self.dt = dt
+            self.delta = delta
+            lambd = dt / np.power(dx, 2)
+            alpha = dt / dx
+            self.A = 0.5 * np.power(sigma*self.x_axis, 2) * lambd - 0.5 * self.x_axis * ((r-delta) - (1/dt)) * alpha
+            self.B = 1 - np.power(sigma*self.x_axis, 2) * lambd - r*dt
+            self.C = 0.5 * np.power(sigma*self.x_axis, 2) * lambd + 0.5 * self.x_axis * ((r-delta) - (1/dt)) * alpha
+        def solve(self):
+            V = np.zeros_like(self.x_axis)
+            S_bar = self.option.K
+            for _ in np.arange(0, self.option.T, self.dt):
+                D = 0.5*self.x_axis/self.dx
+                D[1:-1] *= (V[2:]-V[:-2]) * (1/S_bar)
+                
+                S_bar = self.compute_time_iteration(V, D)
+            return S_bar*self.x_axis, V, S_bar
+        @abstractmethod
+        def compute_time_iteration(self, V: np.ndarray, D: np.ndarray):
+            pass
+    class CallOptionExplicitSolver(ExplicitSolver):
+        def __init__(self, 
+            option: CallOption,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta=0  # dividends
+        ):
+            self.x_axis = np.arange(0, 1+dx, dx)
+            super().__init__(option, r, sigma, dx, dt, delta)
+        def compute_time_iteration(self, V: np.ndarray, D: np.ndarray):
+            S_bar = self.option.K + self.A[-2]*V[-3] + self.B[-2]*V[-2] + self.C[-2]*V[-1]
+            S_bar /= 1 - self.dx - D[-2]
+    
+            V[1:-2] = self.A[1:-2]*V[:-3] + self.B[1:-2]*V[1:-2] \
+                + self.C[1:-2]*V[2:-1] + D[1:-2]*S_bar
+            V[-2] = (1-self.dx)*S_bar - self.option.K
+            V[-1] = S_bar - self.option.K
+            return S_bar
+    class PutOptionExplicitSolver(ExplicitSolver):
+        def __init__(self, 
+            option: PutOption,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            x_max: 2.,  # sufficiently large value for x
+            delta=0  # dividends
+        ):
+            self.x_axis = np.arange(1, x_max+dx, dx)
+            super().__init__(option, r, sigma, dx, dt, delta)
+        def compute_time_iteration(self, V: np.ndarray, D: np.ndarray) -> float:
+            S_bar = self.option.K - (self.A[1]*V[0] + self.B[1]*V[1] + self.C[1]*V[2])
+            S_bar /= D[1] + 1 + self.dx
+            V[2:-1] = self.A[2:-1]*V[1:-2] + self.B[2:-1] * \
+                V[2:-1] + self.C[2:-1]*V[3:] + D[2:-1]*S_bar
+            V[0] = self.option.payoff(S_bar)
+            V[1] = self.option.payoff((1+self.dx)*S_bar)
+            return S_bar
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Implicit solver for Nielsen transformation]
+    class ImplicitSolver(Solver):
+        def __init__(self, 
+            option: Option,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta=0, # dividends
+        ) -> None:
+            self.option = option
+            self.r = r
+            self.sigma = sigma
+            self.dx = dx
+            self.dt = dt
+            self.delta = delta
+            self.lambd = self.dt/np.power(self.dx, 2)
+            self.kappa = self.dt/self.dx
+            self.alpha = 1 + self.lambd*np.power(self.sigma*self.x_axis, 2) + self.r*self.dt
+            self.M = self.x_axis.size 
+        def beta(self, S, S_bar):
+            return -0.5*self.lambd*np.power(self.sigma, 2)*np.power(self.x_axis, 2) + 0.5*self.kappa*self.x_axis*((self.r-self.delta) - (S_bar - S)/(self.dt*S))
+        def gamma(self, S, S_bar):
+            return -0.5*self.lambd*np.power(self.sigma, 2)*np.power(self.x_axis, 2) - 0.5*self.kappa*self.x_axis*((self.r-self.delta) - (S_bar - S)/(self.dt*S))
+        @abstractmethod
+        def solve_non_linear_system(self, V, S_bar) -> float:
+            pass
+        def solve(self):
+            S_bar = self.option.K
+            V = np.zeros_like(self.x_axis)
+            for _ in np.arange(0, self.option.T, self.dt):
+                S_bar = self.solve_non_linear_system(V, S_bar)
+            return S_bar*self.x_axis, V, S_bar
+    class CallOptionImplicitSolver(ImplicitSolver):
+        def __init__(self, 
+            option: Option,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta=0, #dividends
+            maxiter=1000,
+            tolerance=1e-24,
+            method='lm'
+        ) -> None:
+            self.x_axis = np.arange(0, 1+dx, dx)
+            super().__init__(option, r, sigma, dx, dt, delta)
+            self.maxiter=maxiter
+            self.tolerance=tolerance
+            self.method=method
+        def jacobian(self, y, S_bar):
+            p, s, = y[:-1], y[-1]
+            beta = self.beta(s, S_bar)
+            gamma = self.gamma(s, S_bar)
+            dgamma_ds = - 0.5 * (1/self.dx) * self.x_axis * S_bar / s**2
+            dbeta_ds = 0.5 * (1/self.dx) * self.x_axis * S_bar / s**2
+            retVal = diags([self.alpha[2:], beta[1:-1], gamma[1:-1]],
+                        [-1, 0, 1], shape=(self.M-2, self.M-2)).toarray()
+            retVal[-1, :] = 0
+            retVal[:, -1] = 0
+            retVal[0, -1] = dbeta_ds[1]*p[0] + dgamma_ds[1]*p[1]
+            retVal[1:-2, -1] = dbeta_ds[2:-3]*p[1:-1] + dgamma_ds[2:-3]*p[2:]
+            retVal[-2, -1] = dbeta_ds[-3]*p[-2]
+            retVal[-2, -1] -= dgamma_ds[-3]*self.option.payoff((1-self.dx)*s) + gamma[-3]*(1 - self.dx)
+            retVal[-1, -2] = self.alpha[-2]
+            retVal[-1, -1] -= dgamma_ds[-2]*self.option.payoff(s) + gamma[-2] + dbeta_ds[-2]*self.option.payoff((1-self.dx)*s) - beta[1]*(1-self.dx)
+            return retVal
+        def system(self, y, b, S_bar):
+            *v, s = y
+            beta = self.beta(s, S_bar)
+            gamma = self.gamma(s, S_bar)
+            A = diags([self.alpha[2:-1], beta[1:-2], gamma[1:-3]],
+                    [-1, 0, 1], shape=(self.M-2, self.M-3)).toarray()
+            f = b[1:-1]
+            f[-2] -= gamma[-3]*((1-self.dx)*s-self.option.K)
+            f[-1] -= gamma[-2]*(s-self.option.K) + beta[-2]*((1-self.dx)*s - self.option.K)
+            res = A@v - f
+            return res
+        def solve_non_linear_system(self, V: np.ndarray, S_bar: np.ndarray):
+            *V[1:-2], S_bar = root(
+                lambda y: self.system(y, np.copy(V[:]), S_bar),
+                # jac=lambda y: self.jacobian(y, S_bar),
+                x0=np.concatenate([V[1:-2], [S_bar]]),
+                method=self.method,
+                options=dict(xtol=self.tolerance, maxiter=self.maxiter)
+            )['x']
+            V[-2] = (1-self.dx)*S_bar-self.option.K
+            V[-1] = S_bar-self.option.K
+            return S_bar
+    class PutOptionImplicitSolver(ImplicitSolver):
+        def __init__(self, 
+            option: Option,
+            r: float,  # risk-free interest rate
+            sigma: float,  # sigma price volatitliy
+            dx: float,  # grid resolution along x-axis
+            dt: float,  # grid resolution along t-axis
+            delta=0, # dividends
+            x_max=2,
+            maxiter=1000,
+            tolerance=1e-24,
+            method='lm'
+        ) -> None:
+            self.x_axis = np.arange(1, x_max+dx, dx)
+            super().__init__(option, r, sigma, dx, dt, delta)
+            self.maxiter=maxiter
+            self.tolerance=tolerance
+            self.method=method
+        def jacobian(self, y, S_bar):
+            p, s, = y[:-1], y[-1]
+            beta = self.beta(s, S_bar)
+            gamma = self.gamma(s, S_bar)
+    
+            dgamma_ds = - 0.5 * (1/self.dx) * self.x_axis * S_bar / s**2
+            dbeta_ds = 0.5 * (1/self.dx) * self.x_axis * S_bar / s**2
+    
+            retVal = diags([beta[3:-1], self.alpha[2:-1], gamma[1:-1]],
+                        [-2, -1, 0], shape=(self.M-2, self.M-2)).toarray()
+            retVal[-1, :] = 0
+            retVal[:, -1] = 0
+            retVal[0, -1] = dgamma_ds[1]*p[0] + dbeta_ds[1] * \
+                (self.option.K - S_bar) - beta[1] - self.alpha[1]*(1+self.dx)
+            retVal[1, -1] = dgamma_ds[2]*p[1] + dbeta_ds[2] * \
+                (self.option.K - (1+self.dx)*S_bar) - beta[2]*(1+self.dx)
+            retVal[2:-1, -1] = dbeta_ds[3:-2]*p[:-2] + dgamma_ds[3:-2]*p[2:]
+            retVal[-1, -3] = beta[-2]
+            retVal[-1, -2] = self.alpha[-2]
+            retVal[-1, -1] = dbeta_ds[-2]*p[-2]
+            return retVal
+        def system(self, y, b, S_bar):
+            p, s, = y[:-1], y[-1]
+            _beta = self.beta(s, S_bar)
+            _gamma = self.gamma(s, S_bar)
+            A = diags([_beta[3:-1], self.alpha[2:-1], _gamma[1:-2]],
+                    [-2, -1, 0], shape=(self.M-2, self.M-3)).toarray()
+            f = b[1:-1]
+            f[0] -= _beta[1]*(self.option.K-s) + self.alpha[1]*((self.option.K-(1+self.dx)*s))
+            f[1] -= _beta[2]*(self.option.K-(1+self.dx)*s)
+            res = A@p - f
+            return res
+        def solve_non_linear_system(self, V: np.ndarray, S_bar: np.ndarray):
+            *V[2:-1], S_bar = root(
+                lambda y: self.system(y, np.copy(V[:]), S_bar),
+                # jac=lambda y: self.jacobian(y, S_bar),
+                x0=np.concatenate([V[2:-1], [S_bar]]),
+                method=self.method,
+                options=dict(xtol=self.tolerance, maxiter=self.maxiter)
+            )['x']
+            V[0] = self.option.payoff(S_bar)
+            V[1] = self.option.payoff((1+self.dx)*S_bar)    
+            return S_bar
+\end{lstlisting}
+
+\section{Code for numerical experiments} \label{sec:numericalexperiments}

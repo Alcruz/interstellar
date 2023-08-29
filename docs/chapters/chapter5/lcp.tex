@@ -79,7 +79,7 @@ Now that we have formulated the linear complementary problem in terms of the hea
 \end{align}
 where 
 \begin{align}
-  \label{eq:finitedifferencesschemes:overview:grid_2}
+  \label{eq:lcp:overview:grid_2}
   x_i &:= x_{\text{min}} + i\Delta{x} &  \qquad \text{for $i = 0,\dots, M+1$} \\
   \tau_n &:= t_{\text{min}} + i{\Delta{\tau}} & \qquad \text{for $i = 0,\dots, N+1$} \\
   \Delta{x} &:= \dfrac{x_{\text{max}} - x_{\text{min}}}{M+1} \\ 
@@ -88,7 +88,7 @@ where
 
 where $x_{\text{min}}$ is set to a sufficiently small value, $x_{\text{max}}$ to a sufficiently large value, $\tau_{\text{min}}$ to 0 and $\tau_{\text{max}}$ to $\dfrac{\sigma^2}{2}T$
 
-We dedicate the Crank-Nicholson scheme. Morover, the Crank-Nicholson approximation is given by 
+We dedicate the Crank-Nicholson scheme. Moreover, the Crank-Nicholson approximation is given by 
 \begin{equation}
   \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \dfrac{1}{2}\bigg(\dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} + \dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}\bigg)
 \end{equation}
@@ -144,7 +144,7 @@ Hence, we can write the equations in \eqref{eq:lcp:overview:variational_inequali
     \mathbf{y}^{n+1}- \mathbf{h}^{n+1} \ge 0 \\
     \mathbf{y}^{0} = \mathbf{h}^{0} \\  
   \end{cases}
-  \label{eq:lcp:overview:variational_inequalities_heat_equation}
+  \label{eq:lcp:overview:variational_inequalities_heat_equation_2}
 \end{align}
 which is the LCP formulation. Note that if we define the vectors
 \begin{align*}
@@ -162,3 +162,5 @@ which is the LCP formulation. Note that if we define the vectors
 \end{align}
 
 \subsection{PSOR method}
+
+\subsection{Numerical results}
