@@ -367,34 +367,81 @@ where $y_k$ is some approximation of the solution
 \subsection{Numerical results}
 Generally, Datasets for American options are hard to get and often require paying substantial amount of money. Therefore, to validate our implementation, we mainly relied on the data available in Company, 
 et al. \cite*{company_egorova_jodar_2014}, Nielsen, et al. \cite*{nielsen_2001}, Seydel \cite*{seydel_2009}, and Wilmott, et al. \cite*{wilmott_howison_dewynne_1995}. Moreover, we used the approximations produced by the binomial model introduced by Cox et al. \cite{cox_1979} as benchmark for assessing the consistency of our method. We chose the binomial model because it uses a completely different approach to price options than the one considered in our work, is widely used in the industry, and is simple to implement. First, 
-we want to assess the correct functionality of our implementation. With that objective, we define the set of parameters taken from \cite{nielsen_2001}
+we want to assess the correct functionality of our implementation. Naturally, the first test that come into main is to price call and put options without dividend. Therefore, we define the set of parameters taken from \cite{nielsen_2001}
 
 \begin{equation}
   \label{eq:numericaresults:parameters_set_1}
-  K = 1, \quad T = 1, \quad r=0.2, \quad \sigma=0.2, \quad \delta = 0 
+  K = 1, \quad T = 1, \quad r=0.2, \quad \sigma=0.02, \quad \delta = 0 
 \end{equation}
 
-Moreover, Nielsen \cite{nielsen_2001} suggests that the optimal exercise boundary $\bar{S}(t) \approx 0.86$ for parameters \eqref{eq:numericaresults:parameters_set_1}. Then, we validated that the binomial model produces a similar approximation for $\bar{S}(t)$. Finally, we priced a put option using our implementation of the explicit \eqref{eq:finitedifferencesschemes:explicit:nielsen_system_of_equation} and implicit \eqref{eq:finitedifferencesschemes:implicit:nielsen_system_of_equation} method for the Nielsen transformation, and the explicit method for the Company transformation \eqref{alg:appendix:companytransformation:explicits:put_explicit_method_algorithm}. In tables \eqref{tab:rsme_explicit_nielsen_transformation} and \eqref{tab:rsme_explicit_company_transformation}, you can find the RMSE error produced by the explicit method for Nielsen and Company transformation.
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[H]
+Additionally, We use Nielsen \cite{nielsen_2001} optimal exercise boundary $\bar{S}(t) \approx 0.86$ for parameters as a reference \eqref{eq:numericaresults:parameters_set_1}. Also, we approximated $\bar{S}(t)$ using the binomial option pricing model also as a reference. Finally, we priced call and put options using our implementation of the explicit \eqref{eq:finitedifferencesschemes:explicit:nielsen_system_of_equation} and implicit \eqref{eq:finitedifferencesschemes:implicit:nielsen_system_of_equation} method for the Nielsen transformation, and the explicit method for the Company transformation \eqref{alg:appendix:companytransformation:explicits:put_explicit_method_algorithm} (See appendix). As you can observe in figure \eqref{fig:finitedifferencesschemes:numericaresults:test_case_1_explicit_company},
+\eqref{fig:finitedifferencesschemes:numericaresults:test_case_1_explicit_nielsen}, and \eqref{fig:finitedifferencesschemes:numericaresults:test_case_1_implicit_nielsen},
+our implementation for the Nielsen and Company transformation seems to produce the value as per \eqref{fig:blackscholes:preliminaries:american_call_value_vs_curve}. However, by taking a look to figure \eqref{fig:finitedifferencesschemes:numericaresults:test_case_1_bopm}, you can observe that the binomial option pricing model is also not capturing the geometrical properties defined in figure \eqref{fig:blackscholes:preliminaries:american_call_value_vs_curve}. This behavior can explain by saying that American call options without dividends cannot be modelled using \eqref{eq:blackscholes:preliminaries:call_american_options_pde_free_boundary_problem_full}. In fact, Merton \cite{merton_1973} showed that, pricing American options without dividends is equivalent to solve \eqref{eq:chapter2:european_option_pde_with_dividens}. Therefore, we can conclude that we applied the wrong methods to price call options without dividends. 
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \begin{tabular}{@{}ccccccc@{}}
-    \toprule
-    \textbf{Asset price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125 \\ \midrule
-    0.8                  & 0.200000      & 0.200000 & 0.200000 & 0.200000 & 0.200000 & 0.200000  \\
-    1.0                  & 0.048167      & 0.046048 & 0.047748 & 0.048176 & 0.048160 & 0.048155  \\
-    1.2                  & 0.008666      & 0.008661 & 0.008638 & 0.008705 & 0.008674 & 0.008662  \\
-    1.4                  & 0.001285      & 0.001467 & 0.001369 & 0.001313 & 0.001292 & 0.001286  \\
-    1.6                  & 0.000167      & 0.000237 & 0.000196 & 0.000176 & 0.000170 & 0.000168  \\
-    1.8                  & 0.000020      & 0.000038 & 0.000027 & 0.000022 & 0.000021 & 0.000020  \\
-    2.0                  & 0.000002      & 0.000006 & 0.000004 & 0.000003 & 0.000002 & 0.000002  \\
-                         & \textbf{RMSE} & 0.000080 & 0.000016 & 0.000002 & 0.00000  & 0.000000  \\ \bottomrule
-    \end{tabular}
-    \caption{\label{tab:rsme_explicit_nielsen_transformation}RSME error produced by the explicit scheme for the Nielsen transformation for $\Delta{t}=1/8,1/16,\dots,1/128$ and $\Delta{t}=\Delta{x}^2/2$.}
-\end{table}
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1BOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_1_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1ExplicitCompany.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}$ and $\Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_1_explicit_company}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1ExplicitNielsen.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_1_explicit_nielsen}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1ImplicitNielsen.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_1_implicit_nielsen}
+  \end{subfigure}
+  \caption{American call option value $V(S, 0)$ curve.}
+  \label{fig:finitedifferencesschemes:numericaresults:test_case_1_explicit}
+\end{figure}
 
+Now, let us consider the case for put options without dividends for the same given parameters. Figures \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2} show the $V(S, 0)$ curve obtained by the Nielsen and Company explicit method. In each plot, we have listed the optimal exercise boundary $\bar{S}(0)$. Also, we have listed the correspondent value curve produced using the binary option pricing model using $2^{500}$ nodes. As you see, Nielsen and Company approximated the optimal exercise boundary within 2 decimal places. Moreover, in table \eqref{tab:rsme_explicit_company_transformation}, you can find the RMSE error produced by the explicit method for the Company transformation. Other tables can be found in appendix \eqref{sec:numericalexperiments}.  Contrary to the case for call options, you can observe in figures \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2} that the approximations of the value curve $V(S,t)$ captures the geometry of American put options described by figure \eqref{fig:blackscholes:preliminaries:american_put_value_vs_curve}. Specifically, within the continuation region $S>\bar{S}(0)$, the value is larger than the payoff function and as S gets larger, the value goes to zero. In addition, the value curve is exactly the payoff. Also notice that the RSME of the explicit method for the Company transformation fairly low which indicate us that our implementation for the method works for American put options.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2BOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2CompanyExplicit.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2NielsenExplicit.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2NielsenImplicit.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+  \end{subfigure}
+  \caption{American put option value $V(S, 0)$ curve.}
+  \label{fig:finitedifferencesschemes:numericaresults:test_case_2}
+\end{figure}
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
@@ -414,53 +461,43 @@ Moreover, Nielsen \cite{nielsen_2001} suggests that the optimal exercise boundar
     \end{tabular}
     \caption{\label{tab:rsme_explicit_company_transformation}RSME error produced by the explicit scheme for Company transformation for $\Delta{t}=1/8,1/16,\dots,1/128$ and $\Delta{t}=\Delta{x}^2/2$.}
 \end{table}
+Additionally, we proceeded to the case for call and put options with dividends. We used the same set of parameters \eqref{eq:numericaresults:parameters_set_1} but with the slight modification so that the underlying asset pays dividends
+\begin{equation}
+  \label{eq:numericaresults:parameters_set_2}
+  K = 1, \quad T = 1, \quad r=0.2, \quad \sigma=0.2, \quad \delta = 0.03
+\end{equation}
+In table \eqref{tab:rsme_explicit_company_transformation_put}, we present the approximation error produced by the explicit method for the Nielsen transformation, and in figure \eqref{fig:finitedifferencesschemes:numericaresults:test_case_4}, it is shown the value curve obtained for each of the methods with parameters \eqref{eq:numericaresults:parameters_set_2}. See appendix \eqref{sec:numericalexperiments} for the same experiments for call options.
 
-Moreover, figure \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit} show the $V(S, 0)$ curve obtained by the Nielsen and Company explicit method. In each plot, we have listed the optimal exercise boundary $\bar{S}(0)$. Also, we have listed the correspondent value curve produced using the binary option pricing model using $2^500$ nodes. As you see, Nielsen and Company approximated optimal exercise boundary within 2 decimal places. 
-
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
-  \begin{subfigure}{0.435\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+  \begin{subfigure}{0.4\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2BOPM.pdf}
-    \caption{Binary model of $2^{500}$ nodes.}
-  \vspace{0.5cm}
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase3BOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_4_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase3ExplicitCompany.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_4_explicit_company}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
     \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2NielsenExplicit.pdf}
-    \caption{Nielsen transformation with $\Delta{x}=\expnumber{1}{-3}$ and $\Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase3ExplicitNielsen.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_4_explicit_nielsen}
   \end{subfigure}
-  \begin{subfigure}{0.435\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
-    \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2CompanyExplicit.pdf}
-    \caption{Company transformation $\Delta{x}=\expnumber{1}{-3}$ and $\Delta{t}=0.5\times\expnumber{1}{-6}$}
-  \end{subfigure}
-  \caption{American put option value $V(S, 0)$ curve.}
-  \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit}
-\end{figure}
-
-Additionally, table \eqref{tab:rsme_implicit_nielsen_transformation} present the RSME error produced by the implicit method for the Nielsen transformation and figure \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit} show the value curve obtained by using the implicit method for the Nielsen approximation.
-
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}{0.435\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_bopm}
-    \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2BOPM.pdf}
-    \caption{Binary model of $2^{500}$ nodes.}
-    \vspace{0.5cm}
-  \end{subfigure}
+  \hspace{0.5cm}
   \begin{subfigure}{0.4\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_4_implicit_nielsen}
     \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2NielsenExplicit.pdf}
-    \caption{Implicit method for Nielsen transformation with $\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase3ImplictNielsen.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
   \end{subfigure}
   \caption{American put option value $V(S, 0)$ curve.}
-  \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit}
+  \label{fig:finitedifferencesschemes:numericaresults:test_case_4}
 \end{figure}
 
 % Please add the following required packages to your document preamble:
@@ -469,93 +506,76 @@ Additionally, table \eqref{tab:rsme_implicit_nielsen_transformation} present the
   \centering
   \begin{tabular}{@{}ccccccc@{}}
   \toprule
-  \textbf{Asset price} & \textbf{BOPM}        & 0.125      & 0.0625     & 0.03125    & 0.015625   & 0.0078125  \\ \midrule
-  0.8                  & 0.200000             & 0.224810   & 0.227045   & 0.200000   & 0.200000   & 0.200000   \\
-  1.0                  & 0.048167             & 0.156141   & 0.159308   & 0.080886   & 0.053942   & 0.048944   \\
-  1.2                  & 0.008666             & 0.114815   & 0.117140   & 0.041319   & 0.013783   & 0.009290   \\
-  1.4                  & 0.001285             & 0.080638   & 0.081485   & 0.023604   & 0.003694   & 0.001519   \\
-  1.6                  & 0.000167             & 0.047914   & 0.048026   & 0.014269   & 0.001085   & 0.000229   \\
-  1.8                  & 0.000020             & 0.019130   & 0.020665   & 0.008591   & 0.000353   & 0.000033   \\
-  2.0                  & 0.000002             & 0.000022   & 0.003408   & 0.004695   & 0.000125   & 0.000005   \\
-                       & \textbf{Asset price} & 0.06812077 & 0.06970396 & 0.02045601 & 0.00307761 & 0.00038755 \\ \bottomrule
+  \textbf{Asset price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125                    \\ \midrule
+  0.8                  & 0.200000      & 0.200000 & 0.200000 & 0.200000 & 0.200000 & 0.200000                     \\
+  1.0                  & 0.054464      & 0.053355 & 0.054588 & 0.054501 & 0.054465 & 0.054469                     \\
+  1.2                  & 0.011255      & 0.011585 & 0.011457 & 0.011255 & 0.011179 & 0.011161                     \\
+  1.4                  & 0.001855      & 0.002219 & 0.002006 & 0.001889 & 0.001857 & 0.001847                     \\
+  1.6                  & 0.000262      & 0.000399 & 0.000315 & 0.000277 & 0.000268 & 0.000265                     \\
+                       & \textbf{RSME} & 0.00041  & 0.000010 & 0.000002 & 0.000002 & \multicolumn{1}{l}{0.000003} \\ \bottomrule
   \end{tabular}
-  \caption{\label{tab:rsme_implicit_nielsen_transformation}RSME error produced by the implicit scheme for the Nielsen transformation for $\Delta{x}=\Delta{t}=1/8,1/16,\dots,1/128$.}
-\end{table}
+  \caption{\label{tab:rsme_explicit_company_transformation_put}RSME error produced by the explicit scheme for Nielsen transformation to approximate put option \eqref{eq:numericaresults:parameters_set_2} given $\Delta{t}=1/8,1/16,\dots,1/128$ and $\Delta{t}=\Delta{x}^2/2$.}
+  \end{table}
 
-In the figures  \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit} and \eqref{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit}, we observe that the approximation follows the geometry of American options. Specifically, within the continuation region $S>\bar{S}(0)$, the value is larger than the payoff function and as S gets larger, the value goes to zero. In addition, the value curve is exactly the payoff. Also notice that the RSME of the implicit method for Nielsen transformation is larger than the explicit method for both Company and Nielsen transformation. The explanation we have for this is that for the implicit method we have to solve a non-linear system of equation. Therefore, the error produced by the implicit version of Nielsen will be affected by the error produced by non-linear solver. 
+Finally, we conducted a convergence analysis to determine the order of convergence of each the methods. For simplicity, the numerical experiment was conducted for put options and with parameters \eqref{eq:numericaresults:parameters_set_2}. However, we expect that numerical experiment will yield similar results for call options and other set of parameters. Moreover, for analyzing the convergence, we are taking the relative error between contiguous grid in sizes. Specifically, to determine the order of convergence in space, we define the grids with resolution $\Delta{x}_i=h/2^i$ for $i=0,\dots,3$ while $\Delta{t}$ is fixed. Conversely, to determine the temporal order of convergence, we vary $\Delta{t}$ and fix $\Delta{x}$ in similar way. Therefore, the error between consecutive grids is defined as
+\begin{equation}
+  \mathbf{e}_k = ||\mathbf{v}_{k+1} - \mathbf{v}_{k}||_{\infty} \quad \text{for $k=0,\dots,3$}
+  \label{eq:finitedifferencesschemes:numericalresults:consecutive_error}
+\end{equation}
+where $\mathbf{v}_{k}\in\mathbb{R}^{M+1}$ is the vector with the approximation produced by our method and $||\cdot||_{\infty}$ is the infinity norm. In figure \eqref{fig:finitedifferencesschemes:numericaresults:nielsen_convergence analysis}, we show log-log plots of the error produced by the explicit and implicit methods for Nielsen transformation. As you can see, both explicit and implicit methods have first order convergence in space. Recall that although we are using central finite difference, the Nielsen schemes use forward (or backward for calls) difference to approximate the contact point condition \eqref{eq:finitedifferencesschemes:explicit:contact_point_approximation_2} which is first order in space, hence, degrading the overall convergence of the method. In the other hand, figure \eqref{fig:finitedifferencesschemes:numericaresults:company_convergence analysis} shows the convergence order for the explicit method for the Company transformation. Contrary to Nielsen's schemes, the explicit method for Company transformation is second order in space. This is because Company uses a central finite difference scheme for approximating the contact point condition \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation}. Moreover, all methods are first order convergence in space as suggested by the forward/backward difference approximation used for the temporal axis.
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceSpaceExplicitNielsen.pdf}
+    \caption{$\Delta{x}=2^{-7},\dots,2^{-10}$}
+    \caption*{$\Delta{t}=2^{-21}$}
+    \label{fig:finitedifferencesschemes:numericaresults:nielsen_explicit_space}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceTimeExplicitNielsen.pdf}
+    \caption{$\Delta{t}=2^{-15},2^{-17},\dots,2^{-21}$}
+    \caption*{$\Delta{x}=2^{-7}$}
+    \label{fig:finitedifferencesschemes:numericaresults:nielsen_explicit_time}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceSpaceImplicitNielsen.pdf}
+    \caption{$\Delta{x}=2^{-6},\dots,2^{-8}$}
+    \caption*{$\Delta{t}=2^{-2}$}
+    \label{fig:finitedifferencesschemes:numericaresults:nielsen_implicit_space}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:finitedifferencesschemes:numericaresults:nielsen_implicit_time}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceTimeImplicitNielsen.pdf}
+    \caption{$\Delta{t}=2^{-7},2^{-8},\dots,2^{-10}$}
+    \caption*{$\Delta{x}=2^{-5}$}
+  \end{subfigure}
+  \caption{Convergence analysis for the explicit and implicit method for the Nielsen transformation.}
+  \label{fig:finitedifferencesschemes:numericaresults:nielsen_convergence analysis}
+\end{figure}
 
-We realized numerous testings to validate the correct functionality of our implementation. As Merton \cite{merton_1973} showed, pricing American call options without dividends is equivalent to solve the price of European options. Therefore, the most natural test to conduct is to price American call options without dividends ($\delta=0$) using our implementation and compare the results to the one obtain using the Black-Scholes formula for  \cite{merton_1973}. 
-
-For the following experiments, we use the following set of parameters.
-
-Moreover, \eqref{eq:numericaresults:parameters_set_1}, we tested each scheme for the case of put options. For the setup of the experiments, we priced a put option using the binomial model \cite{cox_1979} with parameters \eqref{eq:numericaresults:parameters_set_1}. Then, we proceed to compute the RSME error 
-
-where $V^{\text{BM}}_i$ is the price produced by the binomial model, and $\hat{V}_i$ is the price produced by our numerical method. In Tables \eqref{tab:rsme_explicit_nielsen_transformation} and \eqref{tab:rsme_explicit_company_transformation} contain the results obtained for Nielsen and Company transformation, respectively, for $\Delta{x}=1/8, 1/16,\dots,1/128$ and $\Delta{t}=\Delta{x}^2$
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[H]
-    \begin{tabular}{@{}ccccccc@{}}
-        \toprule
-        \textbf{Asset price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125 \\ \midrule
-        0.8                  & 0.200000      & 0.200000 & 0.200000 & 0.200000 & 0.200000 & 0.200000  \\
-        1.0                  & 0.048155      & 0.046048 & 0.047748 & 0.048176 & 0.048160 & 0.048155  \\
-        1.2                  & 0.008662      & 0.008661 & 0.008638 & 0.008705 & 0.008674 & 0.008662  \\
-        1.4                  & 0.001286      & 0.001467 & 0.001369 & 0.001313 & 0.001292 & 0.001286  \\
-        1.6                  & 0.000168      & 0.000237 & 0.000196 & 0.000176 & 0.000170 & 0.000168  \\
-        1.8                  & 0.000020      & 0.000038 & 0.000027 & 0.000022 & 0.000021 & 0.000020  \\
-        2.0                  & 0.000002      & 0.000006 & 0.000004 & 0.000003 & 0.000002 & 0.000002  \\
-                             & \textbf{RMSE} & 0.000081 & 0.000017 & 0.000002 & 0.000000 & 0.000000  \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[H]
-    \begin{tabular}{@{}ccccccc@{}}
-        \toprule
-        \textbf{Asset price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125 \\ \midrule
-        0.8                  & 0.200000      & 0.224810 & 0.227045 & 0.200000 & 0.200000 & 0.200000  \\
-        1.0                  & 0.048180      & 0.156141 & 0.159308 & 0.080886 & 0.053942 & 0.048944  \\
-        1.2                  & 0.008661      & 0.114815 & 0.117140 & 0.041319 & 0.013783 & 0.009290  \\
-        1.4                  & 0.001283      & 0.080638 & 0.081485 & 0.023604 & 0.003694 & 0.001519  \\
-        1.6                  & 0.000167      & 0.047914 & 0.048026 & 0.014269 & 0.001085 & 0.000229  \\
-        1.8                  & 0.000020      & 0.019130 & 0.020665 & 0.008591 & 0.000353 & 0.000033  \\
-        2.0                  & 0.000002      & 0.000022 & 0.003408 & 0.004695 & 0.000125 & 0.000005  \\
-                             & \textbf{RMSE} & 0.068119 & 0.069703 & 0.020455 & 0.003076 & 0.000385  \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[H]
-    \begin{tabular}{@{}ccccccc@{}}
-        \toprule
-        \textbf{Asset price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125 \\ \midrule
-        0.8                  & 0.200000      & 0.200000 & 0.200000 & 0.200000 & 0.200000 & 0.200000  \\
-        1.0                  & 0.048180      & 0.054188 & 0.053469 & 0.052440 & 0.052340 & 0.052259  \\
-        1.2                  & 0.008661      & 0.012658 & 0.010936 & 0.010331 & 0.010294 & 0.010271  \\
-        1.4                  & 0.001283      & 0.002423 & 0.001855 & 0.001694 & 0.001650 & 0.001640  \\
-        1.6                  & 0.000167      & 0.000462 & 0.000292 & 0.000250 & 0.000234 & 0.000229  \\
-        1.8                  & 0.000020      & 0.000107 & 0.000048 & 0.000034 & 0.000030 & 0.000029  \\
-        2.0                  & 0.000002      & 0.000028 & 0.000009 & 0.000005 & 0.000004 & 0.000004  \\
-                             & \textbf{RMSE} & 0.002763 & 0.002187 & 0.001737 & 0.001695 & 0.001663  \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[H]
-    \begin{tabular}{@{}lllllll@{}}
-        \toprule
-        \textbf{Asset Price} & \textbf{BOPM} & 0.125    & 0.0625   & 0.03125  & 0.015625 & 0.0078125 \\ \midrule
-        0.8                  & 0.170000      & 0.170000 & 0.170000 & 0.170000 & 0.170000 & 0.170000  \\
-        1.0                  & 0.037785      & 0.038365 & 0.038260 & 0.037619 & 0.037754 & 0.037773  \\
-        1.2                  & 0.006576      & 0.007278 & 0.006645 & 0.006602 & 0.006573 & 0.006573  \\
-        1.4                  & 0.000953      & 0.001132 & 0.001013 & 0.000969 & 0.000953 & 0.000952  \\
-        1.6                  & 0.000122      & 0.000185 & 0.000142 & 0.000128 & 0.000124 & 0.000123  \\
-        1.8                  & 0.000015      & 0.000038 & 0.000021 & 0.000016 & 0.000015 & 0.000015  \\
-        2.0                  & 0.000002      & 0.000008 & 0.000003 & 0.000002 & 0.000002 & 0.000002  \\
-                             & \textbf{RMSE} & 0.000035 & 0.000018 & 0.000006 & 0.000001 & 0.000000  \\ \bottomrule
-    \end{tabular}
-\end{table}
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceSpaceExplicitCompany.pdf}
+    \caption{$\Delta{x}=2^{-7},\dots,2^{-10}$}
+    \caption*{$\Delta{t}=2^{-21}$}
+    \label{fig:finitedifferencesschemes:numericaresults:company_explicit_space}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/ConvergenceTimeExplicitCompany.pdf}
+    \caption{$\Delta{t}=2^{-15},2^{-17},\dots,2^{-21}$}
+    \caption*{$\Delta{x}=2^{-7}$}
+    \label{fig:finitedifferencesschemes:numericaresults:company_explicit_time}
+  \end{subfigure}
+  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \label{fig:finitedifferencesschemes:numericaresults:company_convergence analysis}
+\end{figure}
