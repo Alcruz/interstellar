@@ -170,23 +170,23 @@ $\bar{S}(t)$ for this PDE. The moving boundary condition $\bar{S}(t)$ makes the
 Black-Scholes PDE more involved since we also need to determine this boundary
 as time changes. This type of problems are known as free boundary problems. The
 front fixing method is a strategy in which a transformation is used to map the  domain from the original problem to a new domain where moving boundary remains fixed as time changes. In this section, we explore two transformation based on the work of Nielsen et al. \cite{nielsen_2001}, and the work of Company and et al. \cite{company_egorova_jodar_2014}.
-\subsubsection{Nielsen transformation} \label{sec:blackscholes:frontfixingmethod:inversetransform}
+\subsubsection{Nielsen transformation} \label{sec:blackscholes:frontfixingmethod:nielsen}
 The Nielsen transformation suggests a really simple transformation in which
 the asset price $S$ is divided by the optimal exercise price $\bar{S}$
 \begin{equation}
   x = \dfrac{S}{\bar{S}(t)}
-  \label{eq:blackscholes:frontfixingmethod:inversetransform}
+  \label{eq:blackscholes:frontfixingmethod:nielsen}
 \end{equation}
 Clearly, the moving boundary in the original problem will be fixed when $S=\bar{S}(t)$ at $x=1$. Now, we define $v(x,t)$ as the value function of the option but under the front fixing domain given by $x$
 \begin{equation}
   v(x, t) := V(S, t)
-  \label{eq:blackscholes:frontfixingmethod:inversetransform:value_function}
+  \label{eq:blackscholes:frontfixingmethod:nielsen:value_function}
 \end{equation}
 Moreover, we want to understand how this transformation affects the Black-Scholes PDE, the boundary, terminal and contact point conditions given in equation in \eqref{eq:blackscholes:preliminaries:american_options_pde_free_boundary_problem_full}.
 
 Firstly, we start with the Black-Scholes PDE which is defined at the interval 
 $S\in(0, \bar{S}(t))$ for call options or the open interval $S\in(\bar{S}(t), \infty)$ for put options. Under the front fixing domain, the transformed PDE will be defined in the interval $x\in(0, 1)$ for call and $x\in(1, \infty)$ for put. Moreover, we apply the chain rule to rewrite the Black-Scholes PDE in terms of $v$, so that, the new PDE is given as
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:american_options_pde}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:nielsen:american_options_pde}
   \begin{align}
     \text{\textbf{Call:}} \qquad
     \dfrac{\partial{v}}{\partial{t}} + \dfrac{1}{2}\sigma^{2} x^2 \dfrac{\partial^2{v}}{\partial{x}^2} + \bigg[(r - \delta) - \dfrac{\bar{S}^\prime(t)}{\bar{S}(t)}\bigg]x\dfrac{\partial{v}}{\partial{x}} - rv = 0 \quad & \text{for $x \in [0, 1)$ and $t \in [0, T)$} \\
@@ -215,7 +215,7 @@ the put option has left boundary condition $v(1, t) = K - \bar{S}(t)$ at $x=1$ a
   \label{fig:blackscholes:frontfixingmethod:nielsen_value_vs_curve}
 \end{figure}
 Likewise, we express the contact point condition in terms of $v(x,t)$. Recall that at the contact point, the slope $V(S,t)$ with respect to $S$ is the same as the slope of the linear segment in the payoff function. This can be seen clearly in figure (\ref{fig:blackscholes:preliminaries:american_option_value_vs_curve}). Hence, by the chain rule, the contact point condition of $v(x,t)$ is given by
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_contact_point_condition}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:nielsen:american_options_optimal_price_contact_point_condition}
   \begin{align}
     \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = \bar{S}(t) \\
     \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(1, t) = -\bar{S}(t)
@@ -223,18 +223,18 @@ Likewise, we express the contact point condition in terms of $v(x,t)$. Recall th
 \end{subequations}
 Finally, recall that the terminal condition of $\bar{S}(t)$ is given by \eqref{eq:blackscholes:preliminaries:american_options_terminal_condition}. Moreover,
 $x>=1$ for call options, and $x<=1$ for put options. Hence, by simple substitution, we can rewrite the terminal conditions of $v(x, t)$ as
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:nielsen:american_options_terminal_condition}
   \begin{align}
     \text{\textbf{Call:}} \qquad & v(x, T) = \max(x\bar{S}(T) - K) = K \max(x - 1, 0) = 0 \\
     \text{\textbf{Put:}} \qquad & v(x, T) = \max(K - x\bar{S}(T)) = K \max(1 - x, 0) = 0
   \end{align}
 \end{subequations}
 In summary, by groping equations
-\eqref{eq:blackscholes:frontfixingmethod:american_options_pde},
-\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_terminal_condition}, and
-\eqref{eq:blackscholes:frontfixingmethod:inversetransform:american_options_optimal_price_contact_point_condition},
+\eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_pde},
+\eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_terminal_condition}, and
+\eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_optimal_price_contact_point_condition},
 we obtain the system
-\begin{subequations} \label{eq:blackscholes:frontfixingmethod:inversetransform:american_options_bs_pde}
+\begin{subequations} \label{eq:blackscholes:frontfixingmethod:nielsen:american_options_bs_pde}
   \begin{align}
     \text{\textbf{Call:}} \quad &
     \begin{cases}
