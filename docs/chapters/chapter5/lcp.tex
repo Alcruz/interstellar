@@ -273,4 +273,71 @@ Moreover, Seydel et al. \cite{seydel_2009} and Dewynne et al. \cite{wilmott_howi
 \end{algorithmic}
 \end{algorithm}
 
-\section{Numerical results}
+\subsection{Numerical results}
+
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1BOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ExplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ImplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1CrankNicholsonLCP.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+  \end{subfigure}
+  \caption{American put option value $V(S, 0)$ curve.}
+  \label{fig:finitedifferencesschemes:numericaresults:test_case_2}
+\end{figure}
+
+
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2BOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ExplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ImplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2CrankNicholsonLCP.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+  \end{subfigure}
+  \caption{American put option value $V(S, 0)$ curve.}
+  \label{fig:finitedifferencesschemes:numericaresults:test_case_2}
+\end{figure}
