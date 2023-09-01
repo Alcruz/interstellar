@@ -45,7 +45,7 @@ where the risk-free interest rate $r$ and the price volatility $\sigma$ remain c
 \begin{equation*}
   dB = rB(t)dt
 \end{equation*}
-Finally, the underlying asset does not pay dividends. By applying the Black-Scholes model to price European options, Merton \cite{merton_1973} obtained the famous Black-Scholes PDE 
+Finally, the underlying asset does not pay dividends. By applying the Black-Scholes model to price European options, Merton\cite{merton_1973} obtained the famous Black-Scholes PDE 
 \begin{equation*}
   \label{eq:blackscholes:preliminaries:european_option_pde}
   \begin{cases}
@@ -71,7 +71,7 @@ where $\mathcal{L}_{\text{BS}}(\cdot)$ is the linear parabolic operator applied 
   \label{eq:blackscholes:preliminaries:linear_parabolic_operator}
   \mathcal{L}_{\text{BS}}(V) := \dfrac{1}{2}\sigma^{2} S^2 \dfrac{\partial^2{V}}{\partial{S^2}} + (r - \delta) S \dfrac{\partial{V}}{\partial{S}} - rV
 \end{equation}
-Similarly, to the asset price model with dividends, the Black-Scholes PDE with dividends fall back to the original Black-Scholes PDE if the asset does not pay out dividends $\delta = 0$. Likewise, by considering the Black-Scholes model to price American options, Merton \cite{merton_1973} derived some important facts about the value function $V(S,t)$. Firstly, that the $V(S,t)$ is bounded from below by the payoff function
+Similarly, to the asset price model with dividends, the Black-Scholes PDE with dividends fall back to the original Black-Scholes PDE if the asset does not pay out dividends $\delta = 0$. Likewise, by considering the Black-Scholes model to price American options, Merton\cite{merton_1973} derived some important facts about the value function $V(S,t)$. Firstly, that the $V(S,t)$ is bounded from below by the payoff function
 \begin{align}
   \label{eq:blackscholes:american_options_price_lower_bound}
   V(S, t) \ge H(S, t) \qquad \text{for $t \in [0, T]$}

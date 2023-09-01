@@ -67,7 +67,7 @@ and initial condition
 \begin{align}
   y(x, 0) = h(x, 0)
 \end{align}
-Although we might solve \eqref{eq:lcp:overview:variational_inequalities} without transforming the problem, Dewynne et al. \cite{dewynne_howison_rupf_wilmott_1993} and Seydel \cite{seydel_2009} suggest that transformation to the heat diffusion equation \eqref{eq:lcp:overview:heat_diffusion_equation_PDE} introduces desirable numerical properties when applying finite difference schemes. By applying transformation \eqref{eq:lcp:overview:heat_diffusion_domain_transformation}, the system \eqref{eq:lcp:overview:variational_inequalities} becomes
+Although we might solve \eqref{eq:lcp:overview:variational_inequalities} without transforming the problem, Dewynne et al.\cite{dewynne_howison_rupf_wilmott_1993} and Seydel\cite{seydel_2009} suggest that transformation to the heat diffusion equation \eqref{eq:lcp:overview:heat_diffusion_equation_PDE} introduces desirable numerical properties when applying finite difference schemes. By applying transformation \eqref{eq:lcp:overview:heat_diffusion_domain_transformation}, the system \eqref{eq:lcp:overview:variational_inequalities} becomes
 \begin{align}
   \begin{cases}
     \bigg[\dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}}\bigg] \cdot [y(x, \tau) - h(x, \tau)] = 0 & \text{for all $(x,\tau)$} \\
@@ -98,7 +98,7 @@ for $i=1,\dots,M$ and $n=0\dots,N$. Note that contrary to \eqref{eq:blackscholes
   \label{eq:lcp:overview:crank_nicholson}
   \dfrac{y^{n+1}_{i} - y^{n}_{i}}{\Delta \tau} = \dfrac{1}{2}\bigg(\dfrac{y^{n}_{i-1} - 2y^{n}_{i} + y^{n}_{i+1}}{(\Delta x)^2} + \dfrac{y^{n+1}_{i-1} - 2y^{n+1}_{i} + y^{n+1}_{i+1}}{(\Delta x)^2}\bigg)
 \end{equation}
-for $i=1,\dots,M$ and $n=0\dots,N$. Epperson \cite{epperson_2013} and Seydel \cite{seydel_2009} showed that the Crank-Nicholson scheme is $O(\Delta{x}^2 + \Delta{t}^2)$.
+for $i=1,\dots,M$ and $n=0\dots,N$. Epperson\cite{epperson_2013} and Seydel\cite{seydel_2009} showed that the Crank-Nicholson scheme is $O(\Delta{x}^2 + \Delta{t}^2)$.
 \begin{figure}[H]
   \label{fig:lcp:thetamethod:stencil}
   \centering
@@ -246,7 +246,7 @@ The project SOR (PSOR) method is a slight modification of SOR method in which th
   \EndFor
 \end{algorithmic}
 \end{algorithm}
-Moreover, Seydel et al. \cite{seydel_2009} and Dewynne et al. \cite{dewynne_howison_wilmott_howison_1995} showed that the PSOR method is equivalent to LCP algorithm \eqref{alg:lcp:overview:lcp_iterative_method}. Moreover, they also showed that the fastest convergence is given by having $\omega=1$. Putting algorithm \eqref{alg:lcp:overview:variational_inequalities_iterative_method}, \eqref{alg:lcp:overview:lcp_iterative_method} and \eqref{alg:lcp:overview:psor_method_theta} together, we have
+Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howison_wilmott_howison_1995} showed that the PSOR method is equivalent to LCP algorithm \eqref{alg:lcp:overview:lcp_iterative_method}. Moreover, they also showed that the fastest convergence is given by having $\omega=1$. Putting algorithm \eqref{alg:lcp:overview:variational_inequalities_iterative_method}, \eqref{alg:lcp:overview:lcp_iterative_method} and \eqref{alg:lcp:overview:psor_method_theta} together, we have
 \begin{algorithm}[H]
   \caption{Iterative method for solving heat diffusion variational inequalities.}\label{alg:lcp:psor:amer_option_solution}
   \begin{algorithmic}[1]
