@@ -1,6 +1,6 @@
 \section{Linear complementary problem}
 \subsection{Overview}
-A linear complementary problem (LCP) is an optimization problem in which the goal is to solve a system of linear equations subject to a set of complementary conditions. More formally, given the matrix $\mathbf{A}\in\mathbb{R}^{d \times d}$ and the vector $\mathbf{b}\in\mathbb{R}^{d}$, find the vectors $\mathbf{v}\in\mathbb{R}^{d}$ and $\mathbf{w}\in\mathbb{R}^{d}$ such as
+A linear complementary problem (LCP) is an optimization problem in which the goal is to solve a system of linear equations subject to a set of complementary conditions. More formally, given the matrix $\mathbf{A}\in\mathbb{R}^{d \times d}$ and the vector $\mathbf{b}\in\mathbb{R}^{d}$, we have to find the vectors $\mathbf{v}\in\mathbb{R}^{d}$ and $\mathbf{w}\in\mathbb{R}^{d}$ such as
 \begin{align*}
   \mathbf{A}\mathbf{v} - \mathbf{w} = \mathbf{b}
 \end{align*}
@@ -10,11 +10,11 @@ subject to the complementary conditions
   w_i &\ge 0 \qquad \text{for $i = 1,\dots,d$} \\
   \mathbf{v}^{T}\mathbf{w} &= 0
 \end{align*}
-Note that the complementary conditions require that either $v_i=0$ or $w_i=0$. As you will see later, the pricing problem for American options can be reformulated as a linear complementary problem. Let us reconsider what the Black-Scholes model tells about American options. First, that the value $V(S,t)$ is bounded from below by the payoff function 
+Note that the complementary conditions require that either $v_i=0$ or $w_i=0$. As you will see later, the pricing problem for American options can be reformulated as a linear complementary problem. But first, let us reconsider what the Black-Scholes model tells about American options. First, that the value $V(S,t)$ is bounded from below by the payoff function 
 \begin{align*}
   V(S, t) - H(S, t) \ge 0 \qquad \text{for all $(S,t)$}
 \end{align*}
-Moreover, that the value function can be divided in two complementary regions: the exercise region \eqref{eq:blackscholes:preliminaries:exercise_region} where  
+Secondly, the value function can be divided in two complementary regions: the exercise region \eqref{eq:blackscholes:preliminaries:exercise_region} where  
 \begin{align}
   \label{eq:lcp:overview:value_in_continuation_region}
   &V(S, t) - H(S, t) > 0 \qquad \text{for $(S,t) \in \mathcal{C}$}
@@ -28,7 +28,7 @@ Finally, value function $V(S,t)$ is the solution to the Black-Scholes PDE  withi
 \begin{align*}
     \frac{\partial{V}}{\partial{t}} + \mathcal{L}_{\text{BS}}(V) = 0 \qquad \text{for $(S,t) \in \mathcal{C}$}
 \end{align*}
-where $\mathcal{L}_{\text{BS}}(\cdot)$ is the linear parabolic operator \eqref{eq:blackscholes:preliminaries:linear_parabolic_operator} applied to the function $V(S,t)$. Now, let us consider what happens to the Black-Scholes PDE in the exercise region. From equation \eqref{eq:lcp:overview:value_in_exercise_region}, we know that $V(S,t)=H(S,t)$. Hence by plugin $H(S,t)$ into the Black-Scholes PDE, we obtain the Black-Scholes PDE inequality in the exercise region
+where $\mathcal{L}_{\text{BS}}(\cdot)$ is the linear parabolic operator \eqref{eq:blackscholes:preliminaries:linear_parabolic_operator} applied to the function $V(S,t)$. Now, let us consider what happens to the Black-Scholes PDE in the exercise region. From equation \eqref{eq:lcp:overview:value_in_exercise_region}, we know that $V(S,t)=H(S,t)$. Hence, by plugin $H(S,t)$ in the Black-Scholes PDE, we obtain the Black-Scholes PDE inequality
 \begin{align}
     \label{eq:lcp:overview:blackscholes_in_exercise_region}
     \frac{\partial{V}}{\partial{t}} + \mathcal{L}_{\text{BS}} \le 0 \qquad \text{for $(S,t) \in \mathcal{S}$}
@@ -36,14 +36,14 @@ where $\mathcal{L}_{\text{BS}}(\cdot)$ is the linear parabolic operator \eqref{e
 By grouping \eqref{eq:lcp:overview:value_in_continuation_region}, \eqref{eq:lcp:overview:value_in_exercise_region}, \eqref{eq:lcp:overview:blackscholes_in_exercise_region}, we form the system of variational inequalities
 \begin{align}
   \begin{cases}
-    \big[\frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,T-\tau) - H(S,T-\tau)] = 0 & \text{for all $(S,t)$} \\
-    V(S, T-\tau) - H(S, T-\tau) \ge 0 & \text{for all $(S, t) \ $}\\
-    \frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V) \ge 0 &  \text{for all $(S, t)$}\\
-    V(S, T) = H(S, T) \\  
+    \big[\frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V)\big] \cdot [V(S,T-\tau) - H(S,T-\tau)] = 0 & \text{for all $(S,\tau)$} \\
+    V(S, T-\tau) - H(S, T-\tau) \ge 0 & \text{for all $(S,\tau) \ $}\\
+    \frac{\partial V}{\partial \tau} - \mathcal{L}_{\text{BS}}(V) \ge 0 &  \text{for all $(S,\tau)$}\\
+    V(S, T -\tau) = H(S, T - \tau) \\  
   \end{cases}
   \label{eq:lcp:overview:variational_inequalities}
 \end{align}
-The benefit of the variational inequalities is that there is no explicit dependence on the optimal exercise price defined in \eqref{eq:blackscholes:preliminaries:optimal_exercise_boundary}. Also, note that we rewrote the Black-Scholes PDE forward in time by introducing the transformation $\tau = T - t$ deliberately so that the variational inequalities' formulation looks similar in structure to LCP problem. But before elaborating more about the relationship between the variational inequalities and LCP problems, we introduce the transformations
+where $\tau := T - t$. The benefit of the variational inequalities is that there is no explicit dependence on the optimal exercise price defined in \eqref{eq:blackscholes:preliminaries:optimal_exercise_boundary}. Also, note that we rewrote the Black-Scholes PDE forward in time by introducing the transformation $\tau = T - t$ deliberately so that the variational inequalities' formulation looks similar in structure to the LCP problem defined at the beginning of this section. But before elaborating more about the relationship between the variational inequalities and LCP problems, we introduce the transformations
 \begin{align}
 \label{eq:lcp:overview:heat_diffusion_domain_transformation}
 S = Ke^x, \quad t = T - \dfrac{2\tau}{\sigma^2},\quad h(x,\tau) := e^{(\alpha x + \beta \tau)}\dfrac{H(S,t)}{K}, \quad v(x, \tau) := V(S, t) =: Ke^{-(\alpha x + \beta \tau)}y(x, \tau)
@@ -53,15 +53,19 @@ where
   \label{eq:lcp:overview:heat_diffusion_domain_transformation_2}
   q &:= \dfrac{2r}{\sigma^2}, \quad q_{\delta} := \dfrac{2(r-\delta)}{\sigma^2}, \quad \alpha := \dfrac{1}{2}(q_{\delta} - 1) \quad \beta := \dfrac{1}{4}(q_{\delta} - 1)^2 + q 
 \end{align}
-so that the Black-Scholes PDE \eqref{eq:chapter2:european_option_pde_with_dividens} transforms to the heat diffusion equation
+so that the Black-Scholes PDE inequality \eqref{eq:lcp:overview:blackscholes_in_exercise_region} transforms to the heat diffusion inequality
 \begin{align}
   \label{eq:lcp:overview:heat_diffusion_equation_PDE}
-  \dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}} = 0
+  \dfrac{\partial{y}}{\partial{\tau}} - \dfrac{\partial^2{y}}{\partial{x^2}} &\le 0 \qquad \text{for $x \in \mathbb{R}$ and $\tau\in(0, \sigma^2T/2]$}
 \end{align}
-where $y\in C^{2,1}(\mathcal{F})$ for
+where $y\in C^{2,1}\big(\mathbb{R}\times[0, \sigma^2T/2]\big)$ have boundary conditions
 \begin{align}
-  \label{eq:lcp:overview:heat_diffusion_equation_solution_region}
-  \mathcal{F}: \mathbb{R} \times [0, \sigma^2T/2]
+  \lim_{x\rightarrow-\infty}y(x, \tau) &= \lim_{x\rightarrow-\infty}h(0, \tau)  = 0 \\
+  \lim_{x\rightarrow\infty}y(x, \tau) &= \lim_{x\rightarrow\infty}h(0, \tau) = 0
+\end{align}
+and initial condition 
+\begin{align}
+  y(x, 0) = h(x, 0)
 \end{align}
 Although we might solve \eqref{eq:lcp:overview:variational_inequalities} without transforming the problem, Dewynne et al. \cite{dewynne_howison_rupf_wilmott_1993} and Seydel \cite{seydel_2009} suggest that transformation to the heat diffusion equation \eqref{eq:lcp:overview:heat_diffusion_equation_PDE} introduces desirable numerical properties when applying finite difference schemes. By applying transformation \eqref{eq:lcp:overview:heat_diffusion_domain_transformation}, the system \eqref{eq:lcp:overview:variational_inequalities} becomes
 \begin{align}
@@ -73,15 +77,12 @@ Although we might solve \eqref{eq:lcp:overview:variational_inequalities} without
   \end{cases}
   \label{eq:lcp:overview:variational_inequalities_heat_equation}
 \end{align}
-Now that we have expressed the system of variational inequalities using the heat discussion equation, we proceed to apply the finite difference scheme framework presented in section \ref{sec:finitedifferencesschemes}. Specifically, we want to approximate $y(x, \tau)$ at each of the nodes within the grid 
+Now that we have expressed the system of variational inequalities using the heat discussion equation, we proceed to apply the finite difference scheme framework presented in section \ref{sec:finitedifferencesschemes}. Specifically, we want to approximate $y(x, \tau)$ at each node within the grid 
 \begin{align}
-  \mathcal{G} := \{(x_i, \tau_n): (i, n) \in \{0, \dots, M+1\} \times \{0, \dots, N+1\}\}
-\end{align}
-where 
-\begin{align}
+  \mathcal{G} &:= \{(x_i, \tau_n): (i, n) \in \{0, \dots, M+1\} \times \{0, \dots, N+1\}\}\\
   \label{eq:lcp:overview:grid_2}
-  x_i &:= x_{\text{min}} + i\Delta{x} &  \qquad \text{for $i = 0,\dots, M+1$} \\
-  \tau_n &:= t_{\text{min}} + i{\Delta{\tau}} & \qquad \text{for $i = 0,\dots, N+1$} \\
+  x_i &:= x_{\text{min}} + i\Delta{x} \quad \text{for $i = 0,\dots, M+1$} \\
+  \tau_n &:= t_{\text{min}} + i{\Delta{\tau}} \quad \text{for $i = 0,\dots, N+1$} \\
   \Delta{x} &:= \dfrac{x_{\text{max}} - x_{\text{min}}}{M+1} \\ 
   \Delta{t} &:= \dfrac{t_{\text{max}} - t_{\text{min}}}{N+1}
 \end{align}
@@ -135,7 +136,7 @@ where
 for $i = 1,\dots,M$, and $n = 0,\dots,N$. Finally, we define the matrix $\mathbf{A}\in\mathbb{R}^{M \times M}$ as
 \begin{align}
   \label{eq:lcp:overview:theta_matrix}
-  A :=& \begin{bmatrix}
+  \mathbf{A} :=& \begin{bmatrix}
     1+2\lambda\theta & -\lambda\theta & & 0 \\ 
    -\lambda\theta & \ddots & \ddots \\
       & \ddots & \ddots & \ddots \\
@@ -245,7 +246,7 @@ The project SOR (PSOR) method is a slight modification of SOR method in which th
   \EndFor
 \end{algorithmic}
 \end{algorithm}
-Moreover, Seydel et al. \cite{seydel_2009} and Dewynne et al. \cite{wilmott_howison_dewynne_1995} showed that the PSOR method is equivalent to LCP algorithm \eqref{alg:lcp:overview:lcp_iterative_method}. Moreover, they also showed that the fasted convergence is given by having $\omega=1$. Putting algorithm \eqref{alg:lcp:overview:variational_inequalities_iterative_method}, \eqref{alg:lcp:overview:lcp_iterative_method} and \eqref{alg:lcp:overview:psor_method_theta} together, we have
+Moreover, Seydel et al. \cite{seydel_2009} and Dewynne et al. \cite{dewynne_howison_wilmott_howison_1995} showed that the PSOR method is equivalent to LCP algorithm \eqref{alg:lcp:overview:lcp_iterative_method}. Moreover, they also showed that the fastest convergence is given by having $\omega=1$. Putting algorithm \eqref{alg:lcp:overview:variational_inequalities_iterative_method}, \eqref{alg:lcp:overview:lcp_iterative_method} and \eqref{alg:lcp:overview:psor_method_theta} together, we have
 \begin{algorithm}[H]
   \caption{Iterative method for solving heat diffusion variational inequalities.}\label{alg:lcp:psor:amer_option_solution}
   \begin{algorithmic}[1]
@@ -275,69 +276,269 @@ Moreover, Seydel et al. \cite{seydel_2009} and Dewynne et al. \cite{wilmott_howi
 
 \subsection{Numerical results}
 
-
-\begin{figure}[tbp]
+\subsubsection{Numerical experiments}
+\begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter3/TestCase1BOPM.pdf}
     \caption{$\text{Nodes} = 2^{500}$.}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+    \label{fig:lcp:numericaresults:numericaresults:test_case_1_bopm}
   \end{subfigure}
   \hspace{0.5cm}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ExplicitLCP.pdf}
     \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
+    \label{fig:lcp:numericaresults:test_case_1_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ImplicitLCP.pdf}
     \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
+    \label{fig:lcp:numericaresults:test_case_1_implicit}
   \end{subfigure}
   \hspace{0.5cm}
   \begin{subfigure}{0.4\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \label{fig:lcp:numericaresults:test_case_1_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1CrankNicholsonLCP.pdf}
     \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
   \end{subfigure}
   \caption{American put option value $V(S, 0)$ curve.}
-  \label{fig:finitedifferencesschemes:numericaresults:test_case_2}
+  \label{fig:lcp:numericaresults:numericaresults:test_case_1}
 \end{figure}
-
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}ccccc@{}}
+  \toprule
+  \textbf{Asset Price} &
+    \textbf{BOPM} &
+    \textbf{\begin{tabular}[c]{@{}c@{}}Explicit\\ Nielsen\end{tabular}} &
+    \textbf{\begin{tabular}[c]{@{}c@{}}Implicit\\ Nielsen\end{tabular}} &
+    \textbf{\begin{tabular}[c]{@{}c@{}}Explicit\\ Company\end{tabular}} \\ \midrule
+  0.8 & 0.027907      & 0.028005 & 0.027907 & 0.028011 \\
+  1.0 & 0.132688      & 0.132621 & 0.132688 & 0.132626 \\
+  1.2 & 0.302596      & 0.302686 & 0.302596 & 0.302694 \\
+  1.4 & 0.496317      & 0.496474 & 0.496317 & 0.496484 \\
+  1.6 & 0.695316      & 0.695494 & 0.695316 & 0.695507 \\
+  1.8 & 0.895181      & 0.895384 & 0.895181 & 0.895398 \\
+      & \textbf{RMSE} & 0.000156 & 0.000826 & 0.000166 \\
+      & \textbf{Time} & 5062ms   & 2168ms   & 1480ms   \\ \bottomrule
+  \end{tabular}
+  \end{table}
 
 
 \begin{figure}[tbp]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{chapters/chapter3/TestCase2BOPM.pdf}
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2LcpBOPM.pdf}
     \caption{$\text{Nodes} = 2^{500}$.}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_bopm}
+    \label{fig:lcp:numericaresults:test_case_2_bopm}
   \end{subfigure}
   \hspace{0.5cm}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ExplicitLCP.pdf}
     \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_company}
+    \label{fig:lcp:numericaresults:test_case_2_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ImplicitLCP.pdf}
     \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_explicit_nielsen}
+    \label{fig:lcp:numericaresults:test_case_2_implicit}
   \end{subfigure}
   \hspace{0.5cm}
   \begin{subfigure}{0.4\textwidth}
-    \label{fig:finitedifferencesschemes:numericaresults:test_case_2_implicit_nielsen}
+    \label{fig:lcp:numericaresults:test_case_2_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2CrankNicholsonLCP.pdf}
     \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
   \end{subfigure}
   \caption{American put option value $V(S, 0)$ curve.}
-  \label{fig:finitedifferencesschemes:numericaresults:test_case_2}
+  \label{fig:lcp:numericaresults:test_case_2}
+\end{figure}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}ccccc@{}}
+  \toprule
+  \textbf{Asset Price} & \textbf{BOPM} & \textbf{Explicit} & \textbf{Implicit} & \textbf{\begin{tabular}[c]{@{}c@{}}Crank-\\ Nicholson\end{tabular}} \\ \midrule
+  0.8 & 0.200000      & 0.200000 & 0.200000 & 0.200000 \\
+  1.0 & 0.048167      & 0.047919 & 0.047912 & 0.047916 \\
+  1.2 & 0.008666      & 0.008646 & 0.008644 & 0.008645 \\
+  1.4 & 0.001285      & 0.001296 & 0.001297 & 0.001296 \\
+  1.6 & 0.000167      & 0.000170 & 0.000170 & 0.000170 \\
+      & \textbf{RMSE} & 0.000111 & 0.000115 & 0.000113 \\
+      & \textbf{Time} & 4609ms   & 19123ms  & 16741ms  \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3LcpBOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:lcp:numericaresults:test_case_3_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3ExplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:lcp:numericaresults:test_case_3_explicit}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3ImplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:lcp:numericaresults:test_case_3_implicit}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:lcp:numericaresults:test_case_3_crank_nicholson}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3CrankNicholsonLCP.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+  \end{subfigure}
+  \caption{American put option value $V(S, 0)$ curve.}
+  \label{fig:lcp:numericaresults:test_case_3}
+\end{figure}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}ccccc@{}}
+  \toprule
+  \textbf{Asset Price} & \textbf{BOPM} & \textbf{Explicit} & \textbf{Implicit} & \textbf{\begin{tabular}[c]{@{}c@{}}Crank-\\ Nicholson\end{tabular}} \\ \midrule
+  0.8 & 0.011962      & 0.011949 & 0.0120106 & 0.011962 \\
+  1.0 & 0.078062      & 0.077858 & 0.0775714 & 0.078062 \\
+  1.2 & 0.215901      & 0.021586 & 0.2157617 & 0.215901 \\
+  1.4 & 0.400000      & 0.400090 & 0.4000923 & 0.400000 \\
+  1.6 & 0.600000      & 0.600000 & 0.6000000 & 0.600000 \\
+      & \textbf{RMSE} & 0.000072 & 0.000166  & 0.000074 \\
+      & \textbf{Time} & 4640ms   & 1821ms    & 1310ms   \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4LcpBOPM.pdf}
+    \caption{$\text{Nodes} = 2^{500}$.}
+    \label{fig:lcp:numericaresults:test_case_4_bopm}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4ExplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:lcp:numericaresults:test_case_4_explicit}
+  \end{subfigure}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4ImplicitLCP.pdf}
+    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \label{fig:lcp:numericaresults:test_case_4_implicit}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \label{fig:lcp:numericaresults:test_case_4_crank_nicholson}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4CrankNicholsonLCP.pdf}
+    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+  \end{subfigure}
+  \caption{American put option value $V(S, 0)$ curve.}
+  \label{fig:lcp:numericaresults:test_case_4}
+\end{figure}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}ccccc@{}}
+  \toprule
+  \textbf{Asset Price} & \textbf{BOPM} & \textbf{Explicit} & \textbf{Implicit} & \textbf{\begin{tabular}[c]{@{}c@{}}Crank-\\ Nicholson\end{tabular}} \\ \midrule
+  0.8 & 0.200000      & 0.200000 & 0.200000 & 0.200000 \\
+  1.0 & 0.054464      & 0.054246 & 0.053968 & 0.054239 \\
+  1.2 & 0.011255      & 0.011134 & 0.011063 & 0.011129 \\
+  1.4 & 0.001855      & 0.001860 & 0.001908 & 0.001858 \\
+  1.6 & 0.000262      & 0.000268 & 0.000300 & 0.000268 \\
+      & \textbf{RMSE} & 0.000083 & 0.000179 & 0.000086 \\
+      & \textbf{Time} & 4585ms   & 1310ms   & 885ms    \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Convergence Analysis}
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceSpaceExplicitLCP.pdf}
+    \caption{$\Delta{x}=2^{-7},\dots,2^{-10}$}
+    \caption*{$\Delta{t}=2^{-21}$}
+    \label{fig:lcp:numericalresults:convergence_space_explicit}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceTimeExplicitLCP.pdf}
+    \caption{$\Delta{t}=2^{-15},2^{-17},\dots,2^{-21}$}
+    \caption*{$\Delta{x}=2^{-7}$}
+    \label{fig:lcp:numericalresults:convergence_time_explicit}
+  \end{subfigure}
+  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \label{fig:lcp:numericalresults:company_convergence_analysis}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceSpaceImplicitLCP.pdf}
+    \caption{$\Delta{x}=2^{-7},\dots,2^{-10}$}
+    \caption*{$\Delta{t}=2^{-21}$}
+    \label{fig:lcp:numericalresults:convergence_space_implicit}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceTimeImplicitLCP.pdf}
+    \caption{$\Delta{t}=2^{-15},2^{-17},\dots,2^{-21}$}
+    \caption*{$\Delta{x}=2^{-7}$}
+    \label{fig:lcp:numericalresults:convergence_time_implicit}
+  \end{subfigure}
+  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \label{fig:lcp:numericalresults:implicit_convergence_analysis}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceSpaceCrankNicholsonLCP.pdf}
+    \caption{$\Delta{x}=2^{-7},\dots,2^{-10}$}
+    \caption*{$\Delta{t}=2^{-21}$}
+    \label{fig:lcp:numericalresults:convergence_space_cranknicholson}
+  \end{subfigure}
+  \hspace{0.5cm}
+  \begin{subfigure}{0.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{chapters/chapter5/ConvergenceTimeCrankNicholsonLCP.pdf}
+    \caption{$\Delta{t}=2^{-15},2^{-17},\dots,2^{-21}$}
+    \caption*{$\Delta{x}=2^{-7}$}
+    \label{fig:lcp:numericalresults:convergence_time_cranknicholson}
+  \end{subfigure}
+  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \label{fig:lcp:numericalresults:cranknicholson_convergence_analysis}
 \end{figure}
