@@ -276,8 +276,8 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
 
 \subsection{Numerical results}
 
-\subsubsection{Numerical experiments}
-Similar to section \eqref{sec:finitediferencesschemes:numericalresults:numericalexperiments}, we present results for numerical experiments. First, we try to price a call options without dividends using parameters \eqref{eq:numericaresults:parameters_set_1}. Recall that this was not possible when using a front fixing scheme. However, we were able to approximate the value curve for all PSOR schemes (See figure \eqref{fig:lcp:numericaresults:numericaresults:test_case_1}). An argument for this is that the PSOR method does not depend on the optimal exercise price $\bar{S}(t)$. Hence, for American options without dividends the optimal exercise boundary is at $S\rightarrow\infty$, we would have the same variational inequalities as in \eqref{eq:lcp:overview:variational_inequalities_heat_equation}.
+\subsubsection{Comparative analysis}
+Similar to section \eqref{sec:finitediferencesschemes:numericalresults:numericalexperiments}, we present a comparative analysis for explicit, implicit and Crank-Nicholson PSOR schemes. First, we try to price a call options without dividends using parameters \eqref{eq:numericaresults:parameters_set_1}. Recall that this was not possible when using a front fixing scheme. However, we were able to approximate the value curve for all PSOR schemes (See figure \eqref{fig:lcp:numericaresults:numericaresults:test_case_1}). An argument for this is that the PSOR method does not depend on the optimal exercise price $\bar{S}(t)$. Hence, for American options without dividends the optimal exercise boundary is at $S\rightarrow\infty$, we would have the same variational inequalities as in \eqref{eq:lcp:overview:variational_inequalities_heat_equation}.
 \begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
