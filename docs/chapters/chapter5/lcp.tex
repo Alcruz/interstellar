@@ -494,8 +494,8 @@ Finally, we price call and put options with dividends using parameters \eqref{eq
 
 \subsubsection{Convergence Analysis}
 
-We also conducted convergence analysis for the PSOR method. For this, we set up our experiment similar to how we described in \eqref{sec:finitediferencesschemes:numericalresults:convergenceanalysis}. Therefore, we mostly present the results in this section. As you observe in figures \eqref{fig:lcp:numericalresults:convergence_space_explicit}, and \eqref{fig:lcp:numericalresults:convergence_time_explicit} is order two in the spatial domain. We have similar bounds for Crank-Nicholson and implicit schemes. That the Crank-Nicholson is order two in the temporal domain. This would increase the converges significantly. However, by decreasing $\Delta{x}$ would, solving the LCP would take ages.
-\begin{figure}[tbp]
+We also conducted convergence analysis for the PSOR method. For this, we set up experiments similar to as it was described in \eqref{sec:finitediferencesschemes:numericalresults:convergenceanalysis}. As you observe in figures \eqref{fig:lcp:numericalresults:convergence_space_explicit}, \eqref{fig:lcp:numericalresults:convergence_space_implicit}, and \eqref{fig:lcp:numericalresults:convergence_space_cranknicholson}, all PSOR methods are order two in the spatial domain. Likewise, the explicit and implicit methods have first order convergence in the temporal domain according to \eqref{fig:lcp:numericalresults:convergence_time_explicit} and \eqref{fig:lcp:numericalresults:convergence_time_implicit}. Moreover, the Crank-Nicholson is order two in the temporal domain. The convergence of the Crank-Nicholson scheme is superior to the other PSOR scheme. However, it is still significant slow when we compare it with front fixing schemes. 
+\begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
@@ -516,7 +516,7 @@ We also conducted convergence analysis for the PSOR method. For this, we set up 
   \label{fig:lcp:numericalresults:company_convergence_analysis}
 \end{figure}
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
@@ -537,7 +537,7 @@ We also conducted convergence analysis for the PSOR method. For this, we set up 
   \label{fig:lcp:numericalresults:implicit_convergence_analysis}
 \end{figure}
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
