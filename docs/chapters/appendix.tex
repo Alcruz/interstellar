@@ -105,6 +105,7 @@ By combining all the equations above, we define algorithms for approximating $v(
     \EndFor
     \State $\bar{S}_{f}^{0} = K$
     \State Define $a$, $b$, $c$ and $\lambda$ as in \eqref{eq:appendix:comapany:explicit_scheme_terms}
+    \State Define $\alpha$ and $\beta$ as in \eqref{eq:appendix:explicitmethodcompany:alpha_beta}
     \For{$n = 0, \dots, N$}
       \State $d^n = \dfrac{\alpha - (av^{n}_{0} + bv^{0}_{1} + cv^{n}_{2} - (v^{n}_{2} - v^{n}_{0})/(2\Delta{x}))}{(v^{n}_{2} - v^{n}_{0})/(2\Delta{x}) + \beta\bar{S}^{n}_f}$
       \State $\bar{S}^{n+1}_{f}=d^{n}\bar{S}^{n}_{f}$
