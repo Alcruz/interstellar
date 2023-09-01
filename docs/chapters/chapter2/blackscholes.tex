@@ -254,7 +254,7 @@ we obtain the systems
   \end{align}
 \end{subequations}
 }
-\subsubsection{Company transformation}
+\subsubsection{Company transformation} \label{sec:blackscholes:company_transformation}
 The Company transformation proposes set of change of variables for the asset price $S$, the time $t$, the value function $V(S,t)$ and the moving boundary
 \begin{equation}
   x := \log \dfrac{S}{\bar{S}_f(t)}, \quad \tau := T - t, \quad v(x, \tau) := \dfrac{V(S, t)}{K}, \quad \bar{S}_f(\tau) := \dfrac{\bar{S}(t)}{K} 
@@ -276,9 +276,10 @@ Note that the term on the new PDE that correspond to the terms in the linear par
 The boundary conditions for the call option in the original domain are
 $V(0,t)$ at $S=0$ and $V(\bar{S}, t) = \bar{S} - K$  at $S=\bar{S}(t)$, and when transforming those boundary conditions to the front fixing domain, they become $v(x, \tau) = 0$ for a sufficiently negative $x$ and $v(0, \tau) := \bar{S}_f(\tau) - 1 = V(\bar{S}, t) / K$ at $x=0$. Similarly, the boundary conditions for the put option in the original domain are $V(\bar{S}(t), t) = K - \bar{S}$ at $S=\bar{S}(t)$ and $V(S, t) = 0$ for a sufficiently large $S$, and under the front fixing domain, they become $v(0, \tau) = 1 - \bar{S}_f(\tau) = V(\bar{S}, t) / K$ at $x=0$ and $v(x, \tau) = 0$ for a sufficiently large $x$. Similarly, to as we did for the Nielsen transformation, we also rewrite the contact point condition
 \begin{subequations}
-  \begin{align}
-    \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(0, \tau) =  \bar{S}_f(\tau)\\
-    \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(0, \tau) = -\bar{S}_f(\tau)
+  \label{eq:blackscholes:frontfixingmethod:company:contact_point_condition}
+  \begin{align} 
+    \text{\textbf{Call:}} \qquad & \dfrac{\partial v}{\partial x}(0^-, \tau) =  \bar{S}_f(\tau)\\
+    \text{\textbf{Put:}} \qquad & \dfrac{\partial v}{\partial x}(0^+, \tau) = -\bar{S}_f(\tau)
   \end{align}
 \end{subequations}
 \begin{figure}[H]

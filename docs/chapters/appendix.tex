@@ -1,53 +1,101 @@
 
 \section{Explicit scheme for Company transformation} \label{sec:company_explicit_scheme}
-The explicit scheme is given by
+In this section, we will briefly derive the explicit scheme for the Company approximation.\cite{company_egorova_jodar_2014}. Similar as in section \ref{sec:finitediferencesschemes:explicit_scheme}, the explicit front fixing Company scheme is obtained by approximating the second order spatial derivative using central finite difference at position $x_i$. Contrary to section \ref{sec:finitediferencesschemes:explicit_scheme},  the first order spatial derivative using forward difference at time step $t_n$
 \begin{equation*}
     \begin{split}
       \dfrac{v^{n+1}_{i} - v^{n}_{i}}{\Delta{t}} & - \dfrac{1}{2}\sigma^2 \dfrac{v^{n}_{i-1} - 2v^{n}_{i} + v^{n}_{i+1}}{(\Delta{x})^2} \\ 
        & - \bigg( (r-\delta) - \dfrac{\sigma^2}{2} - \dfrac{\bar{S}^{n+1}_{f} - \bar{S}^{n}_{f}}{\Delta{t}\bar{S}^{n}_{f}} \bigg)\dfrac{v^{n}_{i+1} - v^{n}_{i-1}}{2\Delta{x}} + rv^{n}_{i} = 0
     \end{split}
 \end{equation*}
-for $i=1\dots,M$ and $n = 0,\dots,N$. 
-\begin{equation*}
+for $i=1\dots,M$ and $n = 0,\dots,N$. Similarly, we rewrite the expression above by writing the approximation of time step $v^{n+1}_i$ with respect to the approximation at the current time step $t_{n}$
+\begin{equation}
+    \label{eq:appendix:comapany:explicit_scheme}
     \begin{split}
         v^{n+1}_{i} = av^{n}_{i-1} + bv^{n}_{i} + cv^{n}_{i+1} + \dfrac{\bar{S}^{n+1}_{f} - \bar{S}^{n}_{f}}{2\Delta{x}\bar{S}^{n}_{f}}(v^{n}_{i+1} - v^{n}_{i-1})
     \end{split}
-\end{equation*}
+\end{equation}
 where 
-\begin{equation*}
+\begin{equation}
+    \label{eq:appendix:comapany:explicit_scheme_terms}
     \begin{split}
         \lambda =& \dfrac{\Delta{t}}{\Delta{x}^2}\\
         a =& \dfrac{\lambda}{2}\bigg( \sigma^2 - \bigg(r - \delta - \dfrac{\sigma^2}{2}\bigg)\Delta{x} \bigg) \\
         b =& 1 - \sigma^2\lambda- r\Delta{t} \\
         c =& \dfrac{\lambda}{2}\bigg(\sigma^2 + \bigg(r - \delta - \dfrac{\sigma^2}{2}\bigg)\Delta{x}\bigg)
     \end{split}
-\end{equation*}
-Moreover, the boundary conditions 
+\end{equation}
+The explicit scheme \eqref{eq:appendix:comapany:explicit_scheme} have boundary conditions (See section \ref{sec:blackscholes:company_transformation})
 \begin{equation*}
     \begin{split}
         \text{\textbf{Call:}} \qquad & v^{n}_{0} = 0, \quad v^{n}_{M+1} = \bar{S}^{n}_{f} - 1 \\
         \text{\textbf{Put:}} \qquad & v^{n}_{0} = 1 - \bar{S}^{n}_{f}, \quad v^{n}_{M+1} = 0 \\
     \end{split}
 \end{equation*}
-for $n=0,\dots,N$. Moreover, the contact point condition is approximated using central finite difference
+for $n=0,\dots,N$, and initial condition 
+\begin{equation*}
+    \begin{split}
+        \text{\textbf{Call:}} \qquad & v^0_i  = 0 \\
+        \text{\textbf{Put:}} \qquad & v^0_i = 0 \\
+    \end{split}
+\end{equation*}
+Moreover, the contact point condition \ref{eq:blackscholes:frontfixingmethod:company:contact_point_condition} is approximated using central finite difference
 \begin{align*}
-    \text{\textbf{Call:}} \qquad & \dfrac{v^{n}_{M+2} - v^{n}_{M}}{2\Delta{x}^2} = \dfrac{\partial{v}}{\partial{x}}(0, t) + O(\Delta{x}^2) \\
-    \text{\textbf{Put:}} \qquad & \dfrac{v^{n}_{1} - v^{n}_{-1}}{2\Delta{x}} = \dfrac{\partial{v}}{\partial{x}}(0, t)+ O(\Delta{x}^2) 
+    \text{\textbf{Call:}} \qquad & \dfrac{v^{n}_{M+2} - v^{n}_{M}}{2\Delta{x}^2} = \dfrac{\partial{v}}{\partial{x}}(0^-, t) + O(\Delta{x}^2) \\
+    \text{\textbf{Put:}} \qquad & \dfrac{v^{n}_{1} - v^{n}_{-1}}{2\Delta{x}} = \dfrac{\partial{v}}{\partial{x}}(0^+, t)+ O(\Delta{x}^2) 
 \end{align*}
-
 for $n=0,\dots,N$. Moreover, the contact point condition is approximated using central finite difference
 \begin{align}
     \label{eq:appendix:explicitmethodcompany:contact_point_approximation}
     \text{\textbf{Call:}} \qquad & \dfrac{v^{n}_{M+2} - v^{n}_{M}}{2\Delta{x}^2} = \bar{S}^{n}_{f} \\
     \text{\textbf{Put:}} \qquad & \dfrac{v^{n}_{1} - v^{n}_{-1}}{2\Delta{x}}  = -\bar{S}^{n}_{f}  
 \end{align}
-
-By combining the central difference approximation for the PDE, the boundary conditions and the contact point, it is obtained 
-
-\begin{align*}
-    \text{\textbf{Call:}} \qquad & v^{n}_{M} =  \\
-    \text{\textbf{Put:}} \qquad & v^{n}_{1} = \alpha - \beta\bar{S}^{n}_{f}  
-\end{align*}
+Using central finite difference for approximating the contact point condition has the benefit that our scheme will be second order in space. However, we must come up with some way to approximate replace $v_{M+2}$ and $v_{-1}$ in \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation}. By plug the contact condition in \eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_pde} we have that 
+\begin{align}
+    \label{eq:appendix:explicitmethodcompany:contact_point_approximation}
+    \text{\textbf{Call:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{\partial^2{v}}{\partial{x^2}}(0^-, \tau) - \dfrac{\sigma^2}{2}\bar{S}_f(\tau) + r = 0 \\
+    \text{\textbf{Put:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{\partial^2{v}}{\partial{x^2}}(0^+, \tau) + \dfrac{\sigma^2}{2}\bar{S}_f(\tau) - r = 0
+\end{align}
+and by applying using central finite difference we have
+\begin{align}
+    \label{eq:appendix:explicitmethodcompany:contact_point_approximation_2}
+    \text{\textbf{Call:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{v^{n}_{M} - 2v^{n}_{M+1} + v^{n}_{M+2}}{\Delta{x}^2} - \bigg(\dfrac{\sigma^2}{2}-\delta\bigg)\bar{S}^n_f + r = 0 \\
+    \text{\textbf{Put:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{v^{n}_{-1} - 2v^{n}_{0} + v^{n}_{1}}{\Delta{x}^2} + \bigg(\dfrac{\sigma^2}{2}-\delta\bigg)\bar{S}^n_f -r = 0
+\end{align}
+and by plug equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation} in equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation_2}, we have that 
+\begin{align}
+    \text{\textbf{Call:}} \qquad & v_{M} = \alpha - \beta\bar{S}^n_f \\
+    \text{\textbf{Put:}} \qquad & v_{1} = \alpha - \beta\bar{S}^n_f \\
+\end{align}
+where
+\begin{align}
+    \label{eq:appendix:explicitmethodcompany:alpha_beta}
+    \text{\textbf{Call:}} \qquad & \alpha := -\big(1 + \dfrac{r\Delta{x}^2}{\sigma^2}\big), \quad \beta := \Delta{x}-1-\dfrac{1}{2}\Delta{x}^2-\dfrac{\delta}{\sigma^2}\Delta{x}^2\\
+    \text{\textbf{Put:}} \qquad & \alpha := 1 + \dfrac{r\Delta{x}^2}{\sigma^2}, \quad \beta := 1+\Delta{x}+\dfrac{1}{2}\Delta{x}^2+\dfrac{\delta}{\sigma^2}\Delta{x}^2
+\end{align}
+By combining all the equations above, we define algorithms for approximating $v(x,T)$ explicitly
+\begin{algorithm}[H]
+    \caption{Explicit method for call options}\label{alg:appendix:companytransformation:explicits:call_explicit_method_algorithm}
+    \begin{algorithmic}
+    \For{$i = 0,\dots,M+1$} 
+      \State $v^{0}_i = 0 $
+    \EndFor
+    \State $\bar{S}_{f}^{0} = K$
+    \State Define $a$, $b$, $c$ and $\lambda$ as in \eqref{eq:appendix:comapany:explicit_scheme_terms}
+    \State Define $\alpha$ and $\beta$ as in \eqref{eq:appendix:explicitmethodcompany:alpha_beta}
+    \For{$n = 0, \dots, N$}
+      \State $d^n = \dfrac{\alpha - (av^{n}_{0} + bv^{0}_{1} + cv^{n}_{2} - (v^{n}_{M+1} - v^{n}_{M-1})/(2\Delta{x}))}{(v^{n}_{M+1} - v^{n}_{M-1})/(2\Delta{x}) + \beta\bar{S}^{n}_f}$
+      \State $\bar{S}^{n+1}_{f}=d^{n}\bar{S}^{n}_{f}$
+      \State $a^{n} = a - \dfrac{\bar{S}^{n+1}_{f} - \bar{S}^{n}_{f}}{2\Delta{x}\bar{S}^{n}_{f}}$
+      \State $c^{n} = c - \dfrac{\bar{S}^{n+1} - \bar{S}^{n}}{2\Delta{x}\bar{S}^{n}_{f}}$
+      \State $v^{n+1}_{0}= 0$
+      \State $v^{n+1}_{M}=\alpha - \beta\bar{S}^{n+1}_{f}$
+      \State $v^{n+1}_{M+1} =\bar{S}^{n+1}_{f} - 1$
+      \For{$i = 1, \dots, M-1$}
+        \State $v^{n+1}_{i} = a^{n} v^{n}_{i-1} + b v^{n}_{i} + c^{n}v^{n}_{i+1}$
+      \EndFor
+    \EndFor
+  \end{algorithmic}
+  \end{algorithm}
 
 \begin{algorithm}[H]
     \caption{Explicit method for put options}\label{alg:appendix:companytransformation:explicits:put_explicit_method_algorithm}
@@ -56,13 +104,7 @@ By combining the central difference approximation for the PDE, the boundary cond
       \State $v^{0}_i = 0 $
     \EndFor
     \State $\bar{S}_{f}^{0} = K$
-
-    \State $a = \dfrac{\lambda}{2}\bigg(\sigma^2 - \bigg(r - \delta - \dfrac{\sigma^2}{2}\bigg)\Delta{x}\bigg)$
-    \State $b = 1 - \sigma^2\lambda- r\Delta{t} $
-    \State $c = \dfrac{\lambda}{2}\bigg(\sigma^2 + \bigg(r - \delta - \dfrac{\sigma^2}{2}\bigg)\Delta{x}\bigg)$
-    \State $\alpha = 1 + \dfrac{r\Delta{x}^2}{\sigma^2}$
-    \State $\beta = 1 + \Delta{x} + \dfrac{1}{2}\Delta{x}^2$
-
+    \State Define $a$, $b$, $c$ and $\lambda$ as in \eqref{eq:appendix:comapany:explicit_scheme_terms}
     \For{$n = 0, \dots, N$}
       \State $d^n = \dfrac{\alpha - (av^{n}_{0} + bv^{0}_{1} + cv^{n}_{2} - (v^{n}_{2} - v^{n}_{0})/(2\Delta{x}))}{(v^{n}_{2} - v^{n}_{0})/(2\Delta{x}) + \beta\bar{S}^{n}_f}$
       \State $\bar{S}^{n+1}_{f}=d^{n}\bar{S}^{n}_{f}$

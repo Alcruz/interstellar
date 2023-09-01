@@ -1,0 +1,16 @@
+PDE
+Black-Scholes
+PSOR
+Kalogirou
+Jonel
+RSME
+Jacobian
+Seydel
+BOPM
+Black-Scholes-Merton
+Scholes
+Guass-Seidel
+Gauss-Seidel
+SOR
+Addiotanlly
+PDEs

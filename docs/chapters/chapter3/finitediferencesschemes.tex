@@ -74,7 +74,7 @@ where $O(\Delta{x})$ and $O(\Delta{x}^2)$ are high order terms (See Nassif\cite{
 % \end{align*}
 % Note that if we subtract the central difference from our method we have that 
 
-\subsection{Explicit scheme}
+\subsection{Explicit scheme} \label{sec:finitediferencesschemes:explicit_scheme}
 Generally, explicit schemes use forward finite difference to approximate the temporal partial derivative at time step $t_{n+1}$ and central finite difference to approximate the spatial derivative at position $x_i$. However, since the problem \eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_bs_pde} is solved  backward in time, we use backward finite difference at $t_{n+1}$, and a central finite difference at $x_i$.
 \begin{figure}[H]
   \centering

@@ -1,0 +1,34 @@
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qat time \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, the value of the option at exercise region will overlap with linear segment of the payoff function \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, in that case, the optimal exercise \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q will be equal to the strike price \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q payoff function.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhere \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is the strike price, \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is the asset price, and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is the current time.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhere the risk-free interest \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q and the price volatility \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q are deterministic functions of time during the life of the option.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhere \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is a deterministic function.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhere \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q is the optimal exercise price.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich remain constant as t changes.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich fixes the moving boundary \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q at \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q when \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qfor both put and call options.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qat any time \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhich is called the smooth pasting condition in \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qto make the expression above more manageable.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qwhere \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q means an arbitrary large value in this context.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qfor \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q.\\E$"}
+{"rule":"PHRASE_REPETITION","sentence":"^\\QMoreover, \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q can be formulated as the iterative method Iterative method for variational inequalities.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QMoreover, the BOPM uses a completely different approach to price options than the one considered in this dissertation.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qand, lastly, that the price dynamics of American options is governed by the same Black-Scholes PDE as European options in the continuation region.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QSpringerLink\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe long history of the theory of option pricing began in 1900 when the French mathematician Louis Bachelier deduced an option pricing formula based on the assumption that stock prices follow a Brownian motion with zero drift.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIn Chapter 2, we present finite difference schemes for approximating the PDCP by a sequence of linear complementarity problems (LCPs).\\E$"}
+{"rule":"SOME_OF_THE","sentence":"^\\QWe also consider variations on the Black-Scholes pricing model by relaxing some of the basic assumptions.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIn the presence of transaction costs, the discretized partial differential complementarity problem leads to nonlinear complementarity problems (NCPs).\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QAn existence result is given for this class of NCPs.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe problem is formulated as a constrained optimization problem which is an instance of a mathematical program with equilibrium constraints (MPEC).\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QTwo methods for solving an MPEC are described and applied to the implied volatility problem.\\E$"}
+{"rule":"COMMA_PARENTHESIS_WHITESPACE","sentence":"^\\Q.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QZentralblatt MATH.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QThe Mathematical GazetteThe Second Edition of the highly regarded An Introduction to Numerical Methods and Analysis provides a fully revised guide to numerical approximation.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe Mathematical GazetteThe Second Edition of the highly regarded An Introduction to Numerical Methods and Analysis provides a fully revised guide to numerical approximation.\\E$"}
+{"rule":"THE_THEY","sentence":"^\\QThe Mathematical GazetteThe Second Edition of the highly regarded An Introduction to Numerical Methods and Analysis provides a fully revised guide to numerical approximation.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QAn Introduction to Numerical Methods and Analysis, Second Edition reflects the latest trends in the field, includes new material and revised exercises, and offers a unique emphasis on applications.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QA wide range of higher-level methods and solutions, including new topics such as the roots of polynomials, spectral collocation, finite element ideas, and Clenshaw-Curtis quadrature, are presented from an introductory perspective, and the Second Edition also features:Chapters and sections that begin with basic, elementary material followed by gradual coverage of more advanced materialExercises ranging from simple hand computations to challenging derivations and minor proofs to programming exercisesWidespread exposure and utilization of MATLABAn appendix that contains proofs of various theorems and other materialThe book is an ideal textbook for students in advanced undergraduate mathematics and engineering courses who are interested in gaining an understanding of numerical methods and numerical analysis.\\E$"}
+{"rule":"IN_A_X_MANNER","sentence":"^\\QIt uses in a systematic way the residual vector as a search direction, a spectral steplength that produces a nonmonotone process and a globalization strategy that allows for this nonmonotone behavior.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIt uses in a systematic way the residual vector as a search direction, a spectral steplength that produces a nonmonotone process and a globalization strategy that allows for this nonmonotone behavior.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QAn extensive set of numerical experiments that indicate that the new combination is competitive and frequently better than well-known Newton-Krylov methods for large-scale problems is also presented.\\E$"}
