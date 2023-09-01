@@ -75,9 +75,7 @@ class LCPSolver:
         S_axis = option.K*np.exp(self.x_axis)
         S_axis[0] = 0
         V = self.get_surface(option, w, tao_axis, q, q_delta)
-        # S_bar = self.get_early_exercise(option, S_axis, V)
-        S_bar= None
-        return S_axis, V, S_bar
+        return S_axis, V
     
 
 class CallLCPSolver(LCPSolver):
@@ -95,7 +93,7 @@ class CallLCPSolver(LCPSolver):
     def get_surface(self, option, w, tao_axis, q, q_delta, ):
         V = option.K*w*np.exp(-(self.x_axis/2)*(q_delta - 1)) * np.exp(-tao_axis[-1]*((1/4)*np.power(q_delta - 1, 2) + q))
         V[0] = 0
-        return V[:-1]
+        return V[:]
     
     class GUtil: 
         def __init__(self, x, tao, q_delta, q):
@@ -155,9 +153,9 @@ def solve(option: Option,
         eps = 1e-24):
     match option.type:
         case OptionType.CALL:
-            return CallLCPSolver(r, sigma, dx, dt, x_min, x_max, theta, delta)
+            return CallLCPSolver(r, sigma, dx, dt, x_min, x_max, theta, delta).solve(option, wR, eps)
         case OptionType.PUT:
-            return PutLCPSolver(r, sigma, dx, dt, x_min, x_max, theta, delta)
+            return PutLCPSolver(r, sigma, dx, dt, x_min, x_max, theta, delta).solve(option, wR, eps)
 
 
 
