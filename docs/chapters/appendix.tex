@@ -51,17 +51,17 @@ for $n=0,\dots,N$. Moreover, the contact point condition is approximated using c
 \end{align}
 Using central finite difference for approximating the contact point condition has the benefit that our scheme will be second order in space. However, we must come up with some way to approximate replace $v_{M+2}$ and $v_{-1}$ in \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation}. By plug the contact condition in \eqref{eq:blackscholes:frontfixingmethod:nielsen:american_options_pde} we have that 
 \begin{align}
-    \label{eq:appendix:explicitmethodcompany:contact_point_approximation}
+    \label{eq:appendix:explicitmethodcompany:contact_point_approximation_de}
     \text{\textbf{Call:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{\partial^2{v}}{\partial{x^2}}(0^-, \tau) - \dfrac{\sigma^2}{2}\bar{S}_f(\tau) + r = 0 \\
     \text{\textbf{Put:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{\partial^2{v}}{\partial{x^2}}(0^+, \tau) + \dfrac{\sigma^2}{2}\bar{S}_f(\tau) - r = 0
 \end{align}
 and by applying using central finite difference we have
 \begin{align}
-    \label{eq:appendix:explicitmethodcompany:contact_point_approximation_2}
+    \label{eq:appendix:explicitmethodcompany:contact_point_approximation_de_2}
     \text{\textbf{Call:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{v^{n}_{M} - 2v^{n}_{M+1} + v^{n}_{M+2}}{\Delta{x}^2} - \bigg(\dfrac{\sigma^2}{2}-\delta\bigg)\bar{S}^n_f + r = 0 \\
     \text{\textbf{Put:}} \qquad & \dfrac{\sigma^2}{2}\dfrac{v^{n}_{-1} - 2v^{n}_{0} + v^{n}_{1}}{\Delta{x}^2} + \bigg(\dfrac{\sigma^2}{2}-\delta\bigg)\bar{S}^n_f -r = 0
 \end{align}
-and by plug equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation} in equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation_2}, we have that 
+and by plug equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation_de} in equation \eqref{eq:appendix:explicitmethodcompany:contact_point_approximation_de_2}, we have that 
 \begin{align}
     \text{\textbf{Call:}} \qquad & v_{M} = \alpha - \beta\bar{S}^n_f \\
     \text{\textbf{Put:}} \qquad & v_{1} = \alpha - \beta\bar{S}^n_f \\

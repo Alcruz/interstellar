@@ -277,6 +277,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
 \subsection{Numerical results}
 
 \subsubsection{Numerical experiments}
+Similar to section \eqref{sec:finitediferencesschemes:numericalresults:numericalexperiments}, we present results for numerical experiments. First, we try to price a call options without dividends using parameters \eqref{eq:numericaresults:parameters_set_1}. Recall that this was not possible when using a front fixing scheme. However, we were able to approximate the value curve for all PSOR schemes (See figure \eqref{fig:lcp:numericaresults:numericaresults:test_case_1}). An argument for this is that the PSOR method does not depend on the optimal exercise price $\bar{S}(t)$. Hence, for American options without dividends the optimal exercise boundary is at $S\rightarrow\infty$, we would have the same variational inequalities as in \eqref{eq:lcp:overview:variational_inequalities_heat_equation}.
 \begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
@@ -289,13 +290,13 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ExplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_1_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1ImplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_1_implicit}
   \end{subfigure}
   \hspace{0.5cm}
@@ -303,7 +304,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \label{fig:lcp:numericaresults:test_case_1_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase1CrankNicholsonLCP.pdf}
-    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+    \caption{$\Delta{x}=\Delta{t}=2^{-5}$.}
   \end{subfigure}
   \caption{American call option value $V(S, 0)$ given parameters \eqref{eq:numericaresults:parameters_set_1}.}
   \label{fig:lcp:numericaresults:numericaresults:test_case_1}
@@ -332,8 +333,9 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \label{tab:lcp:test_case_1}  $V(S, 0)$ call approximation given parameters \eqref{eq:numericaresults:parameters_set_1}.}
   \end{table}
 
+The second numerical experiment consisted in pricing American put options using parameters \eqref{eq:numericaresults:parameters_set_1}. As you can see in figure \eqref{fig:lcp:numericaresults:test_case_2}, we were able to approximate the value curve $V(S, 0)$. So far, we found that the PSOR yield to large execution times (see table \eqref{tab:lcp:test_case_2}) making us impossible to decrease the discretization parameters and so that the approximation are more accurate. 
 
-\begin{figure}[tbp]
+\begin{figure}[H]
   \centering
   \begin{subfigure}{0.4\textwidth}
     \centering
@@ -345,13 +347,13 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ExplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_2_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2ImplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_2_implicit}
   \end{subfigure}
   \hspace{0.5cm}
@@ -359,7 +361,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \label{fig:lcp:numericaresults:test_case_2_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase2CrankNicholsonLCP.pdf}
-    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+    \caption{$\Delta{x}=\Delta{t}=2^{-5}$.}
   \end{subfigure}
   \caption{American put option value $V(S, 0)$ given parameters \eqref{eq:numericaresults:parameters_set_1}.}
   \label{fig:lcp:numericaresults:test_case_2}
@@ -384,6 +386,10 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \label{tab:lcp:test_case_2}  $V(S, 0)$ put approximation given parameters \eqref{eq:numericaresults:parameters_set_1}.}
 \end{table}
 
+The PSOR schemes spend most the computational time in solving the LCP problem which requires solving a linear equation iteratively. The LCP problem is inversely proportional to the discretization parameter $\Delta{x}$. Therefore, as we decrease the discretization, the LCP problem takes more time to be resolved.
+
+Finally, we price call and put options with dividends using parameters \eqref{eq:numericaresults:parameters_set_3} and \eqref{eq:numericaresults:parameters_set_4}. Judging the computational time and RSME in tables \eqref{tab:lcp:test_case_3} and \eqref{tab:lcp:test_case_4}, we could say that adding dividends into the model does not affect the overall performance and accuracy for each of the PSOR schemes. To summarize, the PSOR method is rather slow compared to the explicit front-fixing schemes, and it has the same order of accuracy as the implicit front-fixing scheme. But contrary to the front fixing methods, PSOR can be used to price American call options without dividends. However, we can always price American call options by using the Black-Scholes formula. Thus, this does not provide any advantage over the front fixing schemes.
+
 \begin{figure}[tbp]
   \centering
   \begin{subfigure}{0.4\textwidth}
@@ -396,13 +402,13 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3ExplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_3_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3ImplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_3_implicit}
   \end{subfigure}
   \hspace{0.5cm}
@@ -410,7 +416,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \label{fig:lcp:numericaresults:test_case_3_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase3CrankNicholsonLCP.pdf}
-    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+    \caption{$\Delta{x}=\Delta{t}=2^{-5}$.}
   \end{subfigure}
   \caption{American call option value $V(S, 0)$ given parameters \eqref{eq:numericaresults:parameters_set_3}.}
   \label{fig:lcp:numericaresults:test_case_3}
@@ -447,13 +453,13 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4ExplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_4_explicit}
   \end{subfigure}
   \begin{subfigure}{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4ImplicitLCP.pdf}
-    \caption{$\Delta{x}=\expnumber{1}{-3}, \Delta{t}=0.5\times\expnumber{1}{-6}$}
+    \caption{$\Delta{x}=2^{-5}, \Delta{t}=0.5\times\Delta{x}^2$}
     \label{fig:lcp:numericaresults:test_case_4_implicit}
   \end{subfigure}
   \hspace{0.5cm}
@@ -461,7 +467,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \label{fig:lcp:numericaresults:test_case_4_crank_nicholson}
     \centering
     \includegraphics[width=\textwidth]{chapters/chapter5/TestCase4CrankNicholsonLCP.pdf}
-    \caption{$\Delta{x}=\Delta{t}=\expnumber{1}{-3}$.}
+    \caption{$\Delta{x}=\Delta{t}=2^{-5}$.}
   \end{subfigure}
   \caption{American put option value $V(S, 0)$ given parameters \eqref{eq:numericaresults:parameters_set_4}.}
   \label{fig:lcp:numericaresults:test_case_4}
@@ -488,6 +494,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
 
 \subsubsection{Convergence Analysis}
 
+We also conducted convergence analysis for the PSOR method. For this, we set up our experiment similar to how we described in \eqref{sec:finitediferencesschemes:numericalresults:convergenceanalysis}. Therefore, we mostly present the results in this section. As you observe in figures \eqref{fig:lcp:numericalresults:convergence_space_explicit}, and \eqref{fig:lcp:numericalresults:convergence_time_explicit} is order two in the spatial domain. We have similar bounds for Crank-Nicholson and implicit schemes. That the Crank-Nicholson is order two in the temporal domain. This would increase the converges significantly. However, by decreasing $\Delta{x}$ would, solving the LCP would take ages.
 \begin{figure}[tbp]
   \centering
   \begin{subfigure}{0.4\textwidth}
@@ -505,7 +512,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \caption*{$\Delta{x}=2^{-7}$}
     \label{fig:lcp:numericalresults:convergence_time_explicit}
   \end{subfigure}
-  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \caption{Convergence analysis for the explicit PSOR method.}
   \label{fig:lcp:numericalresults:company_convergence_analysis}
 \end{figure}
 
@@ -526,7 +533,7 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \caption*{$\Delta{x}=2^{-7}$}
     \label{fig:lcp:numericalresults:convergence_time_implicit}
   \end{subfigure}
-  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \caption{Convergence analysis for the implicit PSOR method.}
   \label{fig:lcp:numericalresults:implicit_convergence_analysis}
 \end{figure}
 
@@ -547,6 +554,6 @@ Moreover, Seydel et al.\cite{seydel_2009} and Dewynne et al.\cite{dewynne_howiso
     \caption*{$\Delta{x}=2^{-7}$}
     \label{fig:lcp:numericalresults:convergence_time_cranknicholson}
   \end{subfigure}
-  \caption{Convergence analysis for the explicit method for the Company transformation.}
+  \caption{Convergence analysis for the Crank-Nicholson PSOR method.}
   \label{fig:lcp:numericalresults:cranknicholson_convergence_analysis}
 \end{figure}

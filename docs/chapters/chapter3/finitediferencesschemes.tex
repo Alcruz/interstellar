@@ -376,7 +376,7 @@ an initial value
 \end{equation}
 
 \subsection{Numerical results}
-\subsubsection{Numerical experiments}
+\subsubsection{Numerical experiments} \label{sec:finitediferencesschemes:numericalresults:numericalexperiments}
 Generally, Datasets for American options are expensive to acquire. Therefore, to validate our implementation, we mainly relied on the data available in Company, 
 et al.\cite*{company_egorova_jodar_2014}, Nielsen, et al.\cite*{nielsen_2001}, Seydel\cite*{seydel_2009}, and Wilmott, et al.\cite*{dewynne_howison_wilmott_howison_1995}. Moreover, used the approximations produced by binary option pricing model\cite{cox_1979} (BOPM)  as benchmark for assessing the consistency of our method. We chose the binomial model because it is widely used in the industry, and is simple to implement. Moreover, the BOPM uses a completely different approach to price options than the one considered in this dissertation. The first experiment that come into mind is to price call and put options without dividend. Therefore, let us define the parameter for the numerical experiment as
 \begin{equation}
@@ -596,7 +596,7 @@ Finally, we also price a put option with dividends using parameters
 Summarizing, none of the front fixing schemes can be used to price American call options without dividends. The explicit schemes are much faster than the implicit scheme. Nielsen explicit scheme is less accurate than Company explicit scheme. We will see later that Company explicit scheme is second order in space. Therefore, it converges faster than Nielsen explicit scheme. Moreover, the Nielsen implicit scheme is slower because at each time step it has to compute the term $D^{n+1}_i$ for $i=0,\dots,M+1$ (See line 9-10 in algorithms \eqref{alg:finitedifferencesschemes:explicit:call_explicit_method_algorithm} and \eqref{alg:finitedifferencesschemes:explicit:put_explicit_method_algorithm}) while the Company does not (See algorithms \eqref{alg:appendix:companytransformation:explicits:call_explicit_method_algorithm}
 and \eqref{alg:appendix:companytransformation:explicits:put_explicit_method_algorithm}).
 
-\subsubsection{Convergence analysis}
+\subsubsection{Convergence analysis} \label{sec:finitediferencesschemes:numericalresults:convergenceanalysis}
 
 We conducted a convergence analysis to determine the order of convergence of each the methods. For simplicity, the numerical experiment was conducted for put options and with parameters \eqref{eq:numericaresults:parameters_set_4}. We expect that numerical experiments yield similar results for call options and other set of parameters. Moreover, for analyzing the convergence, we are taking the relative error between contiguous grid in sizes. Specifically, to determine the order of convergence in space, we define the grids with resolution $\Delta{x}_i=h/2^i$ for $i=0,\dots,3$ while $\Delta{t}$ is fixed. Conversely, to determine the temporal order of convergence, we vary $\Delta{t}$ and fix $\Delta{x}$ in similar way. Therefore, the error between consecutive grids is defined as
 \begin{equation}
